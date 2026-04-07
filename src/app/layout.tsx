@@ -7,7 +7,6 @@ import BrutalCursor from '@/app/components/ui/BrutalCursor'
 import ScrollProgress from '@/app/components/ui/ScrollProgress'
 import Aoscompo from '@/utils/aos'
 import { Providers } from './providers'
-import Intro from '@/app/components/Intro'
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -30,7 +29,6 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${manrope.variable} ${spaceMono.variable} font-heading bg-[var(--bg-primary)] text-[var(--text-primary)] brutal-grain`}>
-        <Intro />
         <ScrollProgress />
         <BrutalCursor />
         <Providers>

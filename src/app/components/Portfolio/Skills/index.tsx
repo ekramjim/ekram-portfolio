@@ -6,7 +6,7 @@ const skillGroups = [
   {
     label: "Languages",
     color: "#FF6600",
-    skills: ["Python", "JavaScript", "TypeScript", "Java", "Swift", "Kotlin", "C", "R", "SQL", "Bash", "HTML/CSS"],
+    skills: ["Python", "R", "JavaScript", "TypeScript", "Java", "Swift", "Kotlin", "C", "SQL", "Bash", "HTML/CSS"],
   },
   {
     label: "Frameworks & Platforms",
@@ -14,14 +14,19 @@ const skillGroups = [
     skills: ["ReactJS", "NextJS", "NodeJS", "Flutter", "Android", "iOS", "MongoDB", "Firebase", "AWS", "Google Cloud"],
   },
   {
-    label: "AI / Data Science",
+    label: "AI / Data Science / Bioinformatics",
     color: "#FF6600",
-    skills: ["TensorFlow", "PyTorch", "Scikit-learn", "NumPy", "Pandas", "Tableau", "RStudio", "Jupyter", "Deep Learning"],
+    skills: ["TensorFlow", "PyTorch", "Scikit-learn", "NumPy", "Pandas", "NLP", "Bioinformatics", "Tableau", "RStudio", "Jupyter", "Deep Learning", "Computational Biology"],
   },
   {
     label: "Tools & Other",
     color: "#0a0a0a",
-    skills: ["Git", "GitHub", "Docker", "VS Code", "Xcode", "Gemini API", "ChatGPT API", "Agile", "RxJS"],
+    skills: ["Git", "GitHub", "Docker", "VS Code", "Xcode", "Gemini API", "ChatGPT API", "Cloud Architecture", "Project Management", "Agile"],
+  },
+  {
+    label: "Certifications",
+    color: "#FF6600",
+    skills: ["Complete Python Developer 2023", "Assessment Of Skill Java", "Monash High Achiever Award", "HackerRank Python Certificate", "Monash Coding League"],
   },
 ];
 

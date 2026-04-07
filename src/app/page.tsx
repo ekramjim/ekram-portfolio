@@ -8,21 +8,19 @@ import Projects from "@/app/components/Portfolio/Projects";
 import Education from "@/app/components/Portfolio/Education";
 import Leadership from "@/app/components/Portfolio/Leadership";
 import Contact from "@/app/components/Portfolio/Contact";
+import ScrollingSVG from "@/app/components/Portfolio/ScrollingSVG";
 
 export const metadata: Metadata = {
   title: "Ekramul Islam — Portfolio",
   description:
-    "Co-Founder & CEO of LynkSphere. Computer Science graduate from Monash University specialising in Data Science, Full-Stack Development, and Machine Learning.",
+    "Co-Founder & CEO of LynkSphere. Computer Science graduate from Monash University specialising in Data Science, Bioinformatics, and Full-Stack Development.",
 };
 
-function SectionDivider({ delay = 0 }: { delay?: number }) {
+function SectionDivider() {
   return (
     <div className="relative flex items-center gap-0 overflow-hidden">
       <div className="flex-1 h-[1px] bg-[var(--border-primary)]" />
-      <div
-        className="w-2.5 h-2.5 bg-[#FF6600] rotate-45 -mx-1.5 flex-shrink-0"
-        style={{ animationDelay: `${delay}ms` }}
-      />
+      <div className="w-2.5 h-2.5 bg-[#FF6600] rotate-45 -mx-1.5 flex-shrink-0" />
       <div className="flex-1 h-[1px] bg-[var(--border-primary)]" />
     </div>
   );
@@ -31,8 +29,8 @@ function SectionDivider({ delay = 0 }: { delay?: number }) {
 export default function Home() {
   return (
     <main className="relative bg-[var(--bg-primary)] min-h-screen">
-      {/* Subtle crosshatch background */}
-      <div className="fixed inset-0 w-full h-full z-0 brutal-crosshatch pointer-events-none" />
+      {/* Persistent swirling SVG overlay — always visible, flows on scroll */}
+      <ScrollingSVG />
 
       <div className="relative z-10">
         <Hero />

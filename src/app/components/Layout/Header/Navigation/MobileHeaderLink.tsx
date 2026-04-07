@@ -37,7 +37,7 @@ const MobileHeaderLink: React.FC<{
             }
           }
         }}
-        className="flex items-center justify-between w-full py-2 text-black hover:text-black focus:outline-hidden"
+        className="flex items-center justify-between w-full py-2 text-[#aaaaaa] hover:text-white focus:outline-hidden"
       >
         {item.label}
         {item.submenu && (

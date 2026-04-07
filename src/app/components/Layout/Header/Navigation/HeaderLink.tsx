@@ -41,8 +41,8 @@ const HeaderLink: React.FC<{
 
   const baseClasses =
     "text-sm flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors duration-200 font-medium";
-  const activeClasses = "bg-black/10 text-black";
-  const inactiveClasses = "text-black hover:text-black hover:bg-black/5";
+  const activeClasses = "bg-[#FF6600]/15 text-[#FF6600]";
+  const inactiveClasses = "text-[#aaaaaa] hover:text-white hover:bg-white/5";
 
   return (
     <div

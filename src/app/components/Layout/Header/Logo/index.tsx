@@ -6,7 +6,7 @@ const Logo: React.FC = () => {
       href="/"
       className="flex items-center gap-2 text-lg font-normal text-black"
     >
-      <span className="font-[family-name:var(--font-space-mono)] font-bold tracking-tight text-[#0a0a0a]">
+      <span className="font-[family-name:var(--font-space-mono)] font-bold tracking-tight text-[#f5f5f5]">
         EKRAMUL<span className="text-[#FF6600]">.</span>
       </span>
     </Link>

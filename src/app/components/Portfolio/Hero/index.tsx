@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
 
-const roles = ["Co-Founder & CEO", "Data Scientist", "Full-Stack Developer", "ML Engineer"];
+const roles = ["Co-Founder & CEO", "Data Scientist", "Full-Stack Developer", "Bioinformatics Researcher", "ML Engineer"];
 
 function TypewriterRole() {
   const [idx, setIdx] = useState(0);
@@ -106,7 +106,7 @@ export default function Hero() {
               className="text-xs font-bold tracking-[0.4em] uppercase text-[#FF6600] font-[family-name:var(--font-space-mono)] mb-6 flex items-center gap-3"
             >
               <span className="w-6 h-[2px] bg-[#FF6600]" />
-              Melbourne, Australia
+              Software Engineer · CEO @LynkSphere
             </motion.p>
 
             <motion.h1
@@ -141,9 +141,8 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.7 }}
               className="text-[var(--text-body)] text-lg leading-relaxed max-w-md mb-10"
             >
-              Building AI-powered products and data-driven solutions. Currently leading{" "}
-              <span className="text-[#FF6600] font-medium">LynkSphere</span>, a Melbourne-based
-              software company delivering iOS, Android & Web apps to Australian clients.
+              Co-Founder & CEO of{" "}
+              <span className="text-[#FF6600] font-medium">LynkSphere</span> — building iOS, Android & web apps for businesses worldwide. Also completing a Master of Data Science at Monash, where my work spans ML, NLP, and bioinformatics.
             </motion.p>
 
             <motion.div
@@ -154,7 +153,7 @@ export default function Hero() {
             >
               <a
                 href="#Projects"
-                className="group inline-flex items-center gap-3 bg-[#0a0a0a] text-white px-6 py-3 rounded-full hover:bg-[#FF6600] transition-colors duration-300 font-[family-name:var(--font-space-mono)] text-sm font-bold uppercase tracking-wider"
+                className="group inline-flex items-center gap-3 bg-[#FF6600] text-white px-6 py-3 rounded-full hover:bg-[#e55500] transition-colors duration-300 font-[family-name:var(--font-space-mono)] text-sm font-bold uppercase tracking-wider shadow-[0_0_24px_rgba(255,102,0,0.25)]"
               >
                 View Projects
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -163,7 +162,7 @@ export default function Hero() {
               </a>
               <a
                 href="mailto:ekramjim002@gmail.com"
-                className="inline-flex items-center gap-3 border-2 border-[#0a0a0a] text-[#0a0a0a] px-6 py-3 rounded-full hover:border-[#FF6600] hover:text-[#FF6600] transition-colors duration-300 font-[family-name:var(--font-space-mono)] text-sm font-bold uppercase tracking-wider"
+                className="inline-flex items-center gap-3 border-2 border-[#242424] text-[#aaaaaa] px-6 py-3 rounded-full hover:border-[#FF6600] hover:text-[#FF6600] transition-colors duration-300 font-[family-name:var(--font-space-mono)] text-sm font-bold uppercase tracking-wider"
               >
                 Get in Touch
               </a>
@@ -228,8 +227,8 @@ export default function Hero() {
             </svg>
 
             {/* Stat cards floating on the visual */}
-            <div className="absolute top-8 right-0 bg-white border-2 border-[#d0d0d0] p-4 shadow-sm" style={{ borderRadius: 4 }}>
-              <div className="text-3xl font-normal text-[#0a0a0a] leading-none">$30K</div>
+            <div className="absolute top-8 right-0 bg-[#161616] border-2 border-[#242424] p-4 shadow-sm" style={{ borderRadius: 4 }}>
+              <div className="text-3xl font-normal text-[#f5f5f5] leading-none">$30K</div>
               <div className="text-[10px] font-bold uppercase tracking-widest text-[#FF6600] font-[family-name:var(--font-space-mono)] mt-1">Revenue Generated</div>
             </div>
             <div className="absolute bottom-12 left-0 bg-[#FF6600] p-4 shadow-sm" style={{ borderRadius: 4 }}>

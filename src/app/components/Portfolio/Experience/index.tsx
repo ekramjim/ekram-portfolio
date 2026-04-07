@@ -7,13 +7,13 @@ const experiences = [
   {
     role: "Co-Founder & CEO",
     company: "LynkSphere",
-    period: "Dec 2024 – Present",
-    location: "Melbourne, Australia",
+    period: "Nov 2024 – Present",
     current: true,
     bullets: [
-      "Delivered staged speeches to attract potential customers at StartSpace Library",
-      "Pitched the company at BNI Australia to acquire clients",
-      "Successfully delivered iOS, Android, and Web applications to Australian clients",
+      "Embed directly into client teams to design, build, and ship iOS, Android, and web applications",
+      "Act as a senior technical and product partner, working within clients' cadence across mobile, web, AI/ML, and data solutions",
+      "Drive strategic direction, client relationships, and ensure every engagement is senior-led from start to finish",
+      "Pitched the company at BNI Australia and StartSpace Library to attract clients",
       "Generated approximately $30,000 AUD in revenue over 8 months",
     ],
   },
@@ -21,7 +21,6 @@ const experiences = [
     role: "Restaurant Cashier",
     company: "La Baguette Café",
     period: "Feb 2025 – Oct 2025",
-    location: "Berwick, Melbourne, VIC, Australia",
     current: false,
     bullets: [
       "Maintained and served customers at the café",
@@ -32,12 +31,10 @@ const experiences = [
     role: "Sales Manager & Inventory Coordinator",
     company: "KK Mart",
     period: "Jul 2023",
-    location: "Monash, Malaysia",
     current: false,
     bullets: [
       "Managed day-to-day store operations including stock replenishment and supplier ordering",
-      "Assisted in shelf layout changes, POS setup, and promotional displays",
-      "Used Excel to track inventory trends and forecast demand",
+      "Used Excel to track inventory trends and forecast demand during peak and off-peak seasons",
       "Improved inventory accuracy by 30% through systematic stock-checking procedures",
     ],
   },
@@ -161,15 +158,9 @@ export default function Experience() {
                       <h3 className="text-xl font-normal text-[var(--text-heading)] mb-1">
                         {exp.role}
                       </h3>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#FF6600] font-[family-name:var(--font-space-mono)] text-sm font-bold">
-                          {exp.company}
-                        </span>
-                        <span className="text-[#d0d0d0]">·</span>
-                        <span className="text-[#888888] font-[family-name:var(--font-space-mono)] text-xs">
-                          {exp.location}
-                        </span>
-                      </div>
+                      <span className="text-[#FF6600] font-[family-name:var(--font-space-mono)] text-sm font-bold">
+                        {exp.company}
+                      </span>
                     </div>
                     <div className="flex-shrink-0">
                       <span

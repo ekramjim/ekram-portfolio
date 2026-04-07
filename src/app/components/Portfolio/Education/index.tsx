@@ -8,40 +8,32 @@ const education = [
     degree: "Master of Data Science",
     school: "Monash University",
     period: "Jul 2025 – Nov 2026",
-    location: "Melbourne, Australia",
     current: true,
-    details: [],
-    color: "#FF6600",
+    details: ["Specialising in machine learning, NLP, data visualisation, and bioinformatics"],
   },
   {
-    degree: "Bachelor of Computer Science (Data Science)",
+    degree: "Bachelor of Computer Science — Data Science",
     school: "Monash University",
     period: "Jul 2022 – Jul 2025",
-    location: "Melbourne, Australia",
     current: false,
     details: [
       "Awarded High Achievers Scholarship",
       "Coursework: Data Visualisation, Data Analytics, Algorithms & Data Structures, Deep Learning, Theory Of Computation",
     ],
-    color: "#0a0a0a",
   },
   {
-    degree: "Cambridge A-Levels",
-    school: "Cambridge International",
-    period: "Completed",
-    location: "",
-    current: false,
-    details: ["Achieved 2 A* and 1 A"],
-    color: "#0a0a0a",
-  },
-  {
-    degree: "Cambridge O-Levels",
-    school: "Cambridge International",
-    period: "Completed",
-    location: "",
+    degree: "Bachelor of Computer Science",
+    school: "Monash University Malaysia",
+    period: "Jun 2022 – Jul 2025",
     current: false,
     details: [],
-    color: "#0a0a0a",
+  },
+  {
+    degree: "O-Levels & A-Levels — Science",
+    school: "Scholastica",
+    period: "2005 – 2021",
+    current: false,
+    details: ["Cambridge A-Levels: 2 A*, 1 A"],
   },
 ];
 
@@ -135,7 +127,7 @@ export default function Education() {
                 <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#FF6600]" />
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[#FF6600] font-[family-name:var(--font-space-mono)] mb-2">Currently At</p>
                 <h4 className="text-2xl font-normal text-[var(--text-heading)] mb-1">Monash University</h4>
-                <p className="text-[var(--text-body)] text-sm">Master of Data Science · Melbourne, Australia</p>
+                <p className="text-[var(--text-body)] text-sm">Master of Data Science — Monash University</p>
                 <div className="mt-4 flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-[#FF6600] animate-pulse" />
                   <span className="text-[10px] font-[family-name:var(--font-space-mono)] uppercase tracking-widest text-[#FF6600]">Ongoing — Nov 2026</span>
@@ -168,9 +160,6 @@ export default function Education() {
                       <div>
                         <h4 className="text-base font-normal text-[var(--text-heading)]">{edu.degree}</h4>
                         <span className="text-[#FF6600] text-sm font-[family-name:var(--font-space-mono)]">{edu.school}</span>
-                        {edu.location && (
-                          <span className="text-[#888888] text-xs font-[family-name:var(--font-space-mono)] ml-2">· {edu.location}</span>
-                        )}
                       </div>
                       <span
                         className="text-[10px] font-bold uppercase tracking-widest font-[family-name:var(--font-space-mono)] px-2 py-1 self-start flex-shrink-0"

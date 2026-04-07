@@ -114,7 +114,7 @@ const Header: React.FC = () => {
         ref={pillRef}
         className={`pointer-events-auto mx-auto transition-all duration-500 ease-in-out ${
           isGlassy
-            ? "mt-4 mx-4 lg:mt-5 lg:mx-auto bg-[#ffb57d]/50 backdrop-blur-xl border border-[#ffb57d]/60 shadow-lg shadow-[#ffb57d]/20 rounded-3xl lg:rounded-full max-w-sm lg:max-w-3xl"
+            ? "mt-4 mx-4 lg:mt-5 lg:mx-auto bg-[#161616]/90 backdrop-blur-xl border border-[#FF6600]/20 shadow-lg shadow-black/40 rounded-3xl lg:rounded-full max-w-sm lg:max-w-3xl"
             : "max-w-7xl mt-0 bg-transparent"
         }`}
       >
@@ -152,7 +152,7 @@ const Header: React.FC = () => {
             >
               <Icon
                 icon={navbarOpen ? "ph:x" : "ph:list"}
-                className="text-2xl text-black"
+                className="text-2xl text-white"
               />
             </button>
           </div>
@@ -169,7 +169,7 @@ const Header: React.FC = () => {
               transition={{ duration: 0.25, ease: "easeOut" }}
               className="lg:hidden overflow-hidden"
             >
-              <div className="px-5 pb-5 pt-1 flex flex-col gap-1 border-t border-[#ffb57d]/40">
+              <div className="px-5 pb-5 pt-1 flex flex-col gap-1 border-t border-[#FF6600]/20">
                 {headerData.map((item, index) => (
                   <MobileHeaderLink
                     key={index}
@@ -178,7 +178,7 @@ const Header: React.FC = () => {
                   />
                 ))}
                 <button
-                  className="group mt-3 w-fit flex items-center overflow-hidden rounded-xl border border-gray-200 bg-white hover:bg-black transition-colors duration-200 cursor-pointer"
+                  className="group mt-3 w-fit flex items-center overflow-hidden rounded-xl border border-[#242424] bg-[#1a1a1a] hover:bg-[#FF6600] transition-colors duration-200 cursor-pointer"
                   onClick={() => {
                     setNavbarOpen(false);
                     setTimeout(scrollToContact, 300);
@@ -187,7 +187,7 @@ const Header: React.FC = () => {
                   <div className="flex items-center justify-center m-1.5 w-9 h-9 rounded-lg shrink-0" style={{ backgroundColor: "#ff914c" }}>
                     <Icon icon="ph:chat-circle-dots-fill" className="text-black text-base transition-transform duration-300 group-hover:scale-125 group-active:scale-90" />
                   </div>
-                  <div className="pr-4 pl-2.5 text-base font-normal text-black group-hover:text-white transition-colors duration-200">
+                  <div className="pr-4 pl-2.5 text-base font-normal text-[#aaaaaa] group-hover:text-white transition-colors duration-200">
                     Get in Touch
                   </div>
                 </button>

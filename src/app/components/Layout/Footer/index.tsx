@@ -15,7 +15,7 @@ const navLinks = [
 
 const socials = [
   { icon: "ion:logo-github", href: "https://github.com", label: "GitHub" },
-  { icon: "ion:logo-linkedin", href: "https://linkedin.com", label: "LinkedIn" },
+  { icon: "ion:logo-linkedin", href: "https://www.linkedin.com/in/ekram02", label: "LinkedIn" },
   { icon: "ion:mail", href: "mailto:ekramjim002@gmail.com", label: "Email" },
 ];
 
@@ -47,13 +47,6 @@ const Footer = () => {
           </g>
         </svg>
 
-        <style jsx>{`
-          @keyframes wave1 { 0% { transform: translateX(0); } 50% { transform: translateX(-25%); } 100% { transform: translateX(0); } }
-          @keyframes wave2 { 0% { transform: translateX(0); } 50% { transform: translateX(-15%); } 100% { transform: translateX(0); } }
-          @keyframes wave3 { 0% { transform: translateX(0); } 50% { transform: translateX(-30%); } 100% { transform: translateX(0); } }
-          @keyframes wave4 { 0% { transform: translateX(0); } 50% { transform: translateX(-20%); } 100% { transform: translateX(0); } }
-          @keyframes wave5 { 0% { transform: translateX(0); } 50% { transform: translateX(-10%); } 100% { transform: translateX(0); } }
-        `}</style>
       </div>
 
       {/* Footer content */}

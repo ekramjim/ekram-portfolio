@@ -56,28 +56,33 @@ export default function About() {
                 About Me
               </p>
               <h2 className="text-4xl md:text-5xl font-normal text-[var(--text-heading)] mb-6 leading-tight">
-                Building at the
+                Software engineering,
                 <br />
-                intersection of code &amp; data
+                data science &amp; computational biology
               </h2>
             </FadeInView>
 
             <FadeInView delay={0.1}>
               <p className="text-[var(--text-body)] text-lg leading-relaxed mb-6">
-                I&apos;m Ekramul — a Computer Science graduate from Monash University (Data Science) and
-                Co-Founder of <span className="text-[#FF6600] font-medium">LynkSphere</span>, a
-                Melbourne-based software company building iOS, Android, and Web applications for
-                Australian clients.
+                I&apos;m Ekramul — Co-Founder and CEO of{" "}
+                <span className="text-[#FF6600] font-medium">LynkSphere</span>, a software company
+                that embeds directly into client teams to design, build, and ship iOS, Android, and
+                web applications. We plug in as a senior technical partner across mobile, web, AI/ML
+                integration, and data solutions.
               </p>
               <p className="text-[var(--text-body)] text-lg leading-relaxed mb-6">
-                My work spans the full stack: from deep learning models with PyTorch and TensorFlow
-                to cross-platform mobile apps with Flutter and Swift, to data visualisation with
-                Tableau and React.
+                Alongside running LynkSphere, I&apos;m completing a Master of Data Science at Monash
+                University — with work spanning machine learning, NLP, data visualisation, and
+                bioinformatics. I hold a Bachelor of Computer Science (Data Science) from Monash,
+                graduating on a High Achievers Scholarship.
               </p>
               <p className="text-[var(--text-body)] text-lg leading-relaxed">
-                Beyond code, I&apos;ve led events for 200+ students across Italy, guided teams in NGO
-                outreach programs, and pitched at BNI Australia. Currently completing my Master of
-                Data Science while continuing to grow LynkSphere.
+                My work sits at the intersection of software engineering, data science, and
+                computational biology. Experienced in Python, R, Java, and cloud architecture —
+                applied across client projects and academic research. Currently open to{" "}
+                <span className="text-[#FF6600]">Data Scientist</span>,{" "}
+                <span className="text-[#FF6600]">Python Developer</span>, and{" "}
+                <span className="text-[#FF6600]">Bioinformatics</span> roles.
               </p>
             </FadeInView>
           </div>
