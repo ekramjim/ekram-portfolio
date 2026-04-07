@@ -36,7 +36,7 @@ function TypewriterRole() {
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section className="glass relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Animated SVG background decorations */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none"

@@ -49,7 +49,7 @@ const contacts = [
 
 export default function Contact() {
   return (
-    <section id="Contact" className="relative py-24 overflow-hidden">
+    <section id="Contact" className="glass-alt relative py-24 overflow-hidden">
       {/* Decorative SVG lines */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none"

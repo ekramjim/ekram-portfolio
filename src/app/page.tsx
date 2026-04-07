@@ -28,7 +28,7 @@ function SectionDivider() {
 
 export default function Home() {
   return (
-    <main className="relative bg-[var(--bg-primary)] min-h-screen">
+    <main className="relative min-h-screen">
       {/* Persistent swirling SVG overlay — always visible, flows on scroll */}
       <ScrollingSVG />
 

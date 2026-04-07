@@ -303,6 +303,18 @@ body {
   pointer-events: none;
 }
 
+/* ── Liquid glass panel ── */
+.glass {
+  background: rgba(13, 13, 13, 0.72);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+}
+.glass-alt {
+  background: rgba(17, 17, 17, 0.76);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+}
+
 /* ── Footer wave animations ── */
 @keyframes wave1 { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-25%); } }
 @keyframes wave2 { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-15%); } }

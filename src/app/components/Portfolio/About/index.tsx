@@ -11,7 +11,7 @@ const highlights = [
 
 export default function About() {
   return (
-    <section id="About" className="relative py-24 overflow-hidden bg-[var(--bg-section-alt)]">
+    <section id="About" className="glass-alt relative py-24 overflow-hidden">
       {/* Decorative SVG lines */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none"

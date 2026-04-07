@@ -105,7 +105,7 @@ function AnimatedVerticalLine() {
 
 export default function Experience() {
   return (
-    <section id="Experience" className="relative py-24 overflow-hidden">
+    <section id="Experience" className="glass-alt relative py-24 overflow-hidden">
       {/* Decorative background SVGs */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none"
