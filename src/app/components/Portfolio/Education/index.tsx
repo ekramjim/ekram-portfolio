@@ -80,7 +80,7 @@ function AnimatedConnectorLine() {
 
 export default function Education() {
   return (
-    <section id="Education" className="glass-alt relative py-24 overflow-hidden">
+    <section id="Education" className="relative py-24 overflow-hidden">
       {/* Decorative SVG lines */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none"

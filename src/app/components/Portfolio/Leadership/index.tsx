@@ -35,7 +35,7 @@ const leadership = [
 
 export default function Leadership() {
   return (
-    <section id="Leadership" className="glass relative py-24 overflow-hidden">
+    <section id="Leadership" className="relative py-24 overflow-hidden">
       {/* Decorative SVG lines */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none"

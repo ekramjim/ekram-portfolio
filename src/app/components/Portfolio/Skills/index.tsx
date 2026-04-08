@@ -32,7 +32,7 @@ const skillGroups = [
 
 export default function Skills() {
   return (
-    <section id="Skills" className="glass relative py-24 overflow-hidden">
+    <section id="Skills" className="relative py-24 overflow-hidden">
       {/* Decorative SVG lines */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none"

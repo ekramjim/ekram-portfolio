@@ -123,7 +123,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
 
 export default function Projects() {
   return (
-    <section id="Projects" className="glass relative py-24 overflow-hidden">
+    <section id="Projects" className="relative py-24 overflow-hidden">
       {/* Decorative SVG lines */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none"
