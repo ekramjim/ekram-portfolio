@@ -208,10 +208,9 @@ export default function Hero() {
             <motion.p
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.35 }}
-              className="text-[var(--text-body)] text-lg leading-relaxed max-w-md mb-10"
+              className="text-[#333] text-4xl font-[family-name:var(--font-space-mono)] leading-none max-w-md mb-10"
             >
-              Co-Founder & CEO of{" "}
-              <span className="text-[#FF6600] font-medium">LynkSphere</span> — building iOS, Android & web apps for businesses worldwide. Also completing a Master of Data Science at Monash, where my work spans ML, NLP, and bioinformatics.
+              [ Placeholder ]
             </motion.p>
 
             <motion.div
