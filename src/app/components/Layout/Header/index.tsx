@@ -14,6 +14,7 @@ const Header: React.FC = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
   const [sticky, setSticky] = useState(false);
   const [activeSectionIndex, setActiveSectionIndex] = useState<number | null>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const router = useRouter();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const intersectingRef = useRef<Set<number>>(new Set());
@@ -22,6 +23,8 @@ const Header: React.FC = () => {
   const handleScroll = () => {
     setSticky(window.scrollY >= 80);
     if (window.scrollY < 80) setActiveSectionIndex(null);
+    const scrollable = document.body.scrollHeight - window.innerHeight;
+    setScrollProgress(scrollable > 0 ? window.scrollY / scrollable : 0);
   };
 
   const scrollToContact = () => {
@@ -110,6 +113,13 @@ const Header: React.FC = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 pointer-events-none">
+      {/* Scroll progress bar */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-transparent z-50">
+        <div
+          className="h-full bg-[#FF6600] transition-none"
+          style={{ width: `${scrollProgress * 100}%` }}
+        />
+      </div>
       <div
         ref={pillRef}
         className={`pointer-events-auto mx-auto transition-all duration-500 ease-in-out ${
