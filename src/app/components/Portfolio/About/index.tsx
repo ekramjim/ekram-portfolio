@@ -64,7 +64,7 @@ export default function About() {
 
             <FadeInView delay={0.1}>
               <p className="text-[var(--text-body)] text-lg leading-relaxed mb-6">
-                I&apos;m Ekramul — Co-Founder and CEO of{" "}
+                I&apos;m Ekram — Co-Founder and CEO of{" "}
                 <span className="text-[#FF6600] font-medium">LynkSphere</span>, a software company
                 that embeds directly into client teams to design, build, and ship iOS, Android, and
                 web applications. We plug in as a senior technical partner across mobile, web, AI/ML

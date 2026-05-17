@@ -9,31 +9,18 @@ const education = [
     school: "Monash University",
     period: "Jul 2025 – Nov 2026",
     current: true,
-    details: ["Specialising in machine learning, NLP, data visualisation, and bioinformatics"],
+    details: [
+      "Coursework: Data Wrangling, Software Engineering, Bioinformatics, Machine Learning, Data Visualisation, Data Analytics, Algorithms and Data Structures, Deep Learning, Theory of Computation",
+    ],
   },
   {
-    degree: "Bachelor of Computer Science — Data Science",
+    degree: "Bachelor of Computer Science (Data Science)",
     school: "Monash University",
     period: "Jul 2022 – Jul 2025",
     current: false,
     details: [
       "Awarded High Achievers Scholarship",
-      "Coursework: Data Visualisation, Data Analytics, Algorithms & Data Structures, Deep Learning, Theory Of Computation",
     ],
-  },
-  {
-    degree: "Bachelor of Computer Science",
-    school: "Monash University Malaysia",
-    period: "Jun 2022 – Jul 2025",
-    current: false,
-    details: [],
-  },
-  {
-    degree: "O-Levels & A-Levels — Science",
-    school: "Scholastica",
-    period: "2005 – 2021",
-    current: false,
-    details: ["Cambridge A-Levels: 2 A*, 1 A"],
   },
 ];
 
@@ -119,7 +106,7 @@ export default function Education() {
                 Academic Background
               </h2>
               <p className="text-[var(--text-body)] text-lg leading-relaxed mb-8">
-                Currently pursuing a Master of Data Science at Monash University after completing my Bachelor's with a high achievers scholarship.
+                Currently pursuing a Master of Data Science at Monash University, having completed a Bachelor of Computer Science (Data Science) with a High Achievers Scholarship.
               </p>
 
               {/* Monash highlight card */}

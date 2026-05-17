@@ -4,31 +4,38 @@ import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
 
 const leadership = [
   {
+    title: "Monash Generator Representative",
+    location: "Monash University",
+    description:
+      "Represented Monash Generator at new student orientation, briefing incoming cohorts on entrepreneurship programs, startup resources, and business development opportunities.",
+    icon: "🚀",
+  },
+  {
     title: "Go-Global Day Representative",
     location: "Prato, Italy",
     description:
-      "Conducted an event for 200+ students as the main representative, showcasing Monash Prato campus to Monash University Malaysia students.",
+      "Represented Monash Prato campus to 200+ students of Monash University Malaysia as the main event representative.",
     icon: "🌍",
   },
   {
     title: "Pisa Tour Leader",
     location: "Pisa, Italy",
     description:
-      "Guided a group of 5 students across historical landmarks in Pisa including the Leaning Tower. Delivered a speech covering historical significance.",
+      "Guided a group of 5 students across Pisa, delivering a speech on the historical significance of key sites including the Leaning Tower of Pisa.",
     icon: "🗼",
   },
   {
     title: "Class Leader — MGX3991",
     location: "Monash Prato, Italy",
     description:
-      "Led a 45-minute class keeping students engaged through interactive games and a two-week course recap. Conducted an in-class Kahoot session.",
+      "Led a 45-minute student session, keeping the cohort engaged through interactive activities and a two-week recap.",
     icon: "🎓",
   },
   {
     title: "MUVP × RMM Outreach",
     location: "Kuala Lumpur, Malaysia",
     description:
-      "Visited an NGO in Kuala Lumpur and conducted an educational class for orphans as part of the outreach program.",
+      "Conducted an educational class for orphaned children as part of a university outreach initiative.",
     icon: "🤝",
   },
 ];
@@ -75,7 +82,7 @@ export default function Leadership() {
           </p>
         </FadeInView>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
           {leadership.map((item, i) => (
             <FadeInView key={item.title} delay={i * 0.12}>
               <div

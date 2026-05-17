@@ -8,10 +8,9 @@ import Projects from "@/app/components/Portfolio/Projects";
 import Education from "@/app/components/Portfolio/Education";
 import Leadership from "@/app/components/Portfolio/Leadership";
 import Contact from "@/app/components/Portfolio/Contact";
-import ScrollingSVG from "@/app/components/Portfolio/ScrollingSVG";
 
 export const metadata: Metadata = {
-  title: "Ekramul Islam — Portfolio",
+  title: "Ekram — Portfolio",
   description:
     "Co-Founder & CEO of LynkSphere. Computer Science graduate from Monash University specialising in Data Science, Bioinformatics, and Full-Stack Development.",
 };
@@ -29,9 +28,6 @@ function SectionDivider() {
 export default function Home() {
   return (
     <main className="relative min-h-screen">
-      {/* Persistent swirling SVG overlay — always visible, flows on scroll */}
-      <ScrollingSVG />
-
       <div className="relative z-10">
         <Hero />
         <SectionDivider />

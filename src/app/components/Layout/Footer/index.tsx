@@ -62,7 +62,7 @@ const Footer = () => {
             {/* Brand column */}
             <div className="lg:col-span-5">
               <h4 className="text-white font-[family-name:var(--font-space-mono)] font-bold text-2xl mb-1">
-                EKRAMUL<span className="text-[#FF6600]">.</span>
+                EKRAM<span className="text-[#FF6600]">.</span>
               </h4>
               <p className="text-[#888888] text-xs font-[family-name:var(--font-space-mono)] uppercase tracking-wider mb-4">
                 Melbourne, Australia
@@ -124,7 +124,7 @@ const Footer = () => {
                 </a>
               </div>
               <p className="text-[#333333] text-[10px] font-[family-name:var(--font-space-mono)] uppercase tracking-[0.3em]">
-                &copy; 2026 Ekramul Islam
+                &copy; 2026 Ekram
               </p>
             </div>
           </div>
