@@ -6,27 +6,27 @@ const skillGroups = [
   {
     label: "Languages",
     color: "#FF6600",
-    skills: ["Python", "R", "JavaScript", "TypeScript", "Java", "Swift", "Kotlin", "C", "SQL", "Bash", "HTML/CSS"],
+    skills: ["Python", "Java", "JavaScript", "TypeScript", "Swift", "Kotlin", "Bash", "R", "SQL", "HTML/CSS/Tailwind"],
   },
   {
-    label: "Frameworks & Platforms",
+    label: "Technologies",
     color: "#0a0a0a",
-    skills: ["ReactJS", "NextJS", "NodeJS", "Flutter", "Android", "iOS", "MongoDB", "Firebase", "AWS", "Google Cloud"],
+    skills: ["Android", "iOS", "MongoDB", "ReactJS", "NodeJS", "Next.js", "Flutter", "AWS", "Google Cloud"],
   },
   {
-    label: "AI / Data Science / Bioinformatics",
+    label: "Data & Bioinformatics",
     color: "#FF6600",
-    skills: ["TensorFlow", "PyTorch", "Scikit-learn", "NumPy", "Pandas", "NLP", "Bioinformatics", "Tableau", "RStudio", "Jupyter", "Deep Learning", "Computational Biology"],
+    skills: ["NumPy", "Pandas", "TensorFlow", "PyTorch", "Scikit-learn", "limma", "DESeq2", "RNA-seq analysis", "GO enrichment analysis", "Bioconductor"],
   },
   {
-    label: "Tools & Other",
+    label: "Tools",
     color: "#0a0a0a",
-    skills: ["Git", "GitHub", "Docker", "VS Code", "Xcode", "Gemini API", "ChatGPT API", "Cloud Architecture", "Project Management", "Agile"],
+    skills: ["Jupyter", "Tableau", "RStudio", "VS Code", "Git", "GitHub", "Docker", "Xcode", "Firebase", "GeminiAPI"],
   },
   {
-    label: "Certifications",
+    label: "Soft Skills",
     color: "#FF6600",
-    skills: ["Complete Python Developer 2023", "Assessment Of Skill Java", "Monash High Achiever Award", "HackerRank Python Certificate", "Monash Coding League"],
+    skills: ["Leadership", "Decision Making", "Technical Communication", "Public Speaking", "Agile Methodologies", "Mentorship", "Conflict Resolution", "Negotiation"],
   },
 ];
 

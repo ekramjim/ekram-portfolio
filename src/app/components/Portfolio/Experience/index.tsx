@@ -7,35 +7,13 @@ const experiences = [
   {
     role: "Co-Founder & CEO",
     company: "LynkSphere",
-    period: "Nov 2024 – Present",
+    period: "Dec 2024 – Present",
     current: true,
     bullets: [
-      "Embed directly into client teams to design, build, and ship iOS, Android, and web applications",
-      "Act as a senior technical and product partner, working within clients' cadence across mobile, web, AI/ML, and data solutions",
-      "Drive strategic direction, client relationships, and ensure every engagement is senior-led from start to finish",
-      "Pitched the company at BNI Australia and StartSpace Library to attract clients",
-      "Generated approximately $30,000 AUD in revenue over 8 months",
-    ],
-  },
-  {
-    role: "Restaurant Cashier",
-    company: "La Baguette Café",
-    period: "Feb 2025 – Oct 2025",
-    current: false,
-    bullets: [
-      "Maintained and served customers at the café",
-      "Supported restaurant operations and customer service",
-    ],
-  },
-  {
-    role: "Sales Manager & Inventory Coordinator",
-    company: "KK Mart",
-    period: "Jul 2023",
-    current: false,
-    bullets: [
-      "Managed day-to-day store operations including stock replenishment and supplier ordering",
-      "Used Excel to track inventory trends and forecast demand during peak and off-peak seasons",
-      "Improved inventory accuracy by 30% through systematic stock-checking procedures",
+      "Co-founded a software studio delivering iOS, Android, and web applications to Australian startups and B2B clients using React Native, Next.js, SwiftUI, and Supabase",
+      "Grew from zero to ~$30,000 AUD revenue within 8 months, shipping 3 production applications including a 14-month cross-platform community platform (LinkedHive)",
+      "Managed full client lifecycle from technical scoping and architecture through to deployment and post-launch support",
+      "Acquired clients through pitches at BNI Australia, StartSpace Library, and Entrepreneurs Summit 2026",
     ],
   },
 ];
@@ -133,7 +111,7 @@ export default function Experience() {
             Where I&apos;ve Worked
           </h2>
           <p className="text-[var(--text-body)] text-lg max-w-xl mb-16 leading-relaxed">
-            From co-founding a software company to hands-on retail management — diverse experience across multiple industries.
+            Co-founded a software studio delivering production apps to Australian startups and B2B clients, growing to $30K AUD revenue in 8 months.
           </p>
         </FadeInView>
 

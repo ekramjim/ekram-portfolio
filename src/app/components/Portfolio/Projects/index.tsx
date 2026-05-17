@@ -4,57 +4,75 @@ import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
 
 const projects = [
   {
-    title: "AFL Game Ranking System",
-    year: "2025",
+    title: "LinkedHive",
+    year: "2025–2026",
     description:
-      "Predicts how each AFL team will perform for upcoming matches using historical data and Deep Learning. Achieved 78% model accuracy.",
-    tech: ["JavaScript", "Python", "ReactJS", "Tailwind", "Deep Learning"],
-    link: "#",
+      "Cross-platform (iOS, Android, Web) location-based community and business networking app for Australian suburbs. Features real-time chat, posts, events, jobs, local deals, AI-powered translation via Gemini 2.5 Flash, and Stripe subscription billing ($149 AUD/year). Covers 20+ entity types with PostgreSQL via Supabase.",
+    tech: ["React Native", "Expo", "Next.js", "TypeScript", "Supabase", "Drizzle ORM", "Stripe"],
+    link: "https://www.linkedhive.com.au/",
     featured: true,
   },
   {
-    title: "LynkSphere Company Website",
+    title: "TimeBreak",
+    year: "2026",
+    description:
+      "Native Pomodoro timer for iOS and macOS with analog clock interface, Live Activities, WidgetKit Focus Trail widget, EventKit Reminders integration, custom themes, and guided onboarding — single SwiftUI codebase across iPhone, iPad, Mac, and menu bar.",
+    tech: ["Swift", "SwiftUI", "WidgetKit", "ActivityKit", "AppIntents", "EventKit"],
+    link: "https://apps.apple.com/au/app/timebreak-pomodoro/id6763444390",
+    featured: false,
+  },
+  {
+    title: "LynkSphere Website",
+    year: "2026",
+    description:
+      "Production marketing site with rich 3D animations showcasing services, products, and pricing. Served as primary customer acquisition channel, contributing to $30K AUD revenue in 8 months.",
+    tech: ["Next.js 15", "TypeScript", "Tailwind CSS", "Framer Motion", "GSAP", "Three.js"],
+    link: "https://lynksphere.com/",
+    featured: false,
+  },
+  {
+    title: "AFL Game Ranking System",
     year: "2025",
     description:
-      "Built the official LynkSphere website showcasing completed projects and clients served across Australia.",
-    tech: ["ReactJS", "Framer", "Tailwind"],
-    link: "#",
+      "CatBoostRegressor models trained on historical AFL data achieving 78% match outcome accuracy. REST API connecting React frontend to ML backend, with MongoDB storage and interactive visualisations via Plotly.js and Chart.js.",
+    tech: ["Next.js", "React", "Python", "CatBoost", "MongoDB", "Pandas", "Scikit-learn", "Plotly.js"],
+    link: "https://github.com/yeanle02/FYP",
+    featured: false,
+  },
+  {
+    title: "Visualizing Renewable Energy",
+    year: "2024",
+    description:
+      "Interactive data visualisation dashboard exploring global renewable energy trends using World Bank data. Features 5 chart idioms (choropleth map, bar chart, stacked area, donut chart) with cross-chart linking and interactive filters.",
+    tech: ["Vega-Lite", "Vega-Embed", "TopoJSON", "Python", "HTML/CSS"],
+    link: "https://ekramjim.github.io/visualizing-renewable-energy/",
     featured: false,
   },
   {
     title: "F1 Pinnacle Of Motor Sports",
     year: "2024",
     description:
-      "Interactive Tableau visualisation displaying driver nationality, team performance over the years, and driver career stats.",
-    tech: ["Tableau", "Data Viz"],
-    link: "#",
+      "Interactive Tableau dashboards with calculated fields, filters, and parameter controls displaying driver nationality, constructor performance trends, and season-by-season comparisons across decades of F1 data.",
+    tech: ["Tableau", "Data Visualisation", "Statistical Analysis"],
+    link: "https://public.tableau.com/app/profile/ekramul.islam/viz/Visualization1F1/Dashboard1",
     featured: false,
   },
   {
     title: "Android Call State Monitor",
     year: "2024",
     description:
-      "Monitors phone call state changes using a broadcast receiver to detect incoming calls and display caller information via Toast messages.",
-    tech: ["Java", "Android", "BroadcastReceiver"],
-    link: "https://github.com",
-    featured: false,
-  },
-  {
-    title: "Fast Food Chain Optimizer",
-    year: "2023",
-    description:
-      "Algorithmic solutions for optimising restaurant chain revenue and finding shortest paths in a tower quest using efficient data structures.",
-    tech: ["Python", "Algorithms", "Dynamic Programming"],
-    link: "https://github.com",
+      "Android app using BroadcastReceiver and TelephonyManager to intercept call state changes (ringing, offhook, idle) and surface incoming caller ID via Toast notifications in real time.",
+    tech: ["Java", "Android SDK", "BroadcastReceiver", "TelephonyManager", "Gradle"],
+    link: "https://github.com/ekramjim/MyCallReceiver",
     featured: false,
   },
   {
     title: "Hearts Card Game",
     year: "2023",
     description:
-      "A Twenty-One dice game where players take turns rolling and tallying results. Includes bust detection and scoring logic.",
-    tech: ["Python", "OOP", "Game Logic"],
-    link: "https://github.com",
+      "Terminal-based Hearts card game in Python with full game logic, trick-taking mechanics, and score tracking using OOP with modular player, card, and round classes. Includes two AI opponent strategies — a basic rule-based agent and an improved heuristic AI.",
+    tech: ["Python", "OOP", "AI Heuristics"],
+    link: "https://github.com/ekramjim/Hearts-Game",
     featured: false,
   },
 ];
