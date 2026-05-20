@@ -8,9 +8,10 @@ interface Props {
   compact?: boolean;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
+  download?: boolean | string;
 }
 
-export default function TerminalButton({ cmd, href, onClick, compact = false, type = "button", disabled = false }: Props) {
+export default function TerminalButton({ cmd, href, onClick, compact = false, type = "button", disabled = false, download }: Props) {
   const [hovered, setHovered] = useState(false);
   const [running, setRunning] = useState(false);
 
@@ -77,6 +78,7 @@ export default function TerminalButton({ cmd, href, onClick, compact = false, ty
   return (
     <a
       href={href}
+      download={download}
       onClick={handleClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
