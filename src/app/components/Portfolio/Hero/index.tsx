@@ -15,7 +15,7 @@ const SCRIPT: Step[] = [
   { s: "cmd", text: "Hi, I'm Ekram.", large: true },
   { s: "blank" },
   { s: "cmd", text: "cat about.txt" },
-  { s: "out", text: "Founder • AI • Bioinformatics • Software Engineering", accent: true },
+  { s: "out", text: "Founder • AI • Bioinformatics • Computer Science • Data Science", accent: true },
   { s: "out", text: "Pursuing all in parallel." },
   { s: "blank" },
   { s: "cmd", text: "./launch --portfolio" },
