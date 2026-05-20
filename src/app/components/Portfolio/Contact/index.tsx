@@ -122,9 +122,9 @@ export default function Contact() {
       </svg>
 
       <div className="relative z-10 container mx-auto max-w-7xl px-6">
-        <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-16 items-start">
+        <div className="grid items-stretch gap-16 lg:grid-cols-[0.9fr_1.1fr]">
           {/* Left: CTA */}
-          <FadeInView>
+          <FadeInView className="lg:flex lg:h-full lg:flex-col">
             <SectionLabel>Contact</SectionLabel>
             <h2 className="text-4xl md:text-5xl font-normal text-[var(--text-heading)] mb-6 leading-tight">
               Let&apos;s have a chat
@@ -133,7 +133,7 @@ export default function Contact() {
               Open to collaborations, freelance projects, internships, and full-time opportunities.
               Whether you have a project idea or just want to say hello, I&apos;d love to hear from you.
             </p>
-            <TerminalFrame title="zsh — ekram@portfolio ~ socials">
+            <TerminalFrame title="zsh — ekram@portfolio ~ socials" className="lg:flex-1">
               <div className="grid grid-cols-1 gap-3 p-5">
                 {contacts.map((contact) => (
                   <a
