@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import TerminalCursor from "./TerminalCursor";
 
 interface Props {
   cmd: string;
@@ -42,7 +43,7 @@ export default function TerminalButton({ cmd, href, onClick, compact = false }: 
           ) : (
             <>
               {cmd}
-              <span className={`inline-block w-[7px] h-[14px] bg-[#FF6600] ml-1.5 align-middle animate-pulse ${hovered ? "opacity-100" : "opacity-40"}`} />
+              <TerminalCursor className="ml-1 align-middle text-[14px]" />
             </>
           )}
         </span>

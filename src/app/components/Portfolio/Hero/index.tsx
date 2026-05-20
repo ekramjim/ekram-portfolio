@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import TerminalButton from "@/components/ui/TerminalButton";
+import TerminalCursor from "@/components/ui/TerminalCursor";
 
 // ── Script definition ─────────────────────────────────────────────────────────
 type Step =
@@ -297,7 +297,7 @@ export default function Hero() {
             {lines.length === 0 && (
               <div className="flex items-center gap-2">
                 <span className="text-[#FF6600] text-[16px] select-none">❯</span>
-                <span className="inline-block w-[9px] h-[18px] bg-[#FF6600] align-middle animate-pulse" />
+                <TerminalCursor className="text-[18px]" />
               </div>
             )}
 
@@ -314,7 +314,7 @@ export default function Hero() {
                     <span className={`text-[#f0f0f0] ${line.large ? "text-[2rem] sm:text-[2.6rem] leading-none tracking-tight" : "text-[15px] text-[#d0d0d0]"}`}>
                       {line.text}
                       {isLast && !finished && (
-                        <span className={`inline-block bg-[#FF6600] ml-0.5 align-middle animate-pulse ${line.large ? "w-[18px] h-[34px]" : "w-[9px] h-[18px]"}`} />
+                        <TerminalCursor className={`ml-0.5 align-middle ${line.large ? "text-[32px]" : "text-[18px]"}`} />
                       )}
                     </span>
                   </div>
@@ -378,7 +378,7 @@ export default function Hero() {
                       >
                         ↓ scroll to explore
                       </a>
-                      <span className="inline-block w-[9px] h-[18px] bg-[#FF6600] ml-1 align-middle animate-pulse" />
+                      <TerminalCursor className="ml-1 align-middle text-[18px]" />
                     </span>
                   </div>
                 );
