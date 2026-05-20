@@ -1,6 +1,7 @@
 "use client";
 import FadeInView from "@/app/components/Common/FadeInView";
 import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
+import TerminalButton from "@/components/ui/TerminalButton";
 
 const contacts = [
   {
@@ -101,16 +102,7 @@ export default function Contact() {
               Whether you have a project idea or just want to say hello — I&apos;d love to hear from you.
             </p>
 
-            <a
-              href="mailto:ekramjim002@gmail.com"
-              className="inline-flex items-center gap-3 bg-[#FF6600] text-white px-8 py-4 hover:bg-[#e55500] transition-colors duration-300 font-[family-name:var(--font-space-mono)] text-sm font-bold uppercase tracking-wider hover:-translate-y-0.5 transition-all"
-              style={{ borderRadius: 4 }}
-            >
-              Send a Message
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </a>
+            <TerminalButton cmd="./send-message.sh" href="mailto:ekramjim002@gmail.com" />
           </FadeInView>
 
           {/* Right: Contact cards */}
