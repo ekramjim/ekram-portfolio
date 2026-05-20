@@ -2,12 +2,29 @@
 import FadeInView from "@/app/components/Common/FadeInView";
 import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
 
-const highlights = [
-  { value: "$30K", label: "Revenue Generated", sub: "in 8 months at LynkSphere" },
-  { value: "8+", label: "Clients Served", sub: "across Australia" },
-  { value: "78%", label: "ML Accuracy", sub: "AFL game prediction model" },
-  { value: "200+", label: "Students Led", sub: "as Go-Global Representative" },
+const ASCII_LINES = [
+  "███████╗██╗  ██╗",
+  "██╔════╝██║ ██╔╝",
+  "█████╗  █████╔╝ ",
+  "██╔══╝  ██╔═██╗ ",
+  "███████╗██║  ██╗",
+  "╚══════╝╚═╝  ╚═╝",
 ];
+
+const FIELDS: { key: string; value: string; orange?: boolean }[] = [
+  { key: "User",     value: "Ekram Islam" },
+  { key: "Location", value: "Melbourne, Australia" },
+  { key: "Role",     value: "Co-Founder @ LynkSphere",                           orange: true },
+  { key: "Study",    value: "MSc Data Science · Monash · Jul 2025 – Nov 2026" },
+  { key: "",         value: "BSc Computer Science · Monash · High Achievers Scholar" },
+  { key: "Research", value: "Bioinformatics · ML · NLP · Deep Learning",          orange: true },
+  { key: "Stack",    value: "Python · TypeScript · Swift · R · Java" },
+  { key: "Tools",    value: "PyTorch · TensorFlow · DESeq2 · limma · Next.js" },
+  { key: "Clients",  value: "8+ across Australia" },
+  { key: "Status",   value: "Open to hire",                                        orange: true },
+];
+
+const PALETTE = ["#FF6600", "#FF8833", "#cc5500", "#ff9966", "#2a2a2a", "#333", "#555", "#888"];
 
 export default function About() {
   return (
@@ -35,81 +52,94 @@ export default function About() {
           delay={400}
           duration={2000}
         />
-        {/* Diagonal accent */}
-        <AnimatedPath
-          d="M800 0 L1000 300 L1200 100"
-          stroke="#FF6600"
-          strokeWidth={0.8}
-          opacity={0.04}
-          delay={600}
-          duration={2000}
-        />
       </svg>
 
       <div className="relative z-10 container mx-auto max-w-7xl px-6">
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
-          {/* Left */}
-          <div>
-            <FadeInView>
-              <p className="text-xs font-bold tracking-[0.4em] uppercase text-[#FF6600] font-[family-name:var(--font-space-mono)] mb-4 flex items-center gap-3">
-                <span className="w-6 h-[2px] bg-[#FF6600]" />
-                About Me
-              </p>
-              <h2 className="text-4xl md:text-5xl font-normal text-[var(--text-heading)] mb-6 leading-tight">
-                Software engineering,
-                <br />
-                data science &amp; computational biology
-              </h2>
-            </FadeInView>
+        <FadeInView>
+          <p className="text-xs font-bold tracking-[0.4em] uppercase text-[#FF6600] font-[family-name:var(--font-space-mono)] mb-6 flex items-center gap-3">
+            <span className="w-6 h-[2px] bg-[#FF6600]" />
+            About Me
+          </p>
+          <h2 className="text-3xl md:text-4xl font-normal text-[var(--text-heading)] leading-tight mb-4 max-w-2xl">
+            Co-founder building software.<br />
+            Currently exploring AI &amp; Bioinformatics.
+          </h2>
+          <p className="text-[var(--text-body)] text-base leading-relaxed max-w-2xl mb-10">
+            Studying a Master of Data Science at Monash — diving into machine learning, bioinformatics, NLP, and deep learning.
+            Alongside that, I run <span className="text-[#FF6600]">LynkSphere</span>, a software studio in Melbourne shipping iOS, Android, and web apps to Australian startups.
+            Code by day, papers by night.
+          </p>
+        </FadeInView>
 
-            <FadeInView delay={0.1}>
-              <p className="text-[var(--text-body)] text-lg leading-relaxed mb-6">
-                I&apos;m Ekram — Co-Founder and CEO of{" "}
-                <span className="text-[#FF6600] font-medium">LynkSphere</span>, a software company
-                that embeds directly into client teams to design, build, and ship iOS, Android, and
-                web applications. We plug in as a senior technical partner across mobile, web, AI/ML
-                integration, and data solutions.
-              </p>
-              <p className="text-[var(--text-body)] text-lg leading-relaxed mb-6">
-                Alongside running LynkSphere, I&apos;m completing a Master of Data Science at Monash
-                University — with work spanning machine learning, NLP, data visualisation, and
-                bioinformatics. I hold a Bachelor of Computer Science (Data Science) from Monash,
-                graduating on a High Achievers Scholarship.
-              </p>
-              <p className="text-[var(--text-body)] text-lg leading-relaxed">
-                My work sits at the intersection of software engineering, data science, and
-                computational biology. Experienced in Python, R, Java, and cloud architecture —
-                applied across client projects and academic research. Currently open to{" "}
-                <span className="text-[#FF6600]">Data Scientist</span>,{" "}
-                <span className="text-[#FF6600]">Python Developer</span>, and{" "}
-                <span className="text-[#FF6600]">Bioinformatics</span> roles.
-              </p>
-            </FadeInView>
-          </div>
+        <FadeInView delay={0.1}>
+          <div
+            className="bg-[#0d0d0d] border border-[#1e1e1e] max-w-4xl"
+            style={{ borderRadius: 6 }}
+          >
+            {/* Chrome bar */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-[#191919]">
+              <span className="w-3 h-3 rounded-full bg-[#FF6600] opacity-75" />
+              <span className="w-3 h-3 rounded-full bg-[#222]" />
+              <span className="w-3 h-3 rounded-full bg-[#222]" />
+              <span className="ml-3 text-[9px] uppercase tracking-[0.35em] text-[#666] font-[family-name:var(--font-space-mono)]">
+                zsh — ekram@portfolio ~ neofetch
+              </span>
+            </div>
 
-          {/* Right: stats */}
-          <div className="grid grid-cols-2 gap-4">
-            {highlights.map((h, i) => (
-              <FadeInView key={h.value} delay={i * 0.12}>
-                <div
-                  className={`border-2 p-6 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 ${
-                    i === 0 ? "border-[#FF6600] bg-[#FF6600]" : "border-[var(--border-primary)] bg-[var(--bg-card)] hover:border-[#FF6600]"
-                  }`}
-                  style={{ borderRadius: 4 }}
-                >
-                  {i !== 0 && <div className="absolute top-0 left-0 right-0 h-[2px] w-0 bg-[#FF6600] group-hover:w-full transition-all duration-500" />}
-                  <span className={`block text-4xl font-normal leading-none mb-2 ${i === 0 ? "text-white" : "text-[var(--text-heading)]"}`}>
-                    {h.value}
-                  </span>
-                  <p className={`text-[10px] font-bold uppercase tracking-widest font-[family-name:var(--font-space-mono)] mb-1 ${i === 0 ? "text-white/80" : "text-[#FF6600]"}`}>
-                    {h.label}
-                  </p>
-                  <p className={`text-xs ${i === 0 ? "text-white/60" : "text-[#888888]"}`}>{h.sub}</p>
+            {/* Neofetch body */}
+            <div className="px-6 py-6 flex gap-10 font-[family-name:var(--font-space-mono)]">
+
+              {/* Left: ASCII art + palette */}
+              <div className="hidden sm:flex flex-col gap-4 shrink-0 select-none">
+                <div className="leading-[1.45]">
+                  {ASCII_LINES.map((line, i) => (
+                    <div
+                      key={i}
+                      className="text-[11px] text-[#FF6600]"
+                      style={{ opacity: 0.55 + i * 0.075 }}
+                    >
+                      {line}
+                    </div>
+                  ))}
                 </div>
-              </FadeInView>
-            ))}
+                {/* Color swatches */}
+                <div className="flex gap-1">
+                  {PALETTE.map((color, i) => (
+                    <span
+                      key={i}
+                      className="w-4 h-4 inline-block"
+                      style={{ backgroundColor: color, borderRadius: 2 }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Right: system info */}
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] mb-0.5">
+                  <span className="text-[#FF6600]">ekram</span>
+                  <span className="text-[#555]">@</span>
+                  <span className="text-[#c0c0c0]">portfolio</span>
+                </p>
+                <div className="h-[1px] bg-[#1e1e1e] mb-4" />
+
+                <div className="space-y-[7px]">
+                  {FIELDS.map((f, i) => (
+                    <div key={i} className="flex gap-2 text-[12px] sm:text-[13px] leading-snug">
+                      <span className="w-[72px] shrink-0 text-[#FF6600] opacity-70 text-right">
+                        {f.key}
+                      </span>
+                      <span className="text-[#333] shrink-0">{f.key ? "~" : " "}</span>
+                      <span className={f.orange ? "text-[#FF6600]" : "text-[#a0a0a0]"}>
+                        {f.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </FadeInView>
       </div>
     </section>
   );

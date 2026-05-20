@@ -5,13 +5,13 @@ import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
 
 const experiences = [
   {
-    role: "Co-Founder & CEO",
+    role: "Co-Founder",
     company: "LynkSphere",
     period: "Dec 2024 – Present",
     current: true,
     bullets: [
       "Co-founded a software studio delivering iOS, Android, and web applications to Australian startups and B2B clients using React Native, Next.js, SwiftUI, and Supabase",
-      "Grew from zero to ~$30,000 AUD revenue within 8 months, shipping 3 production applications including a 14-month cross-platform community platform (LinkedHive)",
+      "Shipped 3 production applications including LinkedHive, a cross-platform community and business networking platform for Australian suburbs",
       "Managed full client lifecycle from technical scoping and architecture through to deployment and post-launch support",
       "Acquired clients through pitches at BNI Australia, StartSpace Library, and Entrepreneurs Summit 2026",
     ],
@@ -111,7 +111,7 @@ export default function Experience() {
             Where I&apos;ve Worked
           </h2>
           <p className="text-[var(--text-body)] text-lg max-w-xl mb-16 leading-relaxed">
-            Co-founded a software studio delivering production apps to Australian startups and B2B clients, growing to $30K AUD revenue in 8 months.
+            Co-founded a software studio delivering production iOS, Android, and web apps to Australian startups and B2B clients.
           </p>
         </FadeInView>
 
