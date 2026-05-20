@@ -162,10 +162,10 @@ export default function Contact() {
             </TerminalFrame>
           </FadeInView>
 
-          <FadeInView delay={0.12}>
+          <FadeInView delay={0.12} className="lg:flex lg:h-full lg:items-end">
             <form
               onSubmit={handleSubmit}
-              className="border-2 border-[var(--border-primary)] bg-[var(--bg-card)] p-5 sm:p-6 relative overflow-hidden"
+              className="relative overflow-hidden border-2 border-[var(--border-primary)] bg-[var(--bg-card)] p-5 sm:p-6 lg:w-full"
               style={{ borderRadius: 4 }}
             >
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#FF6600]" />
