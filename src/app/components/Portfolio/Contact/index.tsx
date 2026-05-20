@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import FadeInView from "@/app/components/Common/FadeInView";
 import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
 import TerminalButton from "@/components/ui/TerminalButton";
+import TerminalFrame from "@/components/ui/TerminalFrame";
 import type { FormEvent } from "react";
 import SectionLabel from "@/components/ui/SectionLabel";
 
@@ -107,30 +108,8 @@ export default function Contact() {
               Open to collaborations, freelance projects, internships, and full-time opportunities.
               Whether you have a project idea or just want to say hello, I&apos;d love to hear from you.
             </p>
-          </FadeInView>
-
-          <FadeInView delay={0.12}>
-            <form
-              onSubmit={handleSubmit}
-              className="border-2 border-[var(--border-primary)] bg-[var(--bg-card)] p-5 sm:p-6 relative overflow-hidden"
-              style={{ borderRadius: 4 }}
-            >
-              <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#FF6600]" />
-              <div className="mb-6 flex items-center justify-between gap-4 border-b border-[var(--border-primary)] pb-4">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#FF6600] font-[family-name:var(--font-space-mono)] mb-2">
-                    Send Message
-                  </p>
-                  <p className="text-sm text-[var(--text-body)]">
-                    This goes straight to my email.
-                  </p>
-                </div>
-                <span className="text-[10px] uppercase tracking-widest text-[#666666] font-[family-name:var(--font-space-mono)]">
-                  ./contact.sh
-                </span>
-              </div>
-
-              <div className="mb-6 grid grid-cols-1 gap-3 border-b border-[var(--border-primary)] pb-6 sm:grid-cols-2">
+            <TerminalFrame title="zsh — ekram@portfolio ~ socials">
+              <div className="grid grid-cols-1 gap-3 p-5">
                 {contacts.map((contact) => (
                   <a
                     key={contact.label}
@@ -153,6 +132,29 @@ export default function Contact() {
                     </span>
                   </a>
                 ))}
+              </div>
+            </TerminalFrame>
+          </FadeInView>
+
+          <FadeInView delay={0.12}>
+            <form
+              onSubmit={handleSubmit}
+              className="border-2 border-[var(--border-primary)] bg-[var(--bg-card)] p-5 sm:p-6 relative overflow-hidden"
+              style={{ borderRadius: 4 }}
+            >
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#FF6600]" />
+              <div className="mb-6 flex items-center justify-between gap-4 border-b border-[var(--border-primary)] pb-4">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#FF6600] font-[family-name:var(--font-space-mono)] mb-2">
+                    Send Message
+                  </p>
+                  <p className="text-sm text-[var(--text-body)]">
+                    This goes straight to my email.
+                  </p>
+                </div>
+                <span className="text-[10px] uppercase tracking-widest text-[#666666] font-[family-name:var(--font-space-mono)]">
+                  ./contact.sh
+                </span>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
