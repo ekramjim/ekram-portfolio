@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Icon } from "@iconify/react";
-import TerminalButton from "@/components/ui/TerminalButton";
 
 const navLinks = [
   { label: "About", href: "/#About" },
@@ -27,25 +26,6 @@ const dividerBlocks = Array.from({ length: 48 }, (_, index) => (
 const Footer = () => {
   return (
     <div className="relative" id="first-section">
-      <section className="bg-[#0d0d0d] px-4 py-14">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 border border-[#242424] bg-[#111111] p-6 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="mb-2 flex items-center gap-2 font-[family-name:var(--font-space-mono)] text-[10px] font-bold uppercase tracking-[0.4em] text-[#FF6600]">
-              <span className="h-[2px] w-3 bg-[#FF6600]" />
-              Curriculum Vitae
-            </p>
-            <h3 className="font-[family-name:var(--font-space-mono)] text-xl font-bold text-white">
-              Download my technical CV
-            </h3>
-          </div>
-          <TerminalButton
-            cmd="./download-cv.sh"
-            href="/cv/ekram-tech-cv.pdf"
-            download
-          />
-        </div>
-      </section>
-
       <div className="w-full overflow-hidden border-y border-[#FF6600] bg-[#0a0a0a] py-2 text-[#FF6600]">
         <div className="flex w-max animate-footer-marquee whitespace-nowrap font-[family-name:var(--font-space-mono)] text-xs tracking-[0.35em]">
           <div className="flex">{dividerBlocks}</div>

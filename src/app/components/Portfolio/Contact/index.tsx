@@ -6,16 +6,41 @@ import FadeInView from "@/app/components/Common/FadeInView";
 import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
 import TerminalButton from "@/components/ui/TerminalButton";
 import TerminalFrame from "@/components/ui/TerminalFrame";
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode } from "react";
 import SectionLabel from "@/components/ui/SectionLabel";
 
-const contacts = [
+type ContactLink = {
+  label: string;
+  value: string;
+  href: string;
+  download?: boolean;
+  icon: ReactNode;
+};
+
+const contacts: ContactLink[] = [
+  {
+    label: "CV",
+    value: "ekram-tech-cv.pdf",
+    href: "/cv/ekram-tech-cv.pdf",
+    download: true,
+    icon: (
+      <Icon icon="ion:document-text-outline" width="20" height="20" />
+    ),
+  },
   {
     label: "Email",
     value: "ekramjim002@gmail.com",
     href: "mailto:ekramjim002@gmail.com",
     icon: (
       <Icon icon="ion:mail-outline" width="20" height="20" />
+    ),
+  },
+  {
+    label: "LynkSphere Email",
+    value: "ekram@lynksphere.com",
+    href: "mailto:ekram@lynksphere.com",
+    icon: (
+      <Icon icon="ion:business-outline" width="20" height="20" />
     ),
   },
   {
@@ -114,6 +139,7 @@ export default function Contact() {
                   <a
                     key={contact.label}
                     href={contact.href}
+                    download={contact.download}
                     target={contact.href.startsWith("http") ? "_blank" : undefined}
                     rel="noopener noreferrer"
                     className="group flex min-w-0 items-center gap-3 border border-[#1e1e1e] bg-[#0d0d0d] px-3 py-3 transition-colors duration-200 hover:border-[#FF6600]"
