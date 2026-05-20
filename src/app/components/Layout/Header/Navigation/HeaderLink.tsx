@@ -40,9 +40,9 @@ const HeaderLink: React.FC<{
   };
 
   const baseClasses =
-    "text-sm flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors duration-200 font-medium";
-  const activeClasses = "bg-[#FF6600]/15 text-[#FF6600]";
-  const inactiveClasses = "text-[#aaaaaa] hover:text-white hover:bg-white/5";
+    "text-[11px] flex items-center gap-1.5 px-3 py-1.5 border transition-all duration-200 font-[family-name:var(--font-space-mono)] tracking-wide";
+  const activeClasses = "border-[#FF6600] bg-[#FF6600]/5 text-[#FF6600]";
+  const inactiveClasses = "border-[#1e1e1e] bg-[#0f0f0f] text-[#c0c0c0] hover:border-[#FF6600] hover:text-[#FF6600]";
 
   return (
     <div
@@ -53,8 +53,10 @@ const HeaderLink: React.FC<{
       <Link
         href={item.href}
         className={`${baseClasses} ${combinedActive ? activeClasses : inactiveClasses}`}
+        style={{ borderRadius: 4 }}
         onClick={handleClick}
       >
+        <span className={`transition-colors duration-200 ${combinedActive ? "text-[#FF6600]" : "text-[#333]"}`}>❯</span>
         {item.label}
         {item.submenu && (
           <svg

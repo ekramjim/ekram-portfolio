@@ -8,11 +8,11 @@ import HeaderLink from "./Navigation/HeaderLink";
 import MobileHeaderLink from "./Navigation/MobileHeaderLink";
 import { Icon } from "@iconify/react";
 import { scrollToHash } from "./navUtils";
+import TerminalButton from "@/components/ui/TerminalButton";
 import { AnimatePresence, motion } from "framer-motion";
 
 const Header: React.FC = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
-  const [sticky, setSticky] = useState(false);
   const [activeSectionIndex, setActiveSectionIndex] = useState<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const router = useRouter();
@@ -21,8 +21,6 @@ const Header: React.FC = () => {
   const pillRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = () => {
-    setSticky(window.scrollY >= 80);
-    if (window.scrollY < 80) setActiveSectionIndex(null);
     const scrollable = document.body.scrollHeight - window.innerHeight;
     setScrollProgress(scrollable > 0 ? window.scrollY / scrollable : 0);
   };
@@ -109,8 +107,6 @@ const Header: React.FC = () => {
     return () => clearTimeout(timeout);
   }, [pathname]);
 
-  const isGlassy = sticky || navbarOpen;
-
   return (
     <header className="fixed top-0 left-0 right-0 z-40 pointer-events-none">
       {/* Scroll progress bar */}
@@ -122,21 +118,13 @@ const Header: React.FC = () => {
       </div>
       <div
         ref={pillRef}
-        className={`pointer-events-auto mx-auto transition-all duration-500 ease-in-out ${
-          isGlassy
-            ? "mt-4 mx-4 lg:mt-5 lg:mx-auto bg-[#161616]/90 backdrop-blur-xl border border-[#FF6600]/20 shadow-lg shadow-black/40 rounded-3xl lg:rounded-full max-w-sm lg:max-w-3xl"
-            : "max-w-7xl mt-0 bg-transparent"
-        }`}
+        className="pointer-events-auto mx-4 mt-4 lg:mt-5 lg:mx-auto max-w-7xl bg-[#0d0d0d]/95 backdrop-blur-xl border border-[#1e1e1e] rounded-xl"
       >
         {/* Top bar */}
-        <div
-          className={`flex items-center justify-between transition-all duration-500 ${
-            isGlassy ? "px-5 py-3" : "px-6 py-6"
-          }`}
-        >
+        <div className="flex items-center justify-between px-4 py-3">
           <Logo />
 
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-0">
             {headerData.map((item, index) => (
               <HeaderLink
                 key={index}
@@ -148,12 +136,9 @@ const Header: React.FC = () => {
           </nav>
 
           <div className="flex items-center gap-3">
-            <button
-              className="hidden lg:block bg-black text-white text-sm font-normal px-5 py-2.5 rounded-full hover:bg-[#FF6600] transition-colors duration-300 cursor-pointer"
-              onClick={scrollToContact}
-            >
-              Get in Touch
-            </button>
+            <div className="hidden lg:block">
+              <TerminalButton cmd="./contact.sh" onClick={scrollToContact} compact />
+            </div>
 
             <button
               onClick={() => setNavbarOpen(!navbarOpen)}
@@ -179,7 +164,7 @@ const Header: React.FC = () => {
               transition={{ duration: 0.25, ease: "easeOut" }}
               className="lg:hidden overflow-hidden"
             >
-              <div className="px-5 pb-5 pt-1 flex flex-col gap-1 border-t border-[#FF6600]/20">
+              <div className="px-4 pb-4 pt-1 flex flex-col gap-1 border-t border-[#1e1e1e]">
                 {headerData.map((item, index) => (
                   <MobileHeaderLink
                     key={index}
@@ -187,20 +172,9 @@ const Header: React.FC = () => {
                     onLinkClick={() => setNavbarOpen(false)}
                   />
                 ))}
-                <button
-                  className="group mt-3 w-fit flex items-center overflow-hidden rounded-xl border border-[#242424] bg-[#1a1a1a] hover:bg-[#FF6600] transition-colors duration-200 cursor-pointer"
-                  onClick={() => {
-                    setNavbarOpen(false);
-                    setTimeout(scrollToContact, 300);
-                  }}
-                >
-                  <div className="flex items-center justify-center m-1.5 w-9 h-9 rounded-lg shrink-0" style={{ backgroundColor: "#ff914c" }}>
-                    <Icon icon="ph:chat-circle-dots-fill" className="text-black text-base transition-transform duration-300 group-hover:scale-125 group-active:scale-90" />
-                  </div>
-                  <div className="pr-4 pl-2.5 text-base font-normal text-[#aaaaaa] group-hover:text-white transition-colors duration-200">
-                    Get in Touch
-                  </div>
-                </button>
+                <div className="mt-3">
+                  <TerminalButton cmd="./contact.sh" onClick={() => { setNavbarOpen(false); setTimeout(scrollToContact, 300); }} compact />
+                </div>
               </div>
             </motion.div>
           )}
