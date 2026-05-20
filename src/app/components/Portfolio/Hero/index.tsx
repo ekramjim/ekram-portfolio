@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import TerminalCursor from "@/components/ui/TerminalCursor";
+import TerminalFrame from "@/components/ui/TerminalFrame";
 
 // ── Script definition ─────────────────────────────────────────────────────────
 type Step =
@@ -276,21 +277,7 @@ export default function Hero() {
         transition={{ duration: 0.55 }}
         className="relative z-10 w-full max-w-3xl mx-auto px-4"
       >
-        <div
-          className="bg-[#0d0d0d] border border-[#1e1e1e]"
-          style={{ borderRadius: 6 }}
-        >
-          {/* Chrome bar */}
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-[#191919]">
-            <span className="w-3 h-3 rounded-full bg-[#FF6600] opacity-75" />
-            <span className="w-3 h-3 rounded-full bg-[#222]" />
-            <span className="w-3 h-3 rounded-full bg-[#222]" />
-            <span className="ml-3 text-[9px] uppercase tracking-[0.35em] text-[#666] font-[family-name:var(--font-space-mono)]">
-              zsh — ekram@portfolio
-            </span>
-          </div>
-
-          {/* Terminal body */}
+        <TerminalFrame title="zsh — ekram@portfolio">
           <div className="px-6 py-5 min-h-[420px] font-[family-name:var(--font-space-mono)]">
 
             {/* Initial empty cursor before animation starts */}
@@ -387,7 +374,7 @@ export default function Hero() {
               return null;
             })}
           </div>
-        </div>
+        </TerminalFrame>
       </motion.div>
 
 

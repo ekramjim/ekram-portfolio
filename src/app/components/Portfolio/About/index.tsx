@@ -1,145 +1,201 @@
 "use client";
+import { useEffect, useRef, useState } from "react";
 import FadeInView from "@/app/components/Common/FadeInView";
 import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
+import TerminalFrame from "@/components/ui/TerminalFrame";
 
-const ASCII_LINES = [
-  "███████╗██╗  ██╗",
-  "██╔════╝██║ ██╔╝",
-  "█████╗  █████╔╝ ",
-  "██╔══╝  ██╔═██╗ ",
-  "███████╗██║  ██╗",
-  "╚══════╝╚═╝  ╚═╝",
-];
+const SCRAMBLE_CHARS = "0123456789abcdef!@#$%&?x*+-=~";
+
+function ScrambleText({ text, trigger, delay = 0, className = "" }: {
+  text: string;
+  trigger: boolean;
+  delay?: number;
+  className?: string;
+}) {
+  const [display, setDisplay] = useState(text);
+  const played = useRef(false);
+
+  useEffect(() => {
+    if (!trigger || played.current) return;
+    played.current = true;
+
+    const start = setTimeout(() => {
+      // Scramble everything first
+      setDisplay(
+        text.split("").map(c =>
+          /[a-zA-Z0-9]/.test(c)
+            ? SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
+            : c
+        ).join("")
+      );
+
+      let iteration = 0;
+      const id = setInterval(() => {
+        const resolved = Math.floor(iteration / 2.2);
+        setDisplay(
+          text.split("").map((c, i) => {
+            if (!/[a-zA-Z0-9]/.test(c)) return c;
+            if (i < resolved) return c;
+            return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+          }).join("")
+        );
+        iteration++;
+        if (resolved >= text.length) {
+          clearInterval(id);
+          setDisplay(text);
+        }
+      }, 28);
+    }, delay);
+
+    return () => clearTimeout(start);
+  }, [trigger, text, delay]);
+
+  return <span className={className}>{display}</span>;
+}
 
 const FIELDS: { key: string; value: string; orange?: boolean }[] = [
-  { key: "User",     value: "Ekram Islam" },
   { key: "Location", value: "Melbourne, Australia" },
-  { key: "Role",     value: "Co-Founder @ LynkSphere",                           orange: true },
-  { key: "Study",    value: "MSc Data Science · Monash · Jul 2025 – Nov 2026" },
-  { key: "",         value: "BSc Computer Science · Monash · High Achievers Scholar" },
-  { key: "Research", value: "Bioinformatics · ML · NLP · Deep Learning",          orange: true },
-  { key: "Stack",    value: "Python · TypeScript · Swift · R · Java" },
-  { key: "Tools",    value: "PyTorch · TensorFlow · DESeq2 · limma · Next.js" },
-  { key: "Clients",  value: "8+ across Australia" },
-  { key: "Status",   value: "Open to hire",                                        orange: true },
+  { key: "Role",     value: "Co-Founder @ LynkSphere",                       orange: true },
+  { key: "Study",     value: "MSc Data Science · Monash · 2025–2026" },
+  { key: "Exploring", value: "Bioinformatics · RNA-seq · AI · Intuitive Software", orange: true },
+  { key: "Languages", value: "Python · TypeScript · Swift · R · Java · Kotlin · SQL" },
+  { key: "Frameworks", value: "Next.js · React Native · Flutter · SwiftUI · Node.js" },
+  { key: "Data",      value: "Pandas · PyTorch · TensorFlow · Scikit-learn · NumPy" },
+  { key: "Available", value: "Open to hire",                                               orange: true },
 ];
 
-const PALETTE = ["#FF6600", "#FF8833", "#cc5500", "#ff9966", "#2a2a2a", "#333", "#555", "#888"];
+
+type BioLine = { text: string; accent?: boolean; comment?: boolean; blank?: boolean };
+
+const LEFT_LINES: BioLine[] = [
+  { text: "# data science", accent: true },
+  { blank: true },
+  { text: "Studying an MSc in Data Science at Monash. You'll find me in RStudio building colour palettes and visualising interesting data — F1 lap times, sector gaps, tyre strategy. It's a sport I genuinely love, and the data side makes it even better." },
+  { blank: true },
+  { text: "# computer science", accent: true },
+  { blank: true },
+  { text: "There's something satisfying about clean, efficient code — logic that's tight and does exactly what it needs to. I'm genuinely curious about how AI works under the hood: how models learn, why they fail, what makes a good architecture. Less interested in claiming I'm great at it, more interested in actually understanding it." },
+  { blank: true },
+  { text: "# bioinformatics", accent: true },
+  { blank: true },
+  { text: "I picked it up as a unit in my Master of Data Science at Monash and fell in love immediately. Coursework covered the full RNA-seq pipeline — from FastQC and adapter trimming through to differential expression with limma and DESeq2. My applied project worked on a colorectal cancer dataset, interpreting GO enrichment results across lipid metabolism, inflammatory response, and blood coagulation." },
+  { blank: true },
+  { text: "Bioinformatics is what happens when software, statistics, and biology collide. For someone from a CS background, it felt like finding a problem space that actually needed all of it." },
+  { blank: true },
+  { text: "// fun fact", comment: true },
+  { text: "I got into bioinformatics by staring at my friend's screen, watching her work through genomic data and understanding absolutely nothing. That confusion was enough to make me want to understand everything." },
+];
+
+const RIGHT_LOWER_LINES: BioLine[] = [
+  { text: "# co-founder", accent: true },
+  { blank: true },
+  { text: "My passion for developing intuitive apps pushed me to start a software studio with my friend and co-founder in Melbourne, December 2024. We build iOS, Android, and web apps for Australian startups — and alongside that, we explore ideas for software that could genuinely be useful for people in ways that don't exist yet." },
+];
+
+function renderLine(line: BioLine, i: number) {
+  if (line.blank) return <div key={i} className="h-3" />;
+  if (line.comment) return (
+    <div key={i} className="flex gap-2">
+      <span className="text-[#FF6600] opacity-40 shrink-0 text-[12px]">❯</span>
+      <span className="text-[#FF6600] opacity-50 text-[12px] leading-relaxed">{line.text}</span>
+    </div>
+  );
+  if (line.accent) return (
+    <div key={i} className="flex gap-2 items-center mb-2">
+      <span className="text-[#FF6600] shrink-0 text-[16px]">❯</span>
+      <span className="text-[#FF6600] text-[22px] font-bold tracking-wide">{line.text}</span>
+    </div>
+  );
+  return (
+    <div key={i} className="flex gap-2">
+      <span className="text-[#FF6600] opacity-40 shrink-0 text-[12px] mt-0.5">❯</span>
+      <span className="text-[#b0b0b0] text-[12px] leading-relaxed">{line.text}</span>
+    </div>
+  );
+}
 
 export default function About() {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [triggered, setTriggered] = useState(false);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setTriggered(true); observer.disconnect(); } },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section id="About" className="relative py-24 overflow-hidden">
-      {/* Decorative SVG lines */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none"
         viewBox="0 0 1200 600"
         preserveAspectRatio="xMidYMid slice"
         fill="none"
       >
-        <AnimatedPath
-          d="M0 50 L100 50 L100 200 L300 200 L300 100 L500 100"
-          stroke="#FF6600"
-          strokeWidth={1}
-          opacity={0.1}
-          delay={100}
-          duration={2500}
-        />
-        <AnimatedPath
-          d="M1200 550 L1100 550 L1100 400 L900 400 L900 550 L700 550"
-          stroke="#FF6600"
-          strokeWidth={1}
-          opacity={0.08}
-          delay={400}
-          duration={2000}
-        />
+        <AnimatedPath d="M0 50 L100 50 L100 200 L300 200 L300 100 L500 100" stroke="#FF6600" strokeWidth={1} opacity={0.1} delay={100} duration={2500} />
+        <AnimatedPath d="M1200 550 L1100 550 L1100 400 L900 400 L900 550 L700 550" stroke="#FF6600" strokeWidth={1} opacity={0.08} delay={400} duration={2000} />
       </svg>
 
       <div className="relative z-10 container mx-auto max-w-7xl px-6">
-        <FadeInView>
-          <p className="text-xs font-bold tracking-[0.4em] uppercase text-[#FF6600] font-[family-name:var(--font-space-mono)] mb-6 flex items-center gap-3">
-            <span className="w-6 h-[2px] bg-[#FF6600]" />
-            About Me
-          </p>
-          <h2 className="text-3xl md:text-4xl font-normal text-[var(--text-heading)] leading-tight mb-4 max-w-2xl">
-            Co-founder building software.<br />
-            Currently exploring AI &amp; Bioinformatics.
-          </h2>
-          <p className="text-[var(--text-body)] text-base leading-relaxed max-w-2xl mb-10">
-            Studying a Master of Data Science at Monash — diving into machine learning, bioinformatics, NLP, and deep learning.
-            Alongside that, I run <span className="text-[#FF6600]">LynkSphere</span>, a software studio in Melbourne shipping iOS, Android, and web apps to Australian startups.
-            Code by day, papers by night.
-          </p>
-        </FadeInView>
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
 
-        <FadeInView delay={0.1}>
-          <div
-            className="bg-[#0d0d0d] border border-[#1e1e1e] max-w-4xl"
-            style={{ borderRadius: 6 }}
-          >
-            {/* Chrome bar */}
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-[#191919]">
-              <span className="w-3 h-3 rounded-full bg-[#FF6600] opacity-75" />
-              <span className="w-3 h-3 rounded-full bg-[#222]" />
-              <span className="w-3 h-3 rounded-full bg-[#222]" />
-              <span className="ml-3 text-[9px] uppercase tracking-[0.35em] text-[#666] font-[family-name:var(--font-space-mono)]">
-                zsh — ekram@portfolio ~ neofetch
-              </span>
-            </div>
-
-            {/* Neofetch body */}
-            <div className="px-6 py-6 flex gap-10 font-[family-name:var(--font-space-mono)]">
-
-              {/* Left: ASCII art + palette */}
-              <div className="hidden sm:flex flex-col gap-4 shrink-0 select-none">
-                <div className="leading-[1.45]">
-                  {ASCII_LINES.map((line, i) => (
-                    <div
-                      key={i}
-                      className="text-[11px] text-[#FF6600]"
-                      style={{ opacity: 0.55 + i * 0.075 }}
-                    >
-                      {line}
-                    </div>
-                  ))}
-                </div>
-                {/* Color swatches */}
-                <div className="flex gap-1">
-                  {PALETTE.map((color, i) => (
-                    <span
-                      key={i}
-                      className="w-4 h-4 inline-block"
-                      style={{ backgroundColor: color, borderRadius: 2 }}
-                    />
-                  ))}
-                </div>
+          {/* Left: co-founder, data science, bioinformatics */}
+          <div>
+            <FadeInView>
+              <p className="text-xs font-bold tracking-[0.4em] uppercase text-[#FF6600] font-[family-name:var(--font-space-mono)] mb-3 flex items-center gap-3">
+                <span className="w-6 h-[2px] bg-[#FF6600]" />
+                About Me
+              </p>
+              <p className="font-[family-name:var(--font-space-mono)] text-[#555] text-[13px] mb-6">papers by day, coding by night.</p>
+              <div className="font-[family-name:var(--font-space-mono)] space-y-1">
+                {LEFT_LINES.map((line, i) => renderLine(line, i))}
               </div>
-
-              {/* Right: system info */}
-              <div className="flex-1 min-w-0">
-                <p className="text-[13px] mb-0.5">
-                  <span className="text-[#FF6600]">ekram</span>
-                  <span className="text-[#555]">@</span>
-                  <span className="text-[#c0c0c0]">portfolio</span>
-                </p>
-                <div className="h-[1px] bg-[#1e1e1e] mb-4" />
-
-                <div className="space-y-[7px]">
-                  {FIELDS.map((f, i) => (
-                    <div key={i} className="flex gap-2 text-[12px] sm:text-[13px] leading-snug">
-                      <span className="w-[72px] shrink-0 text-[#FF6600] opacity-70 text-right">
-                        {f.key}
-                      </span>
-                      <span className="text-[#333] shrink-0">{f.key ? "~" : " "}</span>
-                      <span className={f.orange ? "text-[#FF6600]" : "text-[#a0a0a0]"}>
-                        {f.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            </FadeInView>
           </div>
-        </FadeInView>
+
+          {/* Right: neofetch terminal + computer science below */}
+          <div>
+            <FadeInView delay={0.1}>
+              <TerminalFrame ref={cardRef} title="zsh — ekram@portfolio ~ neofetch">
+                <div className="px-6 py-6 font-[family-name:var(--font-space-mono)]">
+                  <p className="text-[13px] mb-0.5">
+                    <span className="text-[#FF6600]">ekram</span>
+                    <span className="text-[#555]">@</span>
+                    <span className="text-[#c0c0c0]">portfolio</span>
+                  </p>
+                  <div className="h-[1px] bg-[#1e1e1e] mb-4" />
+
+                  <div className="space-y-[7px]">
+                    {FIELDS.map((f, i) => (
+                      <div key={i} className="flex gap-2 text-[12px] sm:text-[13px] leading-snug">
+                        <span className="w-[84px] shrink-0 text-[#FF6600] opacity-70 text-right">{f.key}</span>
+                        <span className="text-[#333] shrink-0">{f.key ? "~" : " "}</span>
+                        <ScrambleText
+                          text={f.value}
+                          trigger={triggered}
+                          delay={i * 90}
+                          className={f.orange ? "text-[#FF6600]" : "text-[#a0a0a0]"}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TerminalFrame>
+            </FadeInView>
+
+            <FadeInView delay={0.2}>
+              <div className="font-[family-name:var(--font-space-mono)] space-y-1 mt-10">
+                {RIGHT_LOWER_LINES.map((line, i) => renderLine(line, i))}
+              </div>
+            </FadeInView>
+          </div>
+
+        </div>
       </div>
     </section>
   );
