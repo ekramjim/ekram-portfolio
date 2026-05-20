@@ -1,171 +1,201 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import FadeInView from "@/app/components/Common/FadeInView";
+import TerminalFrame from "@/components/ui/TerminalFrame";
+import TerminalCursor from "@/components/ui/TerminalCursor";
+import SectionLabel from "@/components/ui/SectionLabel";
 import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
 
-const experiences = [
-  {
-    role: "Co-Founder",
-    company: "LynkSphere",
-    period: "Dec 2024 – Present",
-    current: true,
-    bullets: [
-      "Co-founded a software studio delivering iOS, Android, and web applications to Australian startups and B2B clients using React Native, Next.js, SwiftUI, and Supabase",
-      "Shipped 3 production applications including LinkedHive, a cross-platform community and business networking platform for Australian suburbs",
-      "Managed full client lifecycle from technical scoping and architecture through to deployment and post-launch support",
-      "Acquired clients through pitches at BNI Australia, StartSpace Library, and Entrepreneurs Summit 2026",
-    ],
-  },
+type Step =
+  | { s: "cmd"; text: string }
+  | { s: "out"; text: string; accent?: boolean; dim?: boolean }
+  | { s: "link"; label: string; href: string }
+  | { s: "blank" }
+  | { s: "bullet"; text: string }
+  | { s: "done" };
+
+const SCRIPT: Step[] = [
+  { s: "cmd",   text: "cat experience.txt" },
+  { s: "blank" },
+  { s: "out",   text: "Co-Founder @ LynkSphere", accent: true },
+  { s: "out",   text: "Dec 2024 – Present", dim: true },
+  { s: "link",  label: "lynksphere.com", href: "https://lynksphere.com" },
+  { s: "blank" },
+  { s: "bullet", text: "Co-founded a software studio delivering iOS, Android, and web apps to Australian startups and B2B clients using React Native, Next.js, SwiftUI, and Supabase" },
+  { s: "bullet", text: "8 clients · 12+ end-to-end products shipped in under a year" },
+  { s: "bullet", text: "Managed full client lifecycle: scoping, architecture, deployment, and post-launch support" },
+  { s: "bullet", text: "Acquired clients via BNI Australia, StartSpace Library, and Entrepreneurs Summit 2026" },
+  { s: "done" },
 ];
 
-function TimelineDot({ current }: { current: boolean }) {
-  return (
-    <div className="relative flex-shrink-0 w-4 h-4 mt-1">
-      <div
-        className="w-4 h-4 rounded-full border-2 border-[#FF6600]"
-        style={{ background: current ? "#FF6600" : "var(--bg-card)" }}
-      />
-      {current && (
-        <div className="absolute inset-0 rounded-full bg-[#FF6600] animate-ping opacity-30" />
-      )}
-    </div>
-  );
-}
+type Line =
+  | { k: "cmd"; text: string }
+  | { k: "out"; text: string; accent?: boolean; dim?: boolean }
+  | { k: "link"; label: string; href: string }
+  | { k: "blank" }
+  | { k: "bullet"; text: string }
+  | { k: "done" };
 
-function AnimatedVerticalLine() {
-  const pathRef = useRef<SVGPathElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
+export default function Experience() {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [lines, setLines] = useState<Line[]>([]);
+  const [finished, setFinished] = useState(false);
+  const [started, setStarted] = useState(false);
+  const alive = useRef(true);
 
   useEffect(() => {
-    const path = pathRef.current;
-    const svg = svgRef.current;
-    if (!path || !svg) return;
-
-    const length = path.getTotalLength();
-    path.style.strokeDasharray = `${length}`;
-    path.style.strokeDashoffset = `${length}`;
-
+    const el = cardRef.current;
+    if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          path.style.transition = "stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1)";
-          path.style.strokeDashoffset = "0";
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
+      ([entry]) => { if (entry.isIntersecting) { setStarted(true); observer.disconnect(); } },
+      { threshold: 0.2 }
     );
-
-    observer.observe(svg);
+    observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
-  return (
-    <svg
-      ref={svgRef}
-      viewBox="0 0 2 100"
-      width="2"
-      height="100"
-      fill="none"
-      className="absolute left-[7px] top-5"
-    >
-      <path
-        ref={pathRef}
-        d="M1 0 L1 100"
-        stroke="#FF6600"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeDasharray="4 4"
-      />
-    </svg>
-  );
-}
+  useEffect(() => {
+    if (!started) return;
+    alive.current = true;
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    const schedule = (fn: () => void, ms: number) => {
+      if (!alive.current) return;
+      const t = setTimeout(() => { timers.delete(t); fn(); }, ms);
+      timers.add(t);
+    };
 
-export default function Experience() {
+    let si = 0;
+    function next() {
+      if (!alive.current || si >= SCRIPT.length) return;
+      const step = SCRIPT[si++];
+
+      if (step.s === "blank") {
+        setLines(p => [...p, { k: "blank" }]);
+        schedule(next, 60);
+      } else if (step.s === "out") {
+        schedule(() => {
+          setLines(p => [...p, { k: "out", text: step.text, accent: step.accent, dim: step.dim }]);
+          schedule(next, 120);
+        }, 200);
+      } else if (step.s === "link") {
+        schedule(() => {
+          setLines(p => [...p, { k: "link", label: step.label, href: step.href }]);
+          schedule(next, 120);
+        }, 120);
+      } else if (step.s === "bullet") {
+        schedule(() => {
+          setLines(p => [...p, { k: "bullet", text: step.text }]);
+          schedule(next, 180);
+        }, 220);
+      } else if (step.s === "cmd") {
+        const full = step.text;
+        setLines(p => [...p, { k: "cmd", text: "" }]);
+        let ci = 0;
+        function typeChar() {
+          if (!alive.current) return;
+          ci++;
+          setLines(p => { const n = [...p]; n[n.length - 1] = { k: "cmd", text: full.slice(0, ci) }; return n; });
+          if (ci < full.length) schedule(typeChar, 52);
+          else schedule(next, 340);
+        }
+        schedule(typeChar, 160);
+      } else if (step.s === "done") {
+        setLines(p => [...p, { k: "done" }]);
+        setFinished(true);
+      }
+    }
+
+    schedule(next, 400);
+    return () => { alive.current = false; timers.forEach(clearTimeout); };
+  }, [started]);
+
   return (
     <section id="Experience" className="relative py-24 overflow-hidden">
-      {/* Decorative background SVGs */}
-      <svg
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        viewBox="0 0 1200 800"
-        preserveAspectRatio="xMidYMid slice"
-        fill="none"
-      >
-        <AnimatedPath
-          d="M1200 100 L1000 100 L1000 400 L1100 400 L1100 700 L900 700"
-          stroke="#FF6600"
-          strokeWidth={1}
-          opacity={0.07}
-          delay={300}
-          duration={3000}
-        />
+      <svg className="absolute inset-0 hidden w-full h-full pointer-events-none md:block" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
+        <AnimatedPath d="M1200 100 L1000 100 L1000 400 L1100 400 L1100 700 L900 700" stroke="#FF6600" strokeWidth={1} opacity={0.25} dashed />
+        <AnimatedPath d="M0 200 L200 200 L200 100 L400 100 L400 300 L600 300 L600 150 L800 150" stroke="#FF6600" strokeWidth={1} opacity={0.22} dashed />
+        <AnimatedPath d="M0 500 L300 500 L300 650 L600 650 L600 500 L800 500 L800 700 L1000 700" stroke="#FF6600" strokeWidth={1} opacity={0.18} dashed />
+        <AnimatedPath d="M1200 500 L1050 500 L1050 300 L850 300 L850 550 L650 550" stroke="#FF6600" strokeWidth={1} opacity={0.18} dashed />
+        <AnimatedPath d="M400 0 L400 120 L700 120 L700 0" stroke="#FF6600" strokeWidth={1} opacity={0.12} dashed />
+        <AnimatedPath d="M300 800 L300 680 L700 680 L700 800" stroke="#FF6600" strokeWidth={1} opacity={0.12} dashed />
       </svg>
-
       <div className="relative z-10 container mx-auto max-w-7xl px-6">
         <FadeInView>
-          <p className="text-xs font-bold tracking-[0.4em] uppercase text-[#FF6600] font-[family-name:var(--font-space-mono)] mb-4 flex items-center gap-3">
-            <span className="w-6 h-[2px] bg-[#FF6600]" />
-            Work Experience
-          </p>
+          <SectionLabel>Work Experience</SectionLabel>
           <h2 className="text-4xl md:text-5xl font-normal text-[var(--text-heading)] mb-4 leading-tight">
             Where I&apos;ve Worked
           </h2>
           <p className="text-[var(--text-body)] text-lg max-w-xl mb-16 leading-relaxed">
-            Co-founded a software studio delivering production iOS, Android, and web apps to Australian startups and B2B clients.
+            One studio. Real clients. Shipped end-to-end.
           </p>
         </FadeInView>
 
         <div className="max-w-3xl">
-          {experiences.map((exp, i) => (
-            <FadeInView key={i} delay={i * 0.15}>
-              <div className="relative flex gap-6 pb-16">
-                {/* Left: timeline */}
-                <div className="relative flex flex-col items-center">
-                  <TimelineDot current={exp.current} />
-                  {i < experiences.length - 1 && (
-                    <div className="relative mt-2 flex-1 min-h-[120px]">
-                      <AnimatedVerticalLine />
-                    </div>
-                  )}
-                </div>
+          <FadeInView delay={0.1}>
+            <TerminalFrame ref={cardRef} title="zsh — ekram@portfolio ~ experience">
+              <div className="px-6 py-5 min-h-[320px] font-[family-name:var(--font-space-mono)]">
 
-                {/* Right: content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
-                    <div>
-                      <h3 className="text-xl font-normal text-[var(--text-heading)] mb-1">
-                        {exp.role}
-                      </h3>
-                      <span className="text-[#FF6600] font-[family-name:var(--font-space-mono)] text-sm font-bold">
-                        {exp.company}
-                      </span>
-                    </div>
-                    <div className="flex-shrink-0">
-                      <span
-                        className={`text-[10px] font-bold uppercase tracking-[0.2em] font-[family-name:var(--font-space-mono)] px-3 py-1.5 ${
-                          exp.current
-                            ? "bg-[#FF6600] text-white"
-                            : "border border-[var(--border-primary)] text-[#888888]"
-                        }`}
-                        style={{ borderRadius: 2 }}
-                      >
-                        {exp.period}
-                      </span>
-                    </div>
+                {lines.length === 0 && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#FF6600] text-[16px] leading-none select-none">❯</span>
+                    <TerminalCursor className="text-[16px] leading-none" />
                   </div>
+                )}
 
-                  <ul className="space-y-2">
-                    {exp.bullets.map((b, bi) => (
-                      <li key={bi} className="flex gap-3 text-[var(--text-body)] text-sm leading-relaxed">
-                        <span className="mt-2 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[#FF6600] opacity-70" />
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {lines.map((line, i) => {
+                  if (line.k === "blank") return <div key={i} className="h-4" />;
+
+                  if (line.k === "cmd") {
+                    const isLast = i === lines.length - 1;
+                    return (
+                      <div key={i} className="flex items-center gap-2.5 mb-2">
+                        <span className="text-[#FF6600] text-[16px] leading-none select-none">❯</span>
+                        <span className="text-[#d0d0d0] text-[14px] leading-none">{line.text}</span>
+                        {isLast && !finished && <TerminalCursor className="text-[14px] leading-none" />}
+                      </div>
+                    );
+                  }
+
+                  if (line.k === "out") {
+                    if (line.accent) return (
+                      <p key={i} className="text-[#FF6600] text-[18px] font-bold mb-1">{line.text}</p>
+                    );
+                    return (
+                      <p key={i} className="text-[#555] text-[12px] mb-0.5">{line.text}</p>
+                    );
+                  }
+
+                  if (line.k === "link") return (
+                    <a
+                      key={i}
+                      href={line.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#FF6600] text-[12px] hover:underline underline-offset-4 opacity-70 hover:opacity-100 transition-opacity block mb-0.5"
+                    >
+                      ↗ {line.label}
+                    </a>
+                  );
+
+                  if (line.k === "bullet") return (
+                    <div key={i} className="flex gap-2.5 mb-2">
+                      <span className="text-[#FF6600] opacity-50 shrink-0 mt-[3px] text-[10px]">▸</span>
+                      <span className="text-[#888] text-[13px] leading-relaxed">{line.text}</span>
+                    </div>
+                  );
+
+                  if (line.k === "done") return (
+                    <div key={i} className="flex items-center gap-2.5 mt-2">
+                      <span className="text-[#FF6600] text-[16px] leading-none select-none">❯</span>
+                      <TerminalCursor className="text-[16px] leading-none" />
+                    </div>
+                  );
+
+                  return null;
+                })}
               </div>
-            </FadeInView>
-          ))}
+            </TerminalFrame>
+          </FadeInView>
         </div>
       </div>
     </section>

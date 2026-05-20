@@ -41,7 +41,7 @@ const HeaderLink: React.FC<{
 
   const baseClasses =
     "text-[11px] flex items-center gap-1.5 px-3 py-1.5 border transition-all duration-200 font-[family-name:var(--font-space-mono)] tracking-wide";
-  const activeClasses = "border-[#FF6600] bg-[#FF6600]/5 text-[#FF6600]";
+  const activeClasses = "border-[#FF6600] bg-[#0f0f0f] text-[#FF6600]";
   const inactiveClasses = "border-[#1e1e1e] bg-[#0f0f0f] text-[#c0c0c0] hover:border-[#FF6600] hover:text-[#FF6600]";
 
   return (
@@ -56,7 +56,7 @@ const HeaderLink: React.FC<{
         style={{ borderRadius: 4 }}
         onClick={handleClick}
       >
-        <span className={`transition-colors duration-200 ${combinedActive ? "text-[#FF6600]" : "text-[#333]"}`}>❯</span>
+        <span className={`leading-none transition-colors duration-200 ${combinedActive ? "text-[#FF6600]" : "text-[#333]"}`}>❯</span>
         {item.label}
         {item.submenu && (
           <svg

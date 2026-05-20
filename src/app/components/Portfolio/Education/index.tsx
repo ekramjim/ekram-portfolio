@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import FadeInView from "@/app/components/Common/FadeInView";
+import SectionLabel from "@/components/ui/SectionLabel";
 import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
 
 const education = [
@@ -68,29 +69,14 @@ function AnimatedConnectorLine() {
 export default function Education() {
   return (
     <section id="Education" className="relative py-24 overflow-hidden">
-      {/* Decorative SVG lines */}
-      <svg
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        viewBox="0 0 1200 700"
-        preserveAspectRatio="xMidYMid slice"
-        fill="none"
-      >
-        <AnimatedPath
-          d="M0 150 L200 150 L200 350 L400 350 L400 200 L600 200"
-          stroke="#FF6600"
-          strokeWidth={1}
-          opacity={0.07}
-          delay={200}
-          duration={2500}
-        />
-        <AnimatedPath
-          d="M1200 550 L1050 550 L1050 350 L850 350"
-          stroke="#FF6600"
-          strokeWidth={1}
-          opacity={0.06}
-          delay={400}
-          duration={2000}
-        />
+      <svg className="absolute inset-0 hidden w-full h-full pointer-events-none md:block" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" fill="none">
+        <AnimatedPath d="M0 150 L200 150 L200 350 L400 350 L400 200 L600 200" stroke="#FF6600" strokeWidth={1} opacity={0.25} dashed />
+        <AnimatedPath d="M1200 550 L1050 550 L1050 350 L850 350" stroke="#FF6600" strokeWidth={1} opacity={0.22} dashed />
+        <AnimatedPath d="M0 400 L200 400 L200 550 L450 550 L450 350 L650 350 L650 550 L850 550" stroke="#FF6600" strokeWidth={1} opacity={0.18} dashed />
+        <AnimatedPath d="M1200 200 L1000 200 L1000 100 L700 100 L700 300 L500 300" stroke="#FF6600" strokeWidth={1} opacity={0.18} dashed />
+        <AnimatedPath d="M300 0 L300 100 L600 100 L600 0" stroke="#FF6600" strokeWidth={1} opacity={0.12} dashed />
+        <AnimatedPath d="M400 700 L400 600 L800 600 L800 700" stroke="#FF6600" strokeWidth={1} opacity={0.12} dashed />
+        <AnimatedPath d="M0 600 L150 600 L150 450 L350 450" stroke="#FF6600" strokeWidth={1} opacity={0.15} dashed />
       </svg>
 
       <div className="relative z-10 container mx-auto max-w-7xl px-6">
@@ -98,10 +84,7 @@ export default function Education() {
           {/* Left: Header */}
           <div>
             <FadeInView>
-              <p className="text-xs font-bold tracking-[0.4em] uppercase text-[#FF6600] font-[family-name:var(--font-space-mono)] mb-4 flex items-center gap-3">
-                <span className="w-6 h-[2px] bg-[#FF6600]" />
-                Education
-              </p>
+              <SectionLabel>Education</SectionLabel>
               <h2 className="text-4xl md:text-5xl font-normal text-[var(--text-heading)] mb-6 leading-tight">
                 Academic Background
               </h2>
@@ -109,17 +92,6 @@ export default function Education() {
                 Currently pursuing a Master of Data Science at Monash University, having completed a Bachelor of Computer Science (Data Science) with a High Achievers Scholarship.
               </p>
 
-              {/* Monash highlight card */}
-              <div className="border-2 border-[#FF6600] p-6 relative" style={{ borderRadius: 4 }}>
-                <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#FF6600]" />
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#FF6600] font-[family-name:var(--font-space-mono)] mb-2">Currently At</p>
-                <h4 className="text-2xl font-normal text-[var(--text-heading)] mb-1">Monash University</h4>
-                <p className="text-[var(--text-body)] text-sm">Master of Data Science — Monash University</p>
-                <div className="mt-4 flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#FF6600] animate-pulse" />
-                  <span className="text-[10px] font-[family-name:var(--font-space-mono)] uppercase tracking-widest text-[#FF6600]">Ongoing — Nov 2026</span>
-                </div>
-              </div>
             </FadeInView>
           </div>
 
@@ -150,11 +122,7 @@ export default function Education() {
                       </div>
                       <span
                         className="text-[10px] font-bold uppercase tracking-widest font-[family-name:var(--font-space-mono)] px-2 py-1 self-start flex-shrink-0"
-                        style={{
-                          background: edu.current ? "#FF6600" : "var(--bg-secondary)",
-                          color: edu.current ? "#fff" : "#888888",
-                          borderRadius: 2,
-                        }}
+                        style={{ color: edu.current ? "#FF6600" : "#888888" }}
                       >
                         {edu.period}
                       </span>

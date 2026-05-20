@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Article } from "@/app/types/articles";
 import { format } from "date-fns";
 import { Icon } from "@iconify/react";
+import { useMobileScrollActive } from "@/app/hooks/useMobileScrollActive";
 
 interface ArticleCardProps {
   article: Article;
@@ -12,12 +13,14 @@ interface ArticleCardProps {
 
 const ArticleCard = ({ article, variant = "grid" }: ArticleCardProps) => {
   const isSlider = variant === "slider";
+  const { ref, isActive } = useMobileScrollActive<HTMLDivElement>();
 
   return (
     <div className={isSlider ? "" : "w-full"}>
       <Link href={`/articles/${article.slug}`} className="block">
         <div
-          className={`bg-white shadow-lg rounded-4xl relative overflow-hidden transition-all duration-300 hover:shadow-xl ${
+          ref={ref}
+          className={`bg-white rounded-4xl relative overflow-hidden transition-colors duration-300 ${
             isSlider ? "m-3 my-10" : "h-full"
           }`}
         >
@@ -32,14 +35,14 @@ const ArticleCard = ({ article, variant = "grid" }: ArticleCardProps) => {
             />
           </div>
 
-          <span className="absolute text-base bg-primary text-white hover:bg-black hover:shadow-xl py-3 px-6 rounded-full top-56 right-11 transition-all duration-300">
+          <span className={`absolute text-base bg-primary text-white hover:bg-black py-3 px-6 rounded-full top-56 right-11 transition-colors duration-300 ${isActive ? "bg-black" : ""}`}>
             {article.readingTime} read
           </span>
 
           {/* Text area with extra padding (keeps separate from image padding) */}
           <div className="px-6 pb-6 pt-4">
             <div className="block">
-              <h5 className="font-normal hover:text-primary transition-colors">
+              <h5 className={`font-normal hover:text-primary transition-colors ${isActive ? "text-primary" : ""}`}>
                 {article.title}
               </h5>
               <p className="text-sm text-black pt-2 line-clamp-2">

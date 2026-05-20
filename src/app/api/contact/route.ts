@@ -12,27 +12,31 @@ const transporter = nodemailer.createTransport({
 
 export async function POST(request: Request) {
   try {
-    const { name, email, message } = await request.json();
+    const { name, email, subject, message } = await request.json();
+    const emailSubject = subject?.trim() || "New contact form message";
 
     const recipients = [
       process.env.EMAIL_RECIPIENT_1,
       process.env.EMAIL_RECIPIENT_2,
-    ];
+      "ekramjim002@gmail.com",
+    ].filter(Boolean);
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: recipients.join(", "),
       replyTo: email,
-      subject: `New Contact Form Message from ${name}`,
+      subject: emailSubject,
       text: `
 Name: ${name}
 Email: ${email}
+Subject: ${emailSubject}
 Message: ${message}
       `,
       html: `
 <h3>New Contact Form Message</h3>
 <p><strong>Name:</strong> ${name}</p>
 <p><strong>Email:</strong> ${email}</p>
+<p><strong>Subject:</strong> ${emailSubject}</p>
 <p><strong>Message:</strong><br/>${message}</p>
       `,
     };

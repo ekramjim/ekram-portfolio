@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 
 interface AnimatedSVGConnectorProps {
   variant?: "vertical" | "wave" | "circuit" | "branch";
@@ -101,53 +101,112 @@ export default function AnimatedSVGConnector({
   );
 }
 
-// Inline SVG path animator — for custom paths within any component
+// Inline SVG path animator — draws as user scrolls through the section.
+// When dashed=true: a mask path (solid, animated via dashoffset) reveals
+// the dashed visible path underneath, keeping the scroll-reveal intact.
 export function AnimatedPath({
   d,
   stroke = "#FF6600",
   strokeWidth = 1.5,
-  delay = 0,
-  duration = 1600,
   opacity = 0.6,
+  dashed = false,
+  delay: _delay,
+  duration: _duration,
 }: {
   d: string;
   stroke?: string;
   strokeWidth?: number;
+  opacity?: number;
+  dashed?: boolean;
   delay?: number;
   duration?: number;
-  opacity?: number;
 }) {
-  const pathRef = useRef<SVGPathElement>(null);
+  const maskPathRef = useRef<SVGPathElement>(null);
+  const uid = useId();
+  const maskId = `apm${uid.replace(/[^a-zA-Z0-9]/g, "")}`;
 
   useEffect(() => {
-    const path = pathRef.current;
+    const path = maskPathRef.current;
     if (!path) return;
 
     const length = path.getTotalLength();
     path.style.strokeDasharray = `${length}`;
     path.style.strokeDashoffset = `${length}`;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => {
-            path.style.transition = `stroke-dashoffset ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
-            path.style.strokeDashoffset = "0";
-          }, delay);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.05 }
-    );
+    let rafId = 0;
 
-    const svg = path.closest("svg");
-    if (svg) observer.observe(svg);
-    return () => observer.disconnect();
-  }, [delay, duration]);
+    const update = () => {
+      const svg = path.closest("svg");
+      if (!svg) return;
+      const rect = svg.getBoundingClientRect();
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      const isTouchPhone = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+      const scrollRange = isTouchPhone
+        ? Math.min(rect.height + viewportHeight, viewportHeight * 1.65)
+        : rect.height + viewportHeight;
+      const progress = (viewportHeight - rect.top) / Math.max(scrollRange, 1);
+      const clamped = Math.max(0, Math.min(1, progress));
+      path.style.strokeDashoffset = `${length * (1 - clamped)}`;
+    };
+
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = 0;
+        update();
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    window.addEventListener("orientationchange", onScroll);
+    window.visualViewport?.addEventListener("resize", onScroll);
+    window.visualViewport?.addEventListener("scroll", onScroll);
+    update();
+    return () => {
+      if (rafId) window.cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("orientationchange", onScroll);
+      window.visualViewport?.removeEventListener("resize", onScroll);
+      window.visualViewport?.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  if (dashed) {
+    return (
+      <g>
+        <mask id={maskId}>
+          {/* Solid path that animates via dashoffset — acts as the reveal mask */}
+          <path
+            ref={maskPathRef}
+            d={d}
+            stroke="white"
+            strokeWidth={strokeWidth + 2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+        </mask>
+        {/* Dashed visible path, revealed by the mask above */}
+        <path
+          d={d}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+          strokeDasharray="6 10"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+          style={{ opacity }}
+          mask={`url(#${maskId})`}
+        />
+      </g>
+    );
+  }
 
   return (
     <path
-      ref={pathRef}
+      ref={maskPathRef}
       d={d}
       stroke={stroke}
       strokeWidth={strokeWidth}

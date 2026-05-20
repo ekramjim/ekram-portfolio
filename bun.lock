@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "desgy_project",
+      "name": "ekram-portfolio",
       "dependencies": {
         "@gsap/react": "^2.1.2",
         "@headlessui/react": "^2.2.9",

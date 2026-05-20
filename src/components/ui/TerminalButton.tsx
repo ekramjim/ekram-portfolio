@@ -1,19 +1,24 @@
 "use client";
 import { useState } from "react";
-import TerminalCursor from "./TerminalCursor";
 
 interface Props {
   cmd: string;
   href?: string;
   onClick?: () => void;
   compact?: boolean;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 }
 
-export default function TerminalButton({ cmd, href, onClick, compact = false }: Props) {
+export default function TerminalButton({ cmd, href, onClick, compact = false, type = "button", disabled = false }: Props) {
   const [hovered, setHovered] = useState(false);
   const [running, setRunning] = useState(false);
 
   const handleClick = (e: React.MouseEvent) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
     if (onClick) {
       e.preventDefault();
       onClick();
@@ -27,25 +32,22 @@ export default function TerminalButton({ cmd, href, onClick, compact = false }: 
     setTimeout(() => { window.location.href = href; }, 900);
   };
 
-  const classes = `flex items-center justify-between gap-4 border transition-all duration-200 cursor-pointer select-none font-[family-name:var(--font-space-mono)] ${
+  const classes = `flex items-center justify-between gap-4 border transition-all duration-200 select-none font-[family-name:var(--font-space-mono)] ${
     compact ? "px-3 py-1.5" : "px-4 py-2.5"
   } ${
-    hovered ? "border-[#FF6600] bg-[#FF6600]/5" : "border-[#1e1e1e] bg-[#0f0f0f]"
+    disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+  } ${
+    hovered ? "border-[#FF6600] bg-[#0f0f0f]" : "border-[#1e1e1e] bg-[#0f0f0f]"
   }`;
 
   const inner = (
     <>
       <div className="flex items-center gap-2">
-        <span className={`text-[#FF6600] select-none ${compact ? "text-[13px]" : "text-[15px]"}`}>❯</span>
-        <span className={`transition-colors duration-200 ${compact ? "text-[11px]" : "text-[13px]"} ${hovered ? "text-[#ffffff]" : "text-[#c0c0c0]"}`}>
+        <span className={`text-[#FF6600] leading-none select-none ${compact ? "text-[13px]" : "text-[15px]"}`}>❯</span>
+        <span className={`leading-none transition-colors duration-200 ${compact ? "text-[11px]" : "text-[13px]"} ${hovered ? "text-[#ffffff]" : "text-[#c0c0c0]"}`}>
           {running ? (
             <span className="text-[#FF6600]">running<span className="animate-pulse">...</span></span>
-          ) : (
-            <>
-              {cmd}
-              <TerminalCursor className="ml-1 align-middle text-[14px]" />
-            </>
-          )}
+          ) : cmd}
         </span>
       </div>
       {!compact && (
@@ -59,6 +61,8 @@ export default function TerminalButton({ cmd, href, onClick, compact = false }: 
   if (onClick || !href) {
     return (
       <button
+        type={type}
+        disabled={disabled}
         onClick={handleClick}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}

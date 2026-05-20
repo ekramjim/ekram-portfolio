@@ -19,40 +19,26 @@ const socials = [
   { icon: "ion:mail", href: "mailto:ekramjim002@gmail.com", label: "Email" },
 ];
 
+const dividerBlocks = Array.from({ length: 48 }, (_, index) => (
+  <span key={index}>▓▓▓░░░</span>
+));
+
 const Footer = () => {
   return (
     <div className="relative" id="first-section">
-      {/* Animated Wave at the top */}
-      <div className="relative w-full overflow-hidden">
-        <svg
-          className="relative w-full h-32 md:h-40"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlnsXlink="http://www.w3.org/1999/xlink"
-          viewBox="0 24 150 28"
-          preserveAspectRatio="none"
-          shapeRendering="auto"
-        >
-          <defs>
-            <path
-              id="gentle-wave"
-              d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
-            />
-          </defs>
-          <g className="waves">
-            <use xlinkHref="#gentle-wave" x="48" y="0" style={{ fill: "rgba(255, 102, 0, 0.12)", animation: "wave1 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite" }} />
-            <use xlinkHref="#gentle-wave" x="48" y="2" style={{ fill: "rgba(255, 102, 0, 0.2)", animation: "wave2 8s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.125s infinite" }} />
-            <use xlinkHref="#gentle-wave" x="48" y="4" style={{ fill: "rgba(255, 102, 0, 0.35)", animation: "wave3 6s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.25s infinite" }} />
-            <use xlinkHref="#gentle-wave" x="48" y="6" style={{ fill: "rgba(10, 10, 10, 0.7)", animation: "wave4 9s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.375s infinite" }} />
-            <use xlinkHref="#gentle-wave" x="48" y="8" style={{ fill: "#0a0a0a", animation: "wave5 8s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.5s infinite" }} />
-          </g>
-        </svg>
-
+      <div className="w-full overflow-hidden border-y border-[#FF6600] bg-[#0a0a0a] py-2 text-[#FF6600]">
+        <div className="flex w-max animate-footer-marquee whitespace-nowrap font-[family-name:var(--font-space-mono)] text-xs tracking-[0.35em]">
+          <div className="flex">{dividerBlocks}</div>
+          <div className="flex" aria-hidden="true">
+            {dividerBlocks}
+          </div>
+        </div>
       </div>
 
       {/* Footer content */}
-      <footer className="bg-[#0a0a0a] border-t-4 border-[#FF6600] relative overflow-hidden">
+      <footer className="bg-[#0a0a0a] relative overflow-hidden">
         {/* Decorative circuit lines */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-5" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice" fill="none">
+        <svg className="absolute inset-0 hidden w-full h-full pointer-events-none opacity-5 md:block" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice" fill="none">
           <path d="M0 100 L200 100 L200 200 L500 200 L500 50 L800 50 L800 300 L1200 300" stroke="#FF6600" strokeWidth="1" />
           <path d="M0 300 L150 300 L150 150 L400 150 L400 350 L1200 350" stroke="#FF6600" strokeWidth="1" />
         </svg>

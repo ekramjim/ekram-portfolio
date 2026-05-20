@@ -1,5 +1,15 @@
 @import 'tailwindcss';
 
+@keyframes float-icon {
+  from { transform: translate(0, 0) rotate(0deg); }
+  to   { transform: translate(var(--float-dx), var(--float-dy)) rotate(var(--float-r)); }
+}
+
+@keyframes scroll-up {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -22,6 +32,43 @@
 
 .terminal-frame:hover .terminal-border-rect {
   stroke-dashoffset: 0;
+}
+
+.terminal-frame.terminal-frame-active .terminal-border-rect {
+  stroke-dashoffset: 0;
+}
+
+.terminal-header-fill {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  background-color: #b84200;
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.35) 1px, transparent 1px);
+  background-size: 3px 3px;
+  transition: width 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 6px 6px 0 0;
+  pointer-events: none;
+}
+
+.terminal-frame:hover .terminal-header-fill,
+.terminal-frame.terminal-frame-active .terminal-header-fill {
+  width: 100%;
+}
+
+.terminal-frame:hover .terminal-header-title,
+.terminal-frame.terminal-frame-active .terminal-header-title {
+  color: #ffffff;
+  opacity: 1;
+}
+
+.terminal-frame:hover .terminal-dot-orange,
+.terminal-frame.terminal-frame-active .terminal-dot-orange {
+  background-color: #ffffff;
+}
+
+.terminal-frame:hover .terminal-dot-grey,
+.terminal-frame.terminal-frame-active .terminal-dot-grey {
+  background-color: rgba(0, 0, 0, 0.25);
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -139,7 +186,7 @@
 
     --brutal-card-bg: #161616;
 
-    --dots-color: #1e1e1e;
+    --dots-color: #222222;
 
     --grain-opacity: 0.03;
 
@@ -271,6 +318,14 @@ body {
 .brutal-dots {
   background-image: radial-gradient(circle, var(--dots-color) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+/* Square box line grid */
+.brutal-grid {
+  background-image:
+    linear-gradient(rgba(255,102,0,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,102,0,0.07) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 /* Scroll progress bar */
@@ -435,4 +490,18 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes footer-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-footer-marquee {
+  animation: footer-marquee 24s linear infinite;
 }

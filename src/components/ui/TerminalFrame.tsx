@@ -1,5 +1,6 @@
 "use client";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { useMobileScrollActive } from "@/app/hooks/useMobileScrollActive";
 
 const PALETTE_BASE = ["#FF6600", "#FF8833", "#cc5500", "#ff9966", "#2a2a2a", "#333", "#555", "#888"];
 
@@ -12,6 +13,10 @@ interface Props {
 const TerminalFrame = forwardRef<HTMLDivElement, Props>(
   ({ title, children, className = "" }, ref) => {
     const [palette, setPalette] = useState(PALETTE_BASE);
+    const frameRef = useRef<HTMLDivElement>(null);
+    const { ref: scrollRef, isActive } = useMobileScrollActive<HTMLDivElement>();
+
+    useImperativeHandle(ref, () => frameRef.current as HTMLDivElement, []);
 
     useEffect(() => {
       const id = setInterval(() => {
@@ -28,26 +33,21 @@ const TerminalFrame = forwardRef<HTMLDivElement, Props>(
     }, []);
 
     return (
-      <div ref={ref} className={`terminal-frame relative bg-[#0d0d0d] border border-[#1e1e1e] ${className}`} style={{ borderRadius: 6 }}>
-        {/* Hover border draw */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" style={{ borderRadius: 6 }}>
-          <rect
-            pathLength="1"
-            className="terminal-border-rect"
-            x="0.5" y="0.5"
-            width="calc(100% - 1px)" height="calc(100% - 1px)"
-            rx="5.5"
-            fill="none"
-            stroke="#FF6600"
-            strokeWidth="1.5"
-          />
-        </svg>
+      <div
+        ref={(node) => {
+          frameRef.current = node;
+          scrollRef.current = node;
+        }}
+        className={`terminal-frame relative bg-[#0d0d0d] border border-[#1e1e1e] ${isActive ? "terminal-frame-active" : ""} ${className}`}
+        style={{ borderRadius: 6 }}
+      >
         {/* Chrome bar */}
-        <div className="flex items-center gap-2 px-4 py-3 border-b border-[#191919]">
-          <span className="w-3 h-3 rounded-full bg-[#FF6600] opacity-75" />
-          <span className="w-3 h-3 rounded-full bg-[#222]" />
-          <span className="w-3 h-3 rounded-full bg-[#222]" />
-          <span className="ml-3 text-[9px] uppercase tracking-[0.35em] text-[#666] font-[family-name:var(--font-space-mono)]">
+        <div className="relative flex items-center gap-2 px-4 py-2 border-b border-[#2a2a2a] bg-[#161616] overflow-hidden">
+          <span className="terminal-header-fill" />
+          <span className="terminal-dot-orange relative z-10 w-3 h-3 rounded-full bg-[#FF6600] opacity-75 shrink-0 transition-colors duration-500" />
+          <span className="terminal-dot-grey relative z-10 w-3 h-3 rounded-full bg-[#222] shrink-0 transition-colors duration-500" />
+          <span className="terminal-dot-grey relative z-10 w-3 h-3 rounded-full bg-[#222] shrink-0 transition-colors duration-500" />
+          <span className="relative z-10 ml-3 text-[10px] uppercase tracking-[0.25em] text-[#666] font-[family-name:var(--font-space-mono)] terminal-header-title transition-all duration-500">
             {title}
           </span>
         </div>

@@ -54,8 +54,9 @@ const Header: React.FC = () => {
   const headerData: HeaderItem[] = [
     { label: "About", href: isHomePage ? "#About" : "/#About" },
     { label: "Skills", href: isHomePage ? "#Skills" : "/#Skills" },
-    { label: "Experience", href: isHomePage ? "#Experience" : "/#Experience" },
     { label: "Projects", href: isHomePage ? "#Projects" : "/#Projects" },
+    { label: "Leadership", href: isHomePage ? "#Leadership" : "/#Leadership" },
+    { label: "Experience", href: isHomePage ? "#Experience" : "/#Experience" },
     { label: "Contact", href: isHomePage ? "#Contact" : "/#Contact" },
   ];
 

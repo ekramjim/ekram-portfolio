@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 function SectionDivider() {
   return (
-    <div className="relative flex items-center gap-0 overflow-hidden">
+    <div className="relative flex items-center gap-0">
       <div className="flex-1 h-[1px] bg-[var(--border-primary)]" />
       <div className="w-2.5 h-2.5 bg-[#FF6600] rotate-45 -mx-1.5 flex-shrink-0" />
       <div className="flex-1 h-[1px] bg-[var(--border-primary)]" />
@@ -35,13 +35,13 @@ export default function Home() {
         <SectionDivider />
         <Skills />
         <SectionDivider />
-        <Experience />
-        <SectionDivider />
         <Projects />
         <SectionDivider />
         <Education />
         <SectionDivider />
         <Leadership />
+        <SectionDivider />
+        <Experience />
         <SectionDivider />
         <Contact />
       </div>

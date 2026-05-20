@@ -11,8 +11,8 @@ const ReadyToGetStarted = () => {
         bring your ideas to life? Let's start a conversation.
       </p>
       <Link
-        href="/contact"
-        className="inline-block bg-primary text-white px-8 py-4 rounded-full hover:bg-black hover:shadow-xl transition-all duration-300 font-normal"
+        href="/#Contact"
+        className="inline-block bg-primary text-white px-8 py-4 rounded-full hover:bg-black transition-colors duration-300 font-normal"
       >
         Get in Touch
       </Link>
