@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
+import { Icon } from "@iconify/react";
 import FadeInView from "@/app/components/Common/FadeInView";
 import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
-import { useMobileScrollActive } from "@/app/hooks/useMobileScrollActive";
 import TerminalButton from "@/components/ui/TerminalButton";
 import type { FormEvent } from "react";
 import SectionLabel from "@/components/ui/SectionLabel";
@@ -13,10 +14,7 @@ const contacts = [
     value: "ekramjim002@gmail.com",
     href: "mailto:ekramjim002@gmail.com",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        <polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <Icon icon="ion:mail-outline" width="20" height="20" />
     ),
   },
   {
@@ -24,9 +22,7 @@ const contacts = [
     value: "github.com/ekramjim002",
     href: "https://github.com/ekramjim002",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z" />
-      </svg>
+      <Icon icon="ion:logo-github" width="20" height="20" />
     ),
   },
   {
@@ -34,10 +30,7 @@ const contacts = [
     value: "linkedin.com/in/ekram02",
     href: "https://www.linkedin.com/in/ekram02",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z" />
-        <circle cx="4" cy="4" r="2" />
-      </svg>
+      <Icon icon="ion:logo-linkedin" width="20" height="20" />
     ),
   },
   {
@@ -45,9 +38,13 @@ const contacts = [
     value: "lynksphere.com",
     href: "https://lynksphere.com",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
+      <Image
+        src="/images/lynksphereLogo/lsLogoDark.png"
+        alt=""
+        width={22}
+        height={22}
+        className="h-5 w-5 object-contain"
+      />
     ),
   },
 ];
@@ -110,11 +107,6 @@ export default function Contact() {
               Open to collaborations, freelance projects, internships, and full-time opportunities.
               Whether you have a project idea or just want to say hello, I&apos;d love to hear from you.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {contacts.map((c, i) => (
-                <ContactCard key={c.label} contact={c} index={i} />
-              ))}
-            </div>
           </FadeInView>
 
           <FadeInView delay={0.12}>
@@ -136,6 +128,31 @@ export default function Contact() {
                 <span className="text-[10px] uppercase tracking-widest text-[#666666] font-[family-name:var(--font-space-mono)]">
                   ./contact.sh
                 </span>
+              </div>
+
+              <div className="mb-6 grid grid-cols-1 gap-3 border-b border-[var(--border-primary)] pb-6 sm:grid-cols-2">
+                {contacts.map((contact) => (
+                  <a
+                    key={contact.label}
+                    href={contact.href}
+                    target={contact.href.startsWith("http") ? "_blank" : undefined}
+                    rel="noopener noreferrer"
+                    className="group flex min-w-0 items-center gap-3 border border-[#1e1e1e] bg-[#0d0d0d] px-3 py-3 transition-colors duration-200 hover:border-[#FF6600]"
+                    style={{ borderRadius: 4 }}
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-[#242424] bg-[#161616] text-[#FF6600] transition-colors duration-200 group-hover:border-[#FF6600]">
+                      {contact.icon}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block font-[family-name:var(--font-space-mono)] text-[10px] font-bold uppercase tracking-[0.25em] text-[#666666]">
+                        {contact.label}
+                      </span>
+                      <span className="block truncate font-[family-name:var(--font-space-mono)] text-xs text-[#aaaaaa] transition-colors duration-200 group-hover:text-white">
+                        {contact.value}
+                      </span>
+                    </span>
+                  </a>
+                ))}
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
@@ -222,57 +239,5 @@ export default function Contact() {
         </div>
       </div>
     </section>
-  );
-}
-
-function ContactCard({ contact, index }: { contact: typeof contacts[0]; index: number }) {
-  const { ref, isActive } = useMobileScrollActive<HTMLDivElement>();
-
-  const inner = (
-    <div
-      ref={ref}
-      className={`terminal-frame bg-[#0d0d0d] border border-[#1e1e1e] flex flex-col ${isActive ? "terminal-frame-active" : ""}`}
-      style={{ borderRadius: 6 }}
-    >
-      {/* Chrome header — same pattern as TerminalFrame */}
-      <div className="relative flex items-center gap-2 px-4 py-2 border-b border-[#2a2a2a] bg-[#161616] overflow-hidden shrink-0">
-        <span className="terminal-header-fill" />
-        <span className="terminal-dot-orange relative z-10 w-3 h-3 rounded-full bg-[#FF6600] opacity-75 shrink-0 transition-colors duration-500" />
-        <span className="terminal-dot-grey relative z-10 w-3 h-3 rounded-full bg-[#222] shrink-0 transition-colors duration-500" />
-        <span className="relative z-10 ml-3 text-[10px] uppercase tracking-[0.25em] text-[#666] font-[family-name:var(--font-space-mono)] terminal-header-title transition-all duration-500">
-          {contact.label}
-        </span>
-      </div>
-
-      {/* Body */}
-      <div className="p-5 flex flex-col gap-3 flex-1">
-        <div className="text-[#555] transition-colors duration-300 group-hover:text-[#FF6600]">
-          {contact.icon}
-        </div>
-        <p className="text-[13px] text-[#aaa] font-[family-name:var(--font-space-mono)] break-all leading-relaxed">
-          {contact.value}
-        </p>
-        {contact.href && (
-          <span className="text-[11px] text-[#FF6600] font-[family-name:var(--font-space-mono)] mt-auto opacity-50 group-hover:opacity-100 transition-opacity duration-300">
-            ↗ open
-          </span>
-        )}
-      </div>
-    </div>
-  );
-
-  return (
-    <FadeInView delay={index * 0.1}>
-      {contact.href ? (
-        <a
-          href={contact.href}
-          target={contact.href.startsWith("http") ? "_blank" : undefined}
-          rel="noopener noreferrer"
-          className="group block"
-        >
-          {inner}
-        </a>
-      ) : inner}
-    </FadeInView>
   );
 }
