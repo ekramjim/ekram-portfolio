@@ -12,7 +12,7 @@ import Contact from "@/app/components/Portfolio/Contact";
 export const metadata: Metadata = {
   title: "Ekram — Portfolio",
   description:
-    "Co-Founder & CEO of LynkSphere. Computer Science graduate from Monash University specialising in Data Science, Bioinformatics, and Full-Stack Development.",
+    "Computer Science graduate from Monash University specialising in Data Science, Bioinformatics, and Full-Stack Development. Co-Founder of Lynksphere.",
 };
 
 function SectionDivider() {
