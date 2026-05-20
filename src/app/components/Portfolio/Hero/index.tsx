@@ -218,7 +218,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="flex flex-wrap gap-4"
             >
-              <a href="#Projects" className="group inline-flex items-center gap-3 bg-[#FF6600] text-white px-6 py-3 rounded-full hover:bg-[#e55500] transition-colors duration-300 font-[family-name:var(--font-space-mono)] text-sm font-bold uppercase tracking-wider shadow-[0_0_24px_rgba(255,102,0,0.25)]">
+              <a href="#Projects" className="group inline-flex items-center gap-3 bg-[#FF6600] text-white px-6 py-3 rounded-full hover:bg-[#e55500] transition-colors duration-300 font-[family-name:var(--font-space-mono)] text-sm font-bold uppercase tracking-wider">
                 View Projects
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

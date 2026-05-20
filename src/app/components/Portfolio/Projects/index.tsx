@@ -84,7 +84,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
         href={project.link}
         target="_blank"
         rel="noopener noreferrer"
-        className={`group block border-2 bg-[var(--bg-card)] p-6 relative overflow-hidden transition-all duration-300 hover:shadow-[4px_4px_0px_#FF6600] hover:-translate-y-1 cursor-pointer ${
+        className={`group block border-2 bg-[var(--bg-card)] p-6 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 cursor-pointer ${
           project.featured
             ? "border-[#FF6600] col-span-1 md:col-span-2"
             : "border-[var(--border-primary)] hover:border-[#FF6600]"

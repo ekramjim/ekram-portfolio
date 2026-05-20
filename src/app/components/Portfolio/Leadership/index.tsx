@@ -86,7 +86,7 @@ export default function Leadership() {
           {leadership.map((item, i) => (
             <FadeInView key={item.title} delay={i * 0.12}>
               <div
-                className="group border-2 border-[var(--border-primary)] bg-[var(--bg-card)] p-6 relative overflow-hidden hover:border-[#FF6600] hover:shadow-[4px_4px_0px_#FF6600] transition-all duration-300 hover:-translate-y-1 h-full flex flex-col"
+                className="group border-2 border-[var(--border-primary)] bg-[var(--bg-card)] p-6 relative overflow-hidden hover:border-[#FF6600] transition-all duration-300 hover:-translate-y-1 h-full flex flex-col"
                 style={{ borderRadius: 4 }}
               >
                 {/* Animated top bar */}

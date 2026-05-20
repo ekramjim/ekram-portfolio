@@ -103,7 +103,7 @@ export default function Contact() {
 
             <a
               href="mailto:ekramjim002@gmail.com"
-              className="inline-flex items-center gap-3 bg-[#FF6600] text-white px-8 py-4 hover:bg-[#e55500] transition-colors duration-300 font-[family-name:var(--font-space-mono)] text-sm font-bold uppercase tracking-wider shadow-[4px_4px_0px_#0a0a0a] hover:shadow-[6px_6px_0px_#0a0a0a] hover:-translate-y-0.5 transition-all"
+              className="inline-flex items-center gap-3 bg-[#FF6600] text-white px-8 py-4 hover:bg-[#e55500] transition-colors duration-300 font-[family-name:var(--font-space-mono)] text-sm font-bold uppercase tracking-wider hover:-translate-y-0.5 transition-all"
               style={{ borderRadius: 4 }}
             >
               Send a Message
@@ -122,7 +122,7 @@ export default function Contact() {
                     href={c.href}
                     target={c.href.startsWith("http") ? "_blank" : undefined}
                     rel="noopener noreferrer"
-                    className="group border-2 border-[var(--border-primary)] bg-[var(--bg-card)] p-5 flex flex-col gap-3 hover:border-[#FF6600] hover:shadow-[3px_3px_0px_#FF6600] transition-all duration-300 hover:-translate-y-0.5 cursor-pointer"
+                    className="group border-2 border-[var(--border-primary)] bg-[var(--bg-card)] p-5 flex flex-col gap-3 hover:border-[#FF6600] transition-all duration-300 hover:-translate-y-0.5 cursor-pointer"
                     style={{ borderRadius: 4 }}
                   >
                     <div className="text-[#888888] group-hover:text-[#FF6600] transition-colors duration-200">
