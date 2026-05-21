@@ -220,11 +220,11 @@ export default function Hero() {
                 return <p key={i} className="ml-5 text-[14px] mb-1 leading-relaxed text-[#888]">{line.text}</p>;
               }
               if (line.k === "bar") {
-                const filled = Math.round(line.pct / 5);
+                const filled = Math.floor(line.pct / 5);
                 return (
                   <div key={i} className="ml-5 mt-1 mb-1">
                     <p className="text-[#666] text-[13px] mb-2">Initializing...</p>
-                    <p className="text-[14px]">[<span className="text-[#FF6600]">{"░".repeat(filled)}</span><span className="text-[#f0f0f0]">{"░".repeat(20 - filled)}</span>]{" "}<span className="text-[#888]">{line.pct}%</span></p>
+                    <p className="text-[14px]">[<span className="text-[#FF6600]">{"█".repeat(filled)}</span><span className="text-[#333]">{"░".repeat(20 - filled)}</span>]{" "}<span className="text-[#888]">{line.pct}%</span></p>
                   </div>
                 );
               }
