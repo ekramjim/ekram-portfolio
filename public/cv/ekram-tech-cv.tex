@@ -1,0 +1,261 @@
+%-------------------------
+% Jake's Resume Style
+%-------------------------
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage[default]{sourcesanspro}
+\usepackage[T1]{fontenc}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[colorlinks=true, urlcolor=blue, linkcolor=blue]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{multicol}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+%-------------------------
+\newcommand{\resumeItem}[1]{
+  \item\small{#1 \vspace{-2pt}}
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubheadingTwo}[2]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%=============================================================================
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+  {\Huge \scshape Ekramul Islam} \\ \vspace{4pt}
+  \small
+  Melbourne, VIC 3161 $|$
+  \href{tel:+61425709925}{\underline{+61 425 709 925}} $|$
+  \href{mailto:ekramjim002@gmail.com}{\underline{ekramjim002@gmail.com}} $|$
+  \href{https://github.com/ekramjim}{\underline{github.com/ekramjim}} $|$
+  \href{https://www.linkedin.com/in/ekram02}{\underline{linkedin.com/in/ekram02}} $|$
+  \href{https://ekram.tech}{\underline{ekram.tech}}
+\end{center}
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Monash University}{Melbourne, Australia}
+      {Master of Data Science}{Jul 2025 -- Nov 2026}
+      \resumeItemListStart
+        \resumeItem{\textbf{Coursework:} Data Wrangling, Software Engineering, Bioinformatics, Machine Learning, Data Visualisation, Data Analytics, Algorithms and Data Structures, Deep Learning, Theory of Computation}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Monash University}{Melbourne, Australia}
+      {Bachelor of Computer Science (Data Science)}{Jul 2022 -- Jul 2025}
+      \resumeItemListStart
+        \resumeItem{Awarded High Achievers Scholarship}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+\section{Projects}
+  \resumeSubHeadingListStart
+
+    \resumeProjectHeading
+      {\textbf{LinkedHive} $|$ \emph{React Native, Expo, Next.js 16, TypeScript, Supabase, Drizzle ORM, Stripe}}{\href{https://www.linkedhive.com.au/}{\underline{Website}} $|$ \href{https://apps.apple.com/au/app/linkedhive/id6741866108}{\underline{iOS}} $|$ 2025--2026}
+      \resumeItemListStart
+        \resumeItem{Built a cross-platform (iOS, Android, Web) location-based community and business networking app for Australian suburbs, featuring real-time chat, posts, events, jobs, and local deals}
+        \resumeItem{Engineered full-stack backend with Next.js API routes, PostgreSQL via Supabase, and Drizzle ORM covering 20+ entity types}
+        \resumeItem{Integrated Google Gemini 2.5 Flash AI for real-time content translation and summarisation across posts, news, events, and job listings}
+        \resumeItem{Implemented Stripe subscription billing (\$149 AUD/year premium) with webhook handling and Resend transactional emails}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{TimeBreak} $|$ \emph{Swift, SwiftUI, WidgetKit, ActivityKit, AppIntents, EventKit}}{\href{https://github.com/ekramjim/timeBreak}{\underline{GitHub}} $|$ \href{https://apps.apple.com/au/app/timebreak-pomodoro/id6763444390}{\underline{iOS}} $|$ \href{https://apps.apple.com/au/app/timebreak-pomodoro/id6763444390}{\underline{macOS}} $|$ 2026}
+      \resumeItemListStart
+        \resumeItem{Built a native Pomodoro timer for iOS and macOS with an analog clock interface, running on a single SwiftUI codebase across iPhone, iPad, and Mac with a dedicated menu bar app}
+        \resumeItem{Implemented Live Activities and WidgetKit Focus Trail widget to surface session state on Lock Screen and Home Screen without opening the app}
+        \resumeItem{Integrated EventKit for Reminders surfacing during focus sessions, custom theme picker, timer sounds, and guided onboarding flow}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{LynkSphere Website} $|$ \emph{Next.js 15, TypeScript, Tailwind CSS, Framer Motion, GSAP, Three.js}}{\href{https://lynksphere.com/}{\underline{Website}} $|$ 2026}
+      \resumeItemListStart
+        \resumeItem{Built production marketing site with rich 3D animations showcasing services, products, and pricing}
+        \resumeItem{Served as primary customer acquisition channel, contributing to \$30K AUD revenue in 3 months}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Personal Portfolio Website} $|$ \emph{Next.js 15, TypeScript, Tailwind CSS v4, Framer Motion, HTML5 Canvas}}{\href{https://ekram.tech}{\underline{Website}} $|$ 2026}
+      \resumeItemListStart
+        \resumeItem{Engineered a brutalist-themed developer portfolio with a hero terminal that simulates a live \texttt{zsh} session — staged typewriter commands animate character-by-character, followed by a 20-slot ASCII progress bar built from Unicode LIGHT SHADE blocks (\texttt{U+2591}) that fills 0\%--100\% via a \texttt{requestAnimationFrame} tick loop before surfacing the ready prompt}
+        \resumeItem{Built a real-time rotating DNA double helix background using raw HTML5 Canvas 2D API — 16-node dual strands with rung base-pair labels (A--T, G--C), skill annotations (bioinformatics and CS stack) rendered at per-frame opacity derived from sine/cosine Z-depth, running at 60 fps}
+        \resumeItem{Architected a custom \texttt{TerminalFrame} component styled after macOS Terminal with traffic-light window controls, Space Mono typeface, and an \texttt{\#FF6600} brutalist orange accent; eliminated layout shift on animation completion by keeping downstream elements always mounted and toggling opacity via Framer Motion}
+        \resumeItem{Integrated Lenis smooth scroll, scroll-triggered Framer Motion entrance animations per section, and a contact form backed by Nodemailer with server-side API route validation}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{AFL Game Ranking System} $|$ \emph{Next.js, React, Python, CatBoost, MongoDB, Pandas, Scikit-learn, Plotly.js, Tailwind}}{\href{https://github.com/yeanle02/FYP}{\underline{GitHub}} $|$ 2025}
+      \resumeItemListStart
+        \resumeItem{Trained CatBoostRegressor models on historical AFL data with Python subprocess integration via Next.js API routes, achieving 78\% match outcome accuracy}
+        \resumeItem{Built REST API endpoints connecting React frontend to ML backend, with MongoDB for team and player data storage}
+        \resumeItem{Visualised team performance and player stats using Plotly.js and Chart.js with interactive filtering}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Visualizing Renewable Energy} $|$ \emph{Vega-Lite, Vega-Embed, TopoJSON, Python, HTML/CSS}}{\href{https://ekramjim.github.io/visualizing-renewable-energy/}{\underline{Website}} $|$ 2024}
+      \resumeItemListStart
+        \resumeItem{Built an interactive data visualisation dashboard exploring global renewable energy trends using World Bank dataset, featuring 5 chart idioms: choropleth map, bar chart, stacked area, and donut chart}
+        \resumeItem{Implemented declarative Vega-Lite specs with interactive filters, tooltips, and cross-chart linking; preprocessed raw CSV data with a Python cleaning script}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{F1 Pinnacle of Motor Sports} $|$ \emph{Tableau, Data Visualisation, Statistical Analysis}}{\href{https://public.tableau.com/app/profile/ekramul.islam/viz/Visualization1F1/Dashboard1}{\underline{Tableau Public}} $|$ 2024}
+      \resumeItemListStart
+        \resumeItem{Built interactive dashboards with calculated fields, filters, and parameter controls displaying driver nationality, constructor performance trends, and season-by-season comparisons across decades of F1 data}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Android Call State Monitor} $|$ \emph{Java, Android SDK, BroadcastReceiver, TelephonyManager, Gradle}}{\href{https://github.com/ekramjim/MyCallReceiver}{\underline{GitHub}} $|$ 2024}
+      \resumeItemListStart
+        \resumeItem{Built an Android app using BroadcastReceiver and TelephonyManager to intercept call state changes (ringing, offhook, idle) and surface incoming caller ID via Toast notifications in real time}
+        \resumeItem{Configured READ\_PHONE\_STATE, PROCESS\_OUTGOING\_CALLS, and READ\_CALL\_LOG permissions with runtime permission handling}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Hearts Game} $|$ \emph{Python, OOP, AI Heuristics, Modular Architecture}}{\href{https://github.com/ekramjim/Hearts-Game}{\underline{GitHub}} $|$ 2023}
+      \resumeItemListStart
+        \resumeItem{Built a terminal-based Hearts card game in Python with full game logic, trick-taking mechanics, and score tracking using OOP with modular player, card, and round classes}
+        \resumeItem{Implemented two AI opponent strategies — a basic rule-based agent and an improved heuristic AI — for single and multi-player modes}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%-----------LEADERSHIP-----------
+\section{Leadership}
+  \resumeSubHeadingListStart
+
+    \resumeSubheadingTwo{Kingston Business Network}{Melbourne, Australia}
+      \resumeItemListStart
+        \resumeItem{Represented LynkSphere and delivered a startup-focused talk on how founders can start, position, and grow a successful business}
+      \resumeItemListEnd
+
+    \resumeSubheadingTwo{BNI Melbourne}{Melbourne, Australia}
+      \resumeItemListStart
+        \resumeItem{Took part in BNI Melbourne's short story program, presenting LynkSphere's work in software and startup development to a business audience}
+      \resumeItemListEnd
+
+    \resumeSubheadingTwo{Monash Generator Representative}{Monash University}
+      \resumeItemListStart
+        \resumeItem{Represented Monash Generator at new student orientation, briefing incoming cohorts on entrepreneurship programs, startup resources, and business development opportunities}
+      \resumeItemListEnd
+
+    \resumeSubheadingTwo{Go-Global Day Representative}{Monash University Prato, Italy}
+      \resumeItemListStart
+        \resumeItem{Represented Monash Prato campus to 200+ students of Monash University Malaysia as the main event representative}
+      \resumeItemListEnd
+
+    \resumeSubheadingTwo{Pisa Tour Leader}{Monash University Prato, Italy}
+      \resumeItemListStart
+        \resumeItem{Guided a group of 5 students across Pisa, delivering a speech on the historical significance of key sites including the Leaning Tower of Pisa}
+      \resumeItemListEnd
+
+    \resumeSubheadingTwo{Class Leader -- MGX3991}{Monash University Prato, Italy}
+      \resumeItemListStart
+        \resumeItem{Led a 45-minute student session, keeping the cohort engaged through interactive activities and a two-week recap}
+      \resumeItemListEnd
+
+    \resumeSubheadingTwo{MUVP x RMM Outreach Event}{NGO, Kuala Lumpur, Malaysia}
+      \resumeItemListStart
+        \resumeItem{Conducted an educational class for orphaned children as part of a university outreach initiative}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%-----------WORK EXPERIENCE-----------
+\section{Work Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Co-Founder \& CEO}{Dec 2024 -- Present}
+      {LynkSphere}{Melbourne, Australia}
+      \resumeItemListStart
+        \resumeItem{Co-founded a software studio delivering iOS, Android, and web applications to Australian startups and B2B clients using React Native, Next.js, SwiftUI, and Supabase}
+        \resumeItem{Grew from zero to \textasciitilde\$30,000 AUD revenue within 3 months, shipping 3 production applications including a 14-month cross-platform community platform (LinkedHive)}
+        \resumeItem{Managed full client lifecycle from technical scoping and architecture through to deployment and post-launch support}
+        \resumeItem{Acquired clients through pitches at BNI Australia, StartSpace Library, and Entrepreneurs Summit 2026}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%-----------CORE SKILLS-----------
+\section{Core Skills}
+  \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+      \textbf{Languages:} Python, Java, JavaScript, TypeScript, Swift, Kotlin, Bash, R, SQL, HTML/CSS/Tailwind \\
+      \textbf{Technologies:} Android, iOS, MongoDB, ReactJS, NodeJS, Next.js, Flutter, AWS, Google Cloud \\
+      \textbf{Tools:} Jupyter, Tableau, RStudio, VS Code, Git, GitHub, Docker, Xcode, Firebase, GeminiAPI \\
+      \textbf{Data \& Bioinformatics:} NumPy, Pandas, TensorFlow, PyTorch, Scikit-learn, limma, DESeq2, RNA-seq analysis, GO enrichment analysis, Bioconductor \\
+      \textbf{Soft Skills:} Leadership, Decision Making, Technical Communication, Public Speaking, Agile Methodologies, Mentorship, Conflict Resolution, Negotiation
+    }}
+  \end{itemize}
+
+\end{document}

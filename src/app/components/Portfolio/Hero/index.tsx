@@ -224,7 +224,7 @@ export default function Hero() {
                 return (
                   <div key={i} className="ml-5 mt-1 mb-1">
                     <p className="text-[#666] text-[13px] mb-2">Initializing...</p>
-                    <p className="text-[14px]">[<span className="text-[#f0f0f0]">{"░".repeat(filled)}</span><span className="text-[#FF6600]">{"░".repeat(20 - filled)}</span>]{" "}<span className="text-[#888]">{line.pct}%</span></p>
+                    <p className="text-[14px]">[<span className="text-[#FF6600]">{"░".repeat(filled)}</span><span className="text-[#f0f0f0]">{"░".repeat(20 - filled)}</span>]{" "}<span className="text-[#888]">{line.pct}%</span></p>
                   </div>
                 );
               }
@@ -244,11 +244,10 @@ export default function Hero() {
         </TerminalFrame>
       </motion.div>
 
-      {finished && (
-        <motion.div
+      <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          animate={{ opacity: finished ? 1 : 0 }}
+          transition={{ delay: finished ? 0.3 : 0, duration: 0.5 }}
           className="relative z-10 flex flex-wrap items-center justify-center gap-6 mt-6 font-[family-name:var(--font-space-mono)] text-[12px]"
         >
           {LINKS.map(({ label, href, icon }) => (
@@ -259,7 +258,6 @@ export default function Hero() {
             </a>
           ))}
         </motion.div>
-      )}
 
       {finished && (
         <motion.div
