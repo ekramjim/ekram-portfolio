@@ -40,8 +40,8 @@ function HtopBar({ pct, trigger, delay = 0 }: { pct: number; trigger: boolean; d
 
   return (
     <span className="min-w-0 flex items-center gap-2 font-[family-name:var(--font-space-mono)] text-[11px] sm:text-[12px]">
-      <span className="sm:hidden whitespace-nowrap">[<span style={{ color: fillColor, textShadow: glow }}>{"░".repeat(filledMobile)}</span><span style={{ color }}>{"░".repeat(emptyMobile)}</span>]</span>
-      <span className="hidden sm:inline whitespace-nowrap">[<span style={{ color: fillColor, textShadow: glow }}>{"░".repeat(filledDesktop)}</span><span style={{ color }}>{"░".repeat(emptyDesktop)}</span>]</span>
+      <span className="sm:hidden whitespace-nowrap">[<span style={{ color }}>{"░".repeat(filledMobile)}</span><span style={{ color: fillColor, textShadow: glow }}>{"░".repeat(emptyMobile)}</span>]</span>
+      <span className="hidden sm:inline whitespace-nowrap">[<span style={{ color }}>{"░".repeat(filledDesktop)}</span><span style={{ color: fillColor, textShadow: glow }}>{"░".repeat(emptyDesktop)}</span>]</span>
       <span className="text-[#aaa] shrink-0 tabular-nums">{current}%</span>
     </span>
   );
