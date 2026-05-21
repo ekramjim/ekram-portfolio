@@ -1,19 +1,18 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
-// Create a transporter using SMTP
-const transporter = nodemailer.createTransport({
-  service: "gmail", // or your email service
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_APP_PASSWORD, // Use app-specific password for Gmail
-  },
-});
-
 export async function POST(request: Request) {
   try {
     const { name, email, subject, message } = await request.json();
     const emailSubject = subject?.trim() || "New contact form message";
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_APP_PASSWORD,
+      },
+    });
 
     const recipients = [
       process.env.EMAIL_RECIPIENT_1,
