@@ -33,6 +33,17 @@ const FLYTHROUGH = [
 
 const DRAMATIC_TEXT = "Hi, I'm Ekram.";
 
+function useIsMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return mobile;
+}
+
 function DramaticText({ visible }: { visible: boolean }) {
   const [displayed, setDisplayed] = useState("");
   const [showCursor, setShowCursor] = useState(true);
@@ -64,13 +75,15 @@ function DramaticText({ visible }: { visible: boolean }) {
     <div
       style={{
         fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-        fontSize: "clamp(40px, 8vw, 100px)",
+        fontSize: "clamp(32px, 7vw, 100px)",
         fontWeight: 700,
         letterSpacing: "0.06em",
         color: "#ffffff",
-        lineHeight: 1.1,
+        lineHeight: 1.15,
         textShadow: "0 0 100px rgba(255,102,0,0.25)",
-        whiteSpace: "nowrap",
+        textAlign: "center",
+        maxWidth: "90vw",
+        wordBreak: "break-word",
       }}
     >
       {displayed}
@@ -97,7 +110,8 @@ function useScrollPct(heroVH = 5) {
 }
 
 export default function GalaxyHero({ visible }: { visible: boolean }) {
-  const p = useScrollPct();
+  const p       = useScrollPct();
+  const mobile  = useIsMobile();
 
   const titleOp  = 1 - ss(0.12, 0.22, p);
   const labelsOp = ss(0.10, 0.22, p) * (1 - ss(0.36, 0.46, p));
@@ -127,19 +141,18 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
           justifyContent: "center",
           opacity: titleOp,
           textAlign: "center",
-          padding: "0 24px",
+          padding: mobile ? "0 20px" : "0 24px",
         }}
       >
         <p
           style={{
             fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-            fontSize: 9,
-            letterSpacing: "0.4em",
+            fontSize: mobile ? 10 : 13,
+            letterSpacing: "0.3em",
             textTransform: "uppercase",
             color: "#FF6600",
-            marginBottom: 28,
+            marginBottom: mobile ? 20 : 28,
             fontWeight: 700,
-            fontSize: 13,
           }}
         >
           Portfolio — 2026
@@ -150,20 +163,23 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
         <div
           style={{
             fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-            fontSize: "clamp(11px, 1.6vw, 15px)",
-            letterSpacing: "0.28em",
+            fontSize: mobile ? 9 : "clamp(11px, 1.6vw, 15px)",
+            letterSpacing: mobile ? "0.12em" : "0.28em",
             color: "#FF6600",
-            marginTop: 22,
-            lineHeight: 2.2,
+            marginTop: mobile ? 16 : 22,
+            lineHeight: mobile ? 1.9 : 2.2,
+            textAlign: "center",
           }}
         >
-          CO-FOUNDER · BIOINFORMATICIAN · COMPUTER SCIENTIST
+          {mobile
+            ? "CO-FOUNDER · BIOINFORMATICIAN\n· COMPUTER SCIENTIST"
+            : "CO-FOUNDER · BIOINFORMATICIAN · COMPUTER SCIENTIST"}
         </div>
 
         {/* scroll cue */}
         <div
           style={{
-            marginTop: 52,
+            marginTop: mobile ? 36 : 52,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -192,57 +208,65 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
       </div>
 
       {/* ── Phase 2: Orbit labels ───────────────────────────── */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          opacity: labelsOp,
-        }}
-      >
-        {ORBIT_LABELS.map(({ label, angleDeg, r }) => {
-          const rad = (angleDeg * Math.PI) / 180;
-          const cx = 50 + Math.cos(rad) * r * 100;
-          const cy = 50 + Math.sin(rad) * r * 100;
-          return (
-            <div
-              key={label}
-              style={{
-                position: "absolute",
-                left: `${cx}%`,
-                top: `${cy}%`,
-                transform: "translate(-50%, -50%)",
-                fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-                fontSize: 9,
-                letterSpacing: "0.28em",
-                color: "#FF6600",
-                textTransform: "uppercase",
-                whiteSpace: "nowrap",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-              }}
-            >
-              <span style={{ opacity: 0.45, fontSize: 6 }}>◆</span>
-              {label}
-            </div>
-          );
-        })}
-      </div>
+      {!mobile && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            opacity: labelsOp,
+          }}
+        >
+          {ORBIT_LABELS.map(({ label, angleDeg, r }) => {
+            const rad = (angleDeg * Math.PI) / 180;
+            const cx  = 50 + Math.cos(rad) * r * 100;
+            const cy  = 50 + Math.sin(rad) * r * 100;
+            return (
+              <div
+                key={label}
+                style={{
+                  position: "absolute",
+                  left: `${cx}%`,
+                  top: `${cy}%`,
+                  transform: "translate(-50%, -50%)",
+                  fontFamily: "var(--font-space-mono),'Space Mono',monospace",
+                  fontSize: 9,
+                  letterSpacing: "0.28em",
+                  color: "#FF6600",
+                  textTransform: "uppercase",
+                  whiteSpace: "nowrap",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <span style={{ opacity: 0.45, fontSize: 6 }}>◆</span>
+                {label}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* ── Phase 3: Flythrough content overlays ────────────── */}
       {FLYTHROUGH.map((step) => {
-        const opacity = ss(step.p0, step.p0 + 0.03, p) * (1 - ss(step.p1, step.p1 + 0.03, p));
+        const opacity    = ss(step.p0, step.p0 + 0.03, p) * (1 - ss(step.p1, step.p1 + 0.03, p));
         const translateY = (1 - ss(step.p0, step.p0 + 0.06, p)) * 22;
         return (
           <div
             key={step.tag}
             style={{
               position: "absolute",
-              left: "clamp(24px, 8vw, 100px)",
-              top: "50%",
-              transform: `translateY(calc(-50% + ${translateY}px))`,
-              maxWidth: 500,
+              left: mobile ? "50%" : "clamp(24px, 8vw, 100px)",
+              bottom: mobile ? "clamp(60px, 12vh, 120px)" : undefined,
+              top: mobile ? undefined : "50%",
+              transform: mobile
+                ? `translateX(-50%) translateY(${translateY}px)`
+                : `translateY(calc(-50% + ${translateY}px))`,
+              width: mobile ? "calc(100% - 40px)" : undefined,
+              maxWidth: mobile ? "none" : 500,
               opacity,
+              textAlign: mobile ? "center" : "left",
+              padding: mobile ? "0 4px" : 0,
             }}
           >
             <p
@@ -252,7 +276,7 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
                 letterSpacing: "0.32em",
                 color: "#FF6600",
                 textTransform: "uppercase",
-                margin: "0 0 14px 0",
+                margin: "0 0 10px 0",
               }}
             >
               {step.tag}
@@ -260,12 +284,12 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
             <h2
               style={{
                 fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-                fontSize: "clamp(18px, 3.5vw, 40px)",
+                fontSize: mobile ? "clamp(16px, 4.5vw, 28px)" : "clamp(18px, 3.5vw, 40px)",
                 fontWeight: 700,
                 color: "#ffffff",
                 letterSpacing: "0.04em",
-                margin: "0 0 18px 0",
-                lineHeight: 1.15,
+                margin: "0 0 14px 0",
+                lineHeight: 1.2,
               }}
             >
               {step.heading}
@@ -273,9 +297,9 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
             <p
               style={{
                 fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-                fontSize: 12,
+                fontSize: mobile ? 11 : 12,
                 color: "rgba(255,255,255,0.38)",
-                lineHeight: 2.1,
+                lineHeight: mobile ? 1.9 : 2.1,
                 margin: 0,
               }}
             >
