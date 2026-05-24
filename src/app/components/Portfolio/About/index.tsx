@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import FadeInView from "@/app/components/Common/FadeInView";
 import TerminalFrame from "@/components/ui/TerminalFrame";
 import SectionLabel from "@/components/ui/SectionLabel";
+import NeuralNet from "./NeuralNet";
 
 const SCRAMBLE_CHARS = "0123456789abcdef!@#$%&?x*+-=~";
 
@@ -132,6 +133,7 @@ export default function About() {
 
   return (
     <section id="About" className="relative py-24 overflow-hidden brutal-dots">
+      <NeuralNet />
 
       <div className="relative z-10 container mx-auto max-w-7xl px-6">
 
