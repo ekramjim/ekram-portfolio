@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0);   opacity: 1; }
+  50%       { transform: translateY(5px); opacity: 0.5; }
+}
+
 @keyframes float-icon {
   from { transform: translate(0, 0) rotate(0deg); }
   to   { transform: translate(var(--float-dx), var(--float-dy)) rotate(var(--float-r)); }
@@ -34,11 +39,17 @@
   border-radius: 6px 6px 0 0;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .terminal-frame:hover .terminal-header-fill,
 .terminal-frame.terminal-frame-active .terminal-header-fill {
+  opacity: 1;
+}
+
+.terminal-frame:hover .terminal-header-title,
+.terminal-frame.terminal-frame-active .terminal-header-title {
+  color: #ffffff;
   opacity: 1;
 }
 
@@ -196,13 +207,13 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
-  background-color: var(--bg-primary);
+  background-color: #000000;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--bg-primary);
+  background-color: transparent;
   color: var(--text-primary);
 }
 

@@ -144,12 +144,12 @@
       \resumeItemListEnd
 
     \resumeProjectHeading
-      {\textbf{Personal Portfolio Website} $|$ \emph{Next.js 15, TypeScript, Tailwind CSS v4, Framer Motion, HTML5 Canvas}}{\href{https://ekram.tech}{\underline{Website}} $|$ 2026}
+      {\textbf{Personal Portfolio Website} $|$ \emph{Next.js 15, TypeScript, Tailwind CSS v4, Three.js, WebGL, Nodemailer}}{\href{https://ekram.tech}{\underline{Website}} $|$ 2026}
       \resumeItemListStart
-        \resumeItem{Engineered a brutalist-themed developer portfolio with a hero terminal that simulates a live \texttt{zsh} session — staged typewriter commands animate character-by-character, followed by a 20-slot ASCII progress bar built from Unicode LIGHT SHADE blocks (\texttt{U+2591}) that fills 0\%--100\% via a \texttt{requestAnimationFrame} tick loop before surfacing the ready prompt}
-        \resumeItem{Built a real-time rotating DNA double helix background using raw HTML5 Canvas 2D API — 16-node dual strands with rung base-pair labels (A--T, G--C), skill annotations (bioinformatics and CS stack) rendered at per-frame opacity derived from sine/cosine Z-depth, running at 60 fps}
-        \resumeItem{Architected a custom \texttt{TerminalFrame} component styled after macOS Terminal with traffic-light window controls, Space Mono typeface, and an \texttt{\#FF6600} brutalist orange accent; eliminated layout shift on animation completion by keeping downstream elements always mounted and toggling opacity via Framer Motion}
-        \resumeItem{Integrated Lenis smooth scroll, scroll-triggered Framer Motion entrance animations per section, and a contact form backed by Nodemailer with server-side API route validation}
+        \resumeItem{Engineered a 50,000-particle WebGL galaxy using Three.js \texttt{PointsMaterial} — four clockwise-wound spiral arms generated from parametric polar coordinates, with a scroll-driven camera flythrough along a \texttt{CatmullRomCurve3} spline and RAF-animated particle formation triggered by a custom loader progress event}
+        \resumeItem{Built an orbit label system anchored at a zero-size centred DOM container with pixel-radius circle positioning corrected for viewport aspect ratio; a counter-rotation RAF loop keeps labels upright while the container rotates clockwise in sync with the Three.js galaxy}
+        \resumeItem{Implemented a custom loader with a 20-slot htop-style ASCII progress bar (Unicode LIGHT SHADE \texttt{U+2591}) filling 0\%--100\% via \texttt{requestAnimationFrame}, dispatching a \texttt{CustomEvent} on completion to trigger galaxy particle formation via smooth interpolation}
+        \resumeItem{Integrated a NeuralNet Three.js canvas background on the Skills section, a neofetch-style \texttt{TerminalFrame} with scramble-text animation on hover, and a contact form backed by Nodemailer with server-side API route validation}
       \resumeItemListEnd
 
     \resumeProjectHeading

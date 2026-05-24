@@ -1,6 +1,5 @@
 import React from "react";
 import { Metadata } from "next";
-import Hero from "@/app/components/Portfolio/Hero";
 import About from "@/app/components/Portfolio/About";
 import Skills from "@/app/components/Portfolio/Skills";
 import Experience from "@/app/components/Portfolio/Experience";
@@ -8,11 +7,12 @@ import Projects from "@/app/components/Portfolio/Projects";
 import Education from "@/app/components/Portfolio/Education";
 import Leadership from "@/app/components/Portfolio/Leadership";
 import Contact from "@/app/components/Portfolio/Contact";
+import { GalaxySceneClient as GalaxyScene, GalaxyEntryClient as GalaxyEntry } from "@/app/components/Galaxy/GalaxyClient";
 
 export const metadata: Metadata = {
   title: "Ekram — Portfolio",
   description:
-    "Computer Science graduate from Monash University specialising in Data Science, Bioinformatics, and Full-Stack Development. Co-Founder of Lynksphere.",
+    "CS graduate from Monash University specialising in Data Science, Bioinformatics, and Full-Stack Development. Co-Founder of LynkSphere.",
 };
 
 function SectionDivider() {
@@ -27,10 +27,23 @@ function SectionDivider() {
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen">
-      <div className="relative z-10">
-        <Hero />
-        <SectionDivider />
+    <main>
+      {/* Fixed galaxy canvas — always behind everything */}
+      <GalaxyScene />
+
+      {/* 400vh scroll zone — transparent so galaxy shows through */}
+      <div style={{ height: "500vh", position: "relative", zIndex: 1 }}>
+        <GalaxyEntry />
+      </div>
+
+      {/* Content sections — solid background covers galaxy */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 5,
+          backgroundColor: "var(--bg-primary)",
+        }}
+      >
         <About />
         <SectionDivider />
         <Skills />

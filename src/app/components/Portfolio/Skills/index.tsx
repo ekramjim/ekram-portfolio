@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import FadeInView from "@/app/components/Common/FadeInView";
 import { useMobileScrollActive } from "@/app/hooks/useMobileScrollActive";
 import SectionLabel from "@/components/ui/SectionLabel";
-import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
+import dynamic from "next/dynamic";
+const NeuralNet = dynamic(() => import("../About/NeuralNet"), { ssr: false });
 
 const BAR_LEN_MOBILE = 12;
 const BAR_LEN_DESKTOP = 20;
@@ -178,14 +179,7 @@ function SkillCard({ group, startIndex }: { group: typeof skillGroups[0]; startI
 export default function Skills() {
   return (
     <section id="Skills" className="relative py-24 overflow-hidden">
-      <svg className="absolute inset-0 hidden w-full h-full pointer-events-none md:block" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
-        <AnimatedPath d="M0 200 L200 200 L200 100 L500 100 L500 400 L800 400" stroke="#FF6600" strokeWidth={1} opacity={0.25} dashed />
-        <AnimatedPath d="M1200 600 L1000 600 L1000 400 L700 400 L700 700 L400 700" stroke="#FF6600" strokeWidth={1} opacity={0.22} dashed />
-        <AnimatedPath d="M0 500 L150 500 L150 300 L350 300 L350 600 L550 600 L550 450" stroke="#FF6600" strokeWidth={1} opacity={0.15} dashed />
-        <AnimatedPath d="M1200 300 L1050 300 L1050 150 L850 150 L850 350 L650 350 L650 200" stroke="#FF6600" strokeWidth={1} opacity={0.15} dashed />
-        <AnimatedPath d="M300 0 L300 150 L600 150 L600 0" stroke="#FF6600" strokeWidth={1} opacity={0.12} dashed />
-        <AnimatedPath d="M600 800 L600 650 L900 650 L900 800" stroke="#FF6600" strokeWidth={1} opacity={0.12} dashed />
-      </svg>
+      <NeuralNet />
 
       <div className="relative z-10 container mx-auto max-w-7xl px-6">
         <FadeInView>

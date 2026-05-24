@@ -28,8 +28,8 @@ const projects = [
     title: "Personal Portfolio Website (This)",
     year: "2026",
     branch: null,
-    description: "Brutalist-themed developer portfolio with a hero terminal simulating a live zsh session — staged typewriter commands, output blocks, and a 20-slot Unicode LIGHT SHADE (U+2591) progress bar animating 0→100% via rAF. Real-time DNA double helix background rendered on HTML5 Canvas at 60fps with Z-depth opacity. Fully animated sections with Lenis smooth scroll and contact form via Nodemailer.",
-    tech: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS v4", "Framer Motion", "HTML5 Canvas", "Lenis", "Nodemailer"],
+    description: "50,000-particle Three.js galaxy with a scroll-driven WebGL camera flythrough along a Catmull-Rom spline — clockwise spiral arms, RAF particle formation on load. Orbit section labels rotate in sync with the galaxy via a pixel-radius circle corrected for aspect ratio. NeuralNet Three.js canvas background on Skills. Neofetch terminal card with scramble-text animation. Contact form via Nodemailer.",
+    tech: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS v4", "Three.js", "WebGL", "Nodemailer"],
     link: "https://ekram.tech",
   },
   {
