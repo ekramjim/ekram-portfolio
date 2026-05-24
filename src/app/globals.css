@@ -24,51 +24,22 @@
   animation: blink 1.1s step-end infinite;
 }
 
-.terminal-border-rect {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 0.7s ease;
-}
-
-.terminal-frame:hover .terminal-border-rect {
-  stroke-dashoffset: 0;
-}
-
-.terminal-frame.terminal-frame-active .terminal-border-rect {
-  stroke-dashoffset: 0;
-}
 
 .terminal-header-fill {
   position: absolute;
   inset: 0;
-  width: 0%;
   background-color: #b84200;
-  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.35) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(0,0,0,0.35) 1px, transparent 1px);
   background-size: 3px 3px;
-  transition: width 0.65s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 6px 6px 0 0;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
 .terminal-frame:hover .terminal-header-fill,
 .terminal-frame.terminal-frame-active .terminal-header-fill {
-  width: 100%;
-}
-
-.terminal-frame:hover .terminal-header-title,
-.terminal-frame.terminal-frame-active .terminal-header-title {
-  color: #ffffff;
   opacity: 1;
-}
-
-.terminal-frame:hover .terminal-dot-orange,
-.terminal-frame.terminal-frame-active .terminal-dot-orange {
-  background-color: #ffffff;
-}
-
-.terminal-frame:hover .terminal-dot-grey,
-.terminal-frame.terminal-frame-active .terminal-dot-grey {
-  background-color: rgba(0, 0, 0, 0.25);
 }
 
 @custom-variant dark (&:is(.dark *));
