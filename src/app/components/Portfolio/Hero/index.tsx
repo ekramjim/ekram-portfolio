@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import TerminalCursor from "@/components/ui/TerminalCursor";
 import TerminalFrame from "@/components/ui/TerminalFrame";
+import ParticleAssembly from "@/components/ui/ParticleAssembly";
 
 type Step =
   | { s: "cmd"; text: string; large?: boolean }
@@ -118,9 +119,22 @@ const LINKS = [
 export default function Hero() {
   const [lines, setLines] = useState<Line[]>([]);
   const [finished, setFinished] = useState(false);
+  // Particles: visible until assembly completes + fadeout
+  const [particleDone, setParticleDone] = useState(false);
+  const [particleMounted, setParticleMounted] = useState(true);
+
+  const terminalRef = useRef<HTMLDivElement>(null);
   const alive = useRef(true);
 
+  const handleParticleComplete = useCallback(() => {
+    setParticleDone(true);
+    // Unmount canvas after fadeout finishes (~800ms)
+    setTimeout(() => setParticleMounted(false), 500);
+  }, []);
+
+  // Typewriter starts only after particle assembly completes
   useEffect(() => {
+    if (!particleDone) return;
     alive.current = true;
     const timers = new Set<ReturnType<typeof setTimeout>>();
     const schedule = (fn: () => void, ms: number) => {
@@ -168,9 +182,9 @@ export default function Hero() {
         setFinished(true);
       }
     }
-    schedule(next, 800);
+    schedule(next, 200);
     return () => { alive.current = false; timers.forEach(clearTimeout); };
-  }, []);
+  }, [particleDone]);
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] overflow-hidden pt-20">
@@ -186,13 +200,19 @@ export default function Hero() {
       <span className="absolute bottom-8 right-8 w-6 h-[2px] bg-[#FF6600] opacity-30" />
       <span className="absolute bottom-8 right-8 w-[2px] h-6 bg-[#FF6600] opacity-30" />
 
+      {/* Particle assembly overlay */}
+      {particleMounted && (
+        <ParticleAssembly terminalRef={terminalRef} onComplete={handleParticleComplete} />
+      )}
+
+      {/* Terminal — invisible until particles dissolve */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: particleDone ? 1 : 0 }}
+        transition={{ duration: 0.28 }}
         className="relative z-10 w-full max-w-3xl mx-auto px-4"
       >
-        <TerminalFrame title="zsh — ekram@portfolio">
+        <TerminalFrame ref={terminalRef} title="zsh — ekram@portfolio">
           <div className="px-6 py-5 min-h-[420px] font-[family-name:var(--font-space-mono)]">
             {lines.length === 0 && (
               <div className="flex items-center gap-2">
