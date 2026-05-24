@@ -13,8 +13,9 @@ export default function NeuralNet() {
     const canvas = canvasRef.current;
     if (!canvas || typeof window === "undefined") return;
 
-    const W = canvas.offsetWidth;
-    const H = canvas.offsetHeight;
+    const W = canvas.offsetWidth  || canvas.parentElement?.clientWidth  || window.innerWidth;
+    const H = canvas.offsetHeight || canvas.parentElement?.clientHeight || window.innerHeight;
+    if (W === 0 || H === 0) return;
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
