@@ -7,8 +7,7 @@ import Projects from "@/app/components/Portfolio/Projects";
 import Education from "@/app/components/Portfolio/Education";
 import Leadership from "@/app/components/Portfolio/Leadership";
 import Contact from "@/app/components/Portfolio/Contact";
-import GalaxyScene from "@/app/components/Galaxy/GalaxyScene";
-import GalaxyEntry from "@/app/components/Galaxy/GalaxyEntry";
+import { GalaxySceneClient as GalaxyScene, GalaxyEntryClient as GalaxyEntry } from "@/app/components/Galaxy/GalaxyClient";
 
 export const metadata: Metadata = {
   title: "Ekram — Portfolio",

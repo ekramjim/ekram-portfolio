@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import FadeInView from "@/app/components/Common/FadeInView";
 import TerminalFrame from "@/components/ui/TerminalFrame";
 import SectionLabel from "@/components/ui/SectionLabel";
-import NeuralNet from "./NeuralNet";
+import dynamic from "next/dynamic";
+const NeuralNet = dynamic(() => import("./NeuralNet"), { ssr: false });
 
 const SCRAMBLE_CHARS = "0123456789abcdef!@#$%&?x*+-=~";
 
