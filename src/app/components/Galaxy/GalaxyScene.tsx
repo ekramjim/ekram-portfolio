@@ -42,7 +42,7 @@ function buildGalaxyGeometry() {
     const r   = t * MAX_RADIUS;
 
     const armAngle  = (arm / ARMS) * Math.PI * 2;
-    const spinAngle = r * 0.028;
+    const spinAngle = r * -0.065;
     const dAngle    = (Math.random() - 0.5) * 0.55;
     const dR        = (Math.random() - 0.5) * r * 0.22;
 
@@ -249,7 +249,8 @@ export default function GalaxyScene() {
       const p = smoothP;
 
       const phase2t = Math.max(0, ss(0.08, 0.22, p) - ss(0.22, 0.38, p));
-      galaxy.rotation.y += lerp(0.0003, 0.0038, phase2t);
+      const phase3t = ss(0.50, 0.85, p);
+      galaxy.rotation.y -= lerp(0.0014, 0.0058, Math.max(phase2t, phase3t));
 
       if (p < 0.35) {
         const t = ss(0, 0.35, p);

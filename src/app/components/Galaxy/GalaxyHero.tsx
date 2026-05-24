@@ -1,14 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-const ORBIT_LABELS = [
-  { label: "ABOUT",      angleDeg: -28,  r: 0.34 },
-  { label: "SKILLS",     angleDeg:  52,  r: 0.32 },
-  { label: "PROJECTS",   angleDeg: 142,  r: 0.36 },
-  { label: "EXPERIENCE", angleDeg: -118, r: 0.34 },
-  { label: "EDUCATION",  angleDeg: 200,  r: 0.30 },
-  { label: "CONTACT",    angleDeg: -72,  r: 0.28 },
-];
+const ORBIT_LABEL_NAMES = ["ABOUT", "SKILLS", "PROJECTS", "EXPERIENCE", "EDUCATION", "CONTACT"];
 
 const FLYTHROUGH = [
   {
@@ -96,6 +89,7 @@ function ss(e0: number, e1: number, x: number) {
   const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0)));
   return t * t * (3 - 2 * t);
 }
+function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
 
 function useScrollPct(heroVH = 5) {
   const [p, setP] = useState(0);
@@ -115,6 +109,50 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
 
   const titleOp  = 1 - ss(0.12, 0.22, p);
   const labelsOp = ss(0.10, 0.22, p) * (1 - ss(0.36, 0.46, p));
+
+  // orbit label rotation — pixel-based circle + RAF spin matching galaxy
+  const rotRef       = useRef(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const labelRefs    = useRef<(HTMLDivElement | null)[]>([]);
+  const pRef         = useRef(0);
+  const [radius, setRadius] = useState(0);
+
+  useEffect(() => {
+    const update = () => setRadius(Math.min(window.innerWidth, window.innerHeight) * 0.30);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => {
+      pRef.current = Math.min(window.scrollY / (window.innerHeight * 5), 1);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (mobile) return;
+    let rafId: number;
+    function tick() {
+      rafId = requestAnimationFrame(tick);
+      const cp       = pRef.current;
+      const phase2t  = Math.max(0, ss(0.08, 0.22, cp) - ss(0.22, 0.38, cp));
+      const phase3t  = ss(0.50, 0.85, cp);
+      const speedDeg = lerp(0.0014, 0.0058, Math.max(phase2t, phase3t)) * (180 / Math.PI);
+      rotRef.current += speedDeg;
+      const rot = rotRef.current;
+      if (containerRef.current) {
+        containerRef.current.style.transform = `rotate(${rot}deg)`;
+      }
+      labelRefs.current.forEach((el) => {
+        if (el) el.style.transform = `translate(-50%, -50%) rotate(${-rot}deg)`;
+      });
+    }
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [mobile]);
 
   return (
     <div
@@ -142,6 +180,7 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
           opacity: titleOp,
           textAlign: "center",
           padding: mobile ? "0 20px" : "0 24px",
+          background: "radial-gradient(ellipse 65% 52% at 50% 50%, rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.28) 58%, transparent 100%)",
         }}
       >
         <p
@@ -171,62 +210,87 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
             textAlign: "center",
           }}
         >
-          {mobile
-            ? "CO-FOUNDER · BIOINFORMATICIAN\n· COMPUTER SCIENTIST"
-            : "CO-FOUNDER · BIOINFORMATICIAN · COMPUTER SCIENTIST"}
+          {mobile ? (
+            <>CO-FOUNDER · BIOINFORMATICIAN<br />· COMPUTER SCIENTIST</>
+          ) : (
+            "CO-FOUNDER · BIOINFORMATICIAN · COMPUTER SCIENTIST"
+          )}
         </div>
 
         {/* scroll cue */}
         <div
-          style={{
-            marginTop: mobile ? 36 : 52,
+          style={mobile ? {
+            position: "absolute",
+            bottom: 36,
+            left: "50%",
+            transform: "translateX(-50%)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 10,
+            gap: 8,
+          } : {
+            marginTop: 56,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 8,
           }}
         >
           <span
             style={{
               fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-              fontSize: 8,
-              letterSpacing: "0.4em",
-              color: "#2a2a2a",
+              fontSize: 9,
+              letterSpacing: "0.35em",
+              color: "#aaa",
               textTransform: "uppercase",
             }}
           >
             Scroll
           </span>
-          <div
-            style={{
-              width: 1,
-              height: 36,
-              background: "linear-gradient(to bottom, #2a2a2a, transparent)",
-            }}
-          />
+          {/* bouncing chevrons */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+            {[0, 1, 2].map((i) => (
+              <svg
+                key={i}
+                width="18" height="10" viewBox="0 0 18 10" fill="none"
+                style={{
+                  animation: `scrollBounce 1.4s ease-in-out infinite`,
+                  animationDelay: `${i * 0.18}s`,
+                  opacity: 1 - i * 0.25,
+                }}
+              >
+                <polyline points="1,1 9,9 17,1" stroke="#FF6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* ── Phase 2: Orbit labels ───────────────────────────── */}
-      {!mobile && (
+      {/* ── Phase 2: Orbit labels — centered pixel circle, RAF-rotated ── */}
+      {!mobile && radius > 0 && (
         <div
+          ref={containerRef}
           style={{
             position: "absolute",
-            inset: 0,
+            left: "50%",
+            top: "50%",
+            width: 0,
+            height: 0,
             opacity: labelsOp,
           }}
         >
-          {ORBIT_LABELS.map(({ label, angleDeg, r }) => {
-            const rad = (angleDeg * Math.PI) / 180;
-            const cx  = 50 + Math.cos(rad) * r * 100;
-            const cy  = 50 + Math.sin(rad) * r * 100;
+          {ORBIT_LABEL_NAMES.map((label, i) => {
+            const angle = (i / ORBIT_LABEL_NAMES.length) * Math.PI * 2 - Math.PI / 2;
+            const px    = Math.cos(angle) * radius;
+            const py    = Math.sin(angle) * radius;
             return (
               <div
                 key={label}
+                ref={(el) => { labelRefs.current[i] = el; }}
                 style={{
                   position: "absolute",
-                  left: `${cx}%`,
-                  top: `${cy}%`,
+                  left: px,
+                  top: py,
                   transform: "translate(-50%, -50%)",
                   fontFamily: "var(--font-space-mono),'Space Mono',monospace",
                   fontSize: 9,
