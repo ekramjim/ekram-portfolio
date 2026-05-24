@@ -29,12 +29,6 @@ const FLYTHROUGH = [
     heading: "9 Project Highlights",
     body: "LinkedHive · TimeBreak · AFL Ranking System · LynkSphere Website · F1 Dashboards · and more across mobile, web, and data science.",
   },
-  {
-    p0: 0.80, p1: 0.88,
-    tag: "CONTACT",
-    heading: "Open to Hire",
-    body: "ekramjim002@gmail.com · ekram@lynksphere.com · linkedin.com/in/ekram02",
-  },
 ];
 
 const DRAMATIC_TEXT = "Hi, I'm Ekram.";
@@ -144,7 +138,8 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
             textTransform: "uppercase",
             color: "#FF6600",
             marginBottom: 28,
-            opacity: 0.75,
+            fontWeight: 700,
+            fontSize: 13,
           }}
         >
           Portfolio — 2026
@@ -155,9 +150,9 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
         <div
           style={{
             fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-            fontSize: "clamp(9px, 1.4vw, 13px)",
+            fontSize: "clamp(11px, 1.6vw, 15px)",
             letterSpacing: "0.28em",
-            color: "rgba(255,255,255,0.38)",
+            color: "#FF6600",
             marginTop: 22,
             lineHeight: 2.2,
           }}

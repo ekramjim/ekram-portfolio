@@ -6,48 +6,38 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 
-const PARTICLE_COUNT = 60_000;
-const DUST_COUNT     = 80_000;
-const BURST_DUR      = 1.8;
-const MAX_DELAY      = 0.3;
-const BURST_TOTAL    = BURST_DUR + MAX_DELAY;
-const SPIN_WIND      = 2.0;
-const PRE_BURST_BLOOM = 0.32;
+const PARTICLE_COUNT = 50_000;
+const ARMS = 3;
+const MAX_RADIUS = 120;
 
-// ── Layer 1: spiral arm particles (all orange, uniform size) ─────
-function buildArmGeometry(maxRadius: number) {
-  const positions       = new Float32Array(PARTICLE_COUNT * 3);
-  const targetPositions = new Float32Array(PARTICLE_COUNT * 3);
-  const colors          = new Float32Array(PARTICLE_COUNT * 3);
-  const sizes           = new Float32Array(PARTICLE_COUNT);
-  const delays          = new Float32Array(PARTICLE_COUNT);
+function buildGalaxyGeometry() {
+  const positions = new Float32Array(PARTICLE_COUNT * 3);
+  const colors    = new Float32Array(PARTICLE_COUNT * 3);
 
-  const coreColor = new THREE.Color(0.95, 0.52, 0.08); // orange core, not white
-  const midColor  = new THREE.Color(0.85, 0.32, 0.02);
-  const edgeColor = new THREE.Color(0.12, 0.03, 0.0);
+  const coreColor = new THREE.Color(0.95, 0.52, 0.08);
+  const midColor  = new THREE.Color(1.0, 0.38, 0.03);
+  const edgeColor = new THREE.Color(0.15, 0.04, 0.0);
   const tmp = new THREE.Color();
 
   for (let i = 0; i < PARTICLE_COUNT; i++) {
-    const arm    = i % 3;
-    const t      = Math.pow(Math.random(), 0.6);
-    const radius = t * maxRadius;
-    const spin   = (radius / maxRadius) * Math.PI * 5;
-    const angle  = (arm / 3) * Math.PI * 2 + spin;
-    const spread = (Math.random() - 0.5) * radius * 0.75;
+    const arm = i % ARMS;
+    const t   = Math.pow(Math.random(), 0.55);
+    const r   = t * MAX_RADIUS;
 
-    const x = Math.cos(angle) * radius + spread;
-    const y = (Math.random() - 0.5) * radius * 0.08;
-    const z = Math.sin(angle) * radius + spread;
+    const armAngle  = (arm / ARMS) * Math.PI * 2;
+    const spinAngle = r * 0.028;
+    const dAngle    = (Math.random() - 0.5) * 0.55;
+    const dR        = (Math.random() - 0.5) * r * 0.22;
 
-    targetPositions[i * 3]     = x;
-    targetPositions[i * 3 + 1] = y;
-    targetPositions[i * 3 + 2] = z;
-    delays[i] = Math.random() * MAX_DELAY;
+    const ang = armAngle + spinAngle + dAngle;
+    const rad = r + dR;
 
-    sizes[i] = 0.4 + Math.random() * 0.15; // // uniform — density varies, not size 
+    positions[i * 3]     = Math.cos(ang) * rad;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * r * 0.07 + (Math.random() - 0.5) * 1.2;
+    positions[i * 3 + 2] = Math.sin(ang) * rad;
 
-    const dist = Math.sqrt(x * x + z * z);
-    const n    = Math.min(dist / maxRadius, 1.0);
+    const dist = Math.sqrt(positions[i * 3] ** 2 + positions[i * 3 + 2] ** 2);
+    const n    = Math.min(dist / MAX_RADIUS, 1.0);
 
     if (n < 0.12) {
       tmp.copy(coreColor).lerp(midColor, n / 0.12);
@@ -66,30 +56,44 @@ function buildArmGeometry(maxRadius: number) {
   const geo = new THREE.BufferGeometry();
   geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
   geo.setAttribute("color",    new THREE.BufferAttribute(colors, 3));
-  geo.setAttribute("aSize",    new THREE.BufferAttribute(sizes, 1));
-  return { geo, targetPositions, delays, total: PARTICLE_COUNT };
+  return geo;
 }
 
-// ── Layer 2: interarm dust — fills gaps so galaxy reads as solid mass
-function buildDustGeometry(maxRadius: number) {
-  const positions       = new Float32Array(DUST_COUNT * 3);
-  const targetPositions = new Float32Array(DUST_COUNT * 3);
-  const delays          = new Float32Array(DUST_COUNT);
+const FILL_COUNT = 35_000;
 
-  for (let i = 0; i < DUST_COUNT; i++) {
-    const r     = Math.pow(Math.random(), 0.55) * maxRadius;
+function buildFillGeometry() {
+  const positions = new Float32Array(FILL_COUNT * 3);
+  const colors    = new Float32Array(FILL_COUNT * 3);
+
+  const midColor  = new THREE.Color(1.0, 0.38, 0.03);
+  const edgeColor = new THREE.Color(0.15, 0.04, 0.0);
+  const tmp = new THREE.Color();
+
+  for (let i = 0; i < FILL_COUNT; i++) {
+    const r     = Math.pow(Math.random(), 0.5) * MAX_RADIUS;
     const theta = Math.random() * Math.PI * 2;
 
-    targetPositions[i * 3]     = Math.cos(theta) * r;
-    targetPositions[i * 3 + 1] = (Math.random() - 0.5) * r * 0.06;
-    targetPositions[i * 3 + 2] = Math.sin(theta) * r;
+    positions[i * 3]     = Math.cos(theta) * r;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * r * 0.06;
+    positions[i * 3 + 2] = Math.sin(theta) * r;
 
-    delays[i] = Math.random() * MAX_DELAY;
+    const n = Math.min(r / MAX_RADIUS, 1.0);
+    if (n < 0.55) {
+      tmp.copy(midColor).lerp(edgeColor, n / 0.55);
+    } else {
+      const dim = 1.0 - (n - 0.55) * 2.0;
+      tmp.copy(edgeColor).multiplyScalar(Math.max(dim, 0));
+    }
+
+    colors[i * 3]     = tmp.r;
+    colors[i * 3 + 1] = tmp.g;
+    colors[i * 3 + 2] = tmp.b;
   }
 
   const geo = new THREE.BufferGeometry();
   geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  return { geo, targetPositions, delays };
+  geo.setAttribute("color",    new THREE.BufferAttribute(colors, 3));
+  return geo;
 }
 
 function buildOrbitRings() {
@@ -122,9 +126,8 @@ export default function GalaxyScene() {
     const canvas = canvasRef.current;
     if (!canvas || typeof window === "undefined") return;
 
-    const dpr = Math.min(devicePixelRatio, 2);
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
-    renderer.setPixelRatio(dpr);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000, 1);
     renderer.toneMapping = THREE.ReinhardToneMapping;
@@ -132,79 +135,34 @@ export default function GalaxyScene() {
 
     const scene  = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(0, 4, 8);
+    camera.position.set(0, 180, 60);
     camera.lookAt(0, 0, 0);
 
-    const maxRadius = Math.max(window.innerWidth, window.innerHeight) * 0.8;
-
-    // ── Arm particles ─────────────────────────────────────────────
-    const { geo: armGeo, targetPositions: armTarget, delays: armDelays, total: armTotal }
-      = buildArmGeometry(maxRadius);
-
-    const uScaleVal = window.innerHeight * dpr / 2;
-    const armMat = new THREE.ShaderMaterial({
-      uniforms: { uScale: { value: uScaleVal } },
-      vertexShader: /* glsl */`
-        attribute float aSize;
-        attribute vec3  color;
-        varying   vec3  vColor;
-        uniform   float uScale;
-        void main() {
-          vColor = color;
-          vec4 mv = modelViewMatrix * vec4(position, 1.0);
-          gl_PointSize = aSize * uScale / -mv.z;
-          gl_Position  = projectionMatrix * mv;
-        }
-      `,
-      fragmentShader: /* glsl */`
-        varying vec3 vColor;
-        void main() {
-          float r = length(gl_PointCoord - 0.5) * 2.0;
-          if (r > 1.0) discard;
-          float a = 1.0 - smoothstep(0.3, 1.0, r);
-          gl_FragColor = vec4(vColor, a);
-        }
-      `,
+    const geo = buildGalaxyGeometry();
+    const mat = new THREE.PointsMaterial({
+      size: 0.55,
+      vertexColors: true,
+      sizeAttenuation: true,
       transparent: true,
-      depthWrite:  false,
-      blending:    THREE.AdditiveBlending,
+      opacity: 1.0,
     });
+    const points = new THREE.Points(geo, mat);
 
-    const armPoints = new THREE.Points(armGeo, armMat);
-
-    // ── Dust layer ────────────────────────────────────────────────
-    const { geo: dustGeo, targetPositions: dustTarget, delays: dustDelays }
-      = buildDustGeometry(maxRadius);
-
-    const dustMat = new THREE.ShaderMaterial({
-      uniforms: { uScale: { value: uScaleVal } },
-      vertexShader: /* glsl */`
-        uniform float uScale;
-        void main() {
-          vec4 mv = modelViewMatrix * vec4(position, 1.0);
-          gl_PointSize = 0.4 * uScale / -mv.z;
-          gl_Position  = projectionMatrix * mv;
-        }
-      `,
-      fragmentShader: /* glsl */`
-        void main() {
-          float r = length(gl_PointCoord - 0.5) * 2.0;
-          if (r > 1.0) discard;
-          float a = (1.0 - smoothstep(0.3, 1.0, r)) * 0.45;
-          gl_FragColor = vec4(0.65, 0.28, 0.05, a);
-        }
-      `,
+    const fillGeo = buildFillGeometry();
+    const fillMat = new THREE.PointsMaterial({
+      size: 0.38,
+      vertexColors: true,
+      sizeAttenuation: true,
       transparent: true,
-      depthWrite:  false,
-      blending:    THREE.AdditiveBlending,
+      opacity: 0.55,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
+    const fillPoints = new THREE.Points(fillGeo, fillMat);
 
-    const dustPoints = new THREE.Points(dustGeo, dustMat);
-
-    // Both layers in one group so rotation is always in sync
     const galaxy = new THREE.Group();
-    galaxy.add(armPoints);
-    galaxy.add(dustPoints);
+    galaxy.add(points);
+    galaxy.add(fillPoints);
     scene.add(galaxy);
 
     const rings = buildOrbitRings();
@@ -214,7 +172,7 @@ export default function GalaxyScene() {
     composer.addPass(new RenderPass(scene, camera));
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.8, 0.6, 0.72
+      1.4, 0.8, 0.2
     );
     composer.addPass(bloomPass);
     composer.addPass(new OutputPass());
@@ -236,28 +194,18 @@ export default function GalaxyScene() {
     window.addEventListener("scroll", onScroll, { passive: true });
 
     const onResize = () => {
-      const d = Math.min(devicePixelRatio, 2);
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-      renderer.setPixelRatio(d);
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
       composer.setSize(window.innerWidth, window.innerHeight);
       bloomPass.resolution.set(window.innerWidth, window.innerHeight);
-      const s = window.innerHeight * d / 2;
-      armMat.uniforms.uScale.value  = s;
-      dustMat.uniforms.uScale.value = s;
     };
     window.addEventListener("resize", onResize);
 
-    const camTarget  = new THREE.Vector3(0, 200, 120);
+    const camTarget  = new THREE.Vector3(0, 180, 60);
     const lookTarget = new THREE.Vector3(0, 0, 0);
     const curLook    = new THREE.Vector3(0, 0, 0);
-
-    let introReady   = false;
-    let burstElapsed = 0;
-    let spinWindT    = 0;
-
-    window.addEventListener("galaxyReady", () => { introReady = true; }, { once: true });
 
     let rafId: number;
     let time = 0;
@@ -266,88 +214,33 @@ export default function GalaxyScene() {
       rafId = requestAnimationFrame(tick);
       time += 0.016;
 
-      // ── Pre-burst ─────────────────────────────────────────────
-      if (!introReady) {
-        camera.position.set(0, 4, 8);
-        camera.lookAt(0, 0, 0);
-        galaxy.rotation.y += 0.0008;
-        bloomPass.strength = PRE_BURST_BLOOM;
-        composer.render();
-        return;
-      }
-
-      const burstDone = burstElapsed >= BURST_TOTAL;
-
-      // ── Burst phase ───────────────────────────────────────────
-      if (!burstDone) {
-        burstElapsed = Math.min(burstElapsed + 0.016, BURST_TOTAL);
-
-        // Arm particles
-        const armAttr = armGeo.attributes.position as THREE.BufferAttribute;
-        const armArr  = armAttr.array as Float32Array;
-        for (let i = 0; i < armTotal; i++) {
-          const pt   = Math.max(0, Math.min(1, (burstElapsed - armDelays[i]) / BURST_DUR));
-          const ease = pt === 1 ? 1 : 1 - Math.pow(2, -10 * pt);
-          armArr[i * 3]     = armTarget[i * 3]     * ease;
-          armArr[i * 3 + 1] = armTarget[i * 3 + 1] * ease;
-          armArr[i * 3 + 2] = armTarget[i * 3 + 2] * ease;
-        }
-        armAttr.needsUpdate = true;
-
-        // Dust particles
-        const dustAttr = dustGeo.attributes.position as THREE.BufferAttribute;
-        const dustArr  = dustAttr.array as Float32Array;
-        for (let i = 0; i < DUST_COUNT; i++) {
-          const pt   = Math.max(0, Math.min(1, (burstElapsed - dustDelays[i]) / BURST_DUR));
-          const ease = pt === 1 ? 1 : 1 - Math.pow(2, -10 * pt);
-          dustArr[i * 3]     = dustTarget[i * 3]     * ease;
-          dustArr[i * 3 + 1] = dustTarget[i * 3 + 1] * ease;
-          dustArr[i * 3 + 2] = dustTarget[i * 3 + 2] * ease;
-        }
-        dustAttr.needsUpdate = true;
-
-        const camEase = 1 - Math.pow(1 - burstElapsed / BURST_TOTAL, 3);
-        camera.position.set(0, lerp(4, 200, camEase), lerp(8, 120, camEase));
-        camera.lookAt(0, 0, 0);
-        galaxy.rotation.y += 0.006;
-        bloomPass.strength  = lerp(PRE_BURST_BLOOM, 1.2, camEase);
-        composer.render();
-        return;
-      }
-
-      // ── Post-burst wind-down ──────────────────────────────────
-      spinWindT = Math.min(spinWindT + 0.016 / SPIN_WIND, 1);
-      const windEase = 1 - Math.pow(1 - spinWindT, 3);
-      bloomPass.strength = lerp(1.4, 0.8, windEase);
-
-      // ── Scroll-driven camera ──────────────────────────────────
       smoothP += (scrollRaw - smoothP) * 0.055;
       const p = smoothP;
 
       const phase2t = Math.max(0, ss(0.08, 0.22, p) - ss(0.22, 0.38, p));
-      galaxy.rotation.y += lerp(0.006, lerp(0.0003, 0.0038, phase2t), windEase);
+      galaxy.rotation.y += lerp(0.0003, 0.0038, phase2t);
 
       const ringFade = ss(0.3, 0.52, p) * (1 - ss(0.7, 0.88, p));
-      rings.children.forEach((child, ci) => {
+      rings.children.forEach((child: THREE.Object3D, ci: number) => {
         const m = (child as THREE.LineLoop).material as THREE.LineBasicMaterial;
         m.opacity = ringFade * (0.1 + 0.06 * Math.sin(time * 1.5 + ci * 1.1));
       });
 
       if (p < 0.35) {
         const t = ss(0, 0.35, p);
-        camTarget.set(0, lerp(200, 240, t), lerp(120, 150, t));
+        camTarget.set(0, lerp(180, 240, t), lerp(60, 120, t));
         lookTarget.set(0, 0, 0);
       } else if (p < 0.52) {
         const t = ss(0.35, 0.52, p);
-        camTarget.set(0, lerp(240, 290, t), lerp(150, 50, t));
+        camTarget.set(0, lerp(240, 290, t), lerp(120, 50, t));
         lookTarget.set(0, 0, 0);
       } else {
         camTarget.copy(spline.getPoint(ss(0.52, 1.0, p)));
         lookTarget.set(0, 0, 0);
       }
 
-      camera.position.lerp(camTarget, 0.09);
-      curLook.lerp(lookTarget, 0.09);
+      camera.position.lerp(camTarget, 0.07);
+      curLook.lerp(lookTarget, 0.07);
       camera.lookAt(curLook);
       composer.render();
     }
@@ -360,10 +253,10 @@ export default function GalaxyScene() {
       window.removeEventListener("resize", onResize);
       renderer.dispose();
       composer.dispose();
-      armGeo.dispose();
-      dustGeo.dispose();
-      armMat.dispose();
-      dustMat.dispose();
+      geo.dispose();
+      mat.dispose();
+      fillGeo.dispose();
+      fillMat.dispose();
     };
   }, []);
 
