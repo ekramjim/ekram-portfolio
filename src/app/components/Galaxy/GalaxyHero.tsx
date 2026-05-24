@@ -159,7 +159,7 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
       style={{
         position: "sticky",
         top: 0,
-        height: "100vh",
+        height: "100dvh",
         width: "100%",
         overflow: "hidden",
         zIndex: 1,

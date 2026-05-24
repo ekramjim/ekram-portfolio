@@ -203,12 +203,17 @@ export default function GalaxyScene() {
     };
     window.addEventListener("scroll", onScroll, { passive: true });
 
+    let resizeId: ReturnType<typeof setTimeout> | null = null;
     const onResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      composer.setSize(window.innerWidth, window.innerHeight);
+      if (resizeId !== null) clearTimeout(resizeId);
+      resizeId = setTimeout(() => {
+        resizeId = null;
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        composer.setSize(window.innerWidth, window.innerHeight);
+      }, 150);
     };
     window.addEventListener("resize", onResize);
 
@@ -274,6 +279,7 @@ export default function GalaxyScene() {
     tick();
 
     return () => {
+      if (resizeId !== null) clearTimeout(resizeId);
       cancelAnimationFrame(rafId);
       window.removeEventListener("galaxyProgress", onProgress);
       window.removeEventListener("scroll", onScroll);
