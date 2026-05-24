@@ -94,8 +94,9 @@ function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
 function useScrollPct(heroVH = 5) {
   const [p, setP] = useState(0);
   useEffect(() => {
+    const stableH = window.innerHeight;
     const handler = () => {
-      setP(Math.min(window.scrollY / (window.innerHeight * heroVH), 1));
+      setP(Math.max(0, Math.min(window.scrollY / (stableH * heroVH), 1)));
     };
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
@@ -125,8 +126,9 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
   }, []);
 
   useEffect(() => {
+    const stableH = window.innerHeight;
     const onScroll = () => {
-      pRef.current = Math.min(window.scrollY / (window.innerHeight * 5), 1);
+      pRef.current = Math.max(0, Math.min(window.scrollY / (stableH * 5), 1));
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);

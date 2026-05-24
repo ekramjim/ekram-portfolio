@@ -195,16 +195,26 @@ export default function GalaxyScene() {
     window.addEventListener("galaxyProgress", onProgress);
 
     const HERO_VH = 5;
+    // Capture stable height once — address bar show/hide changes innerHeight and
+    // would shift the scroll percentage even if the user hasn't moved.
+    const stableH = window.innerHeight;
     let scrollRaw = 0;
     let smoothP   = 0;
 
     const onScroll = () => {
-      scrollRaw = Math.min(window.scrollY / (window.innerHeight * HERO_VH), 1);
+      // Clamp to [0,1]: iOS rubber-band makes scrollY briefly negative, which
+      // drives smoothP below 0 and causes the camera to bounce.
+      scrollRaw = Math.max(0, Math.min(window.scrollY / (stableH * HERO_VH), 1));
     };
     window.addEventListener("scroll", onScroll, { passive: true });
 
+    // Only resize when WIDTH changes. Address bar show/hide is a height-only
+    // event; resizing on it changes camera.aspect and causes a visible zoom jerk.
+    let lastWidth = window.innerWidth;
     let resizeId: ReturnType<typeof setTimeout> | null = null;
     const onResize = () => {
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
       if (resizeId !== null) clearTimeout(resizeId);
       resizeId = setTimeout(() => {
         resizeId = null;
@@ -304,6 +314,7 @@ export default function GalaxyScene() {
         height: "100%",
         zIndex: 0,
         pointerEvents: "none",
+        transform: "translateZ(0)",
       }}
     />
   );
