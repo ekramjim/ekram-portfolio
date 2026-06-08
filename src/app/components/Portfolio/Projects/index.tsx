@@ -6,6 +6,16 @@ import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
 
 const projects = [
   {
+    hash: "f1a0c3d",
+    title: "MailHQ",
+    year: "2026",
+    branch: "HEAD → main",
+    description: "Personal outreach manager to organise contacts, AI-personalise bulk cold emails via Gemini 2.5 Flash, and track opens, clicks & replies. Resend for email delivery, Supabase for contact and campaign storage, and a clean Next.js dashboard for managing the full outreach pipeline.",
+    tech: ["Next.js", "TypeScript", "Supabase", "Gemini API", "Resend", "Tailwind CSS"],
+    link: "https://mail-hq.vercel.app",
+    github: "https://github.com/ekramjim/MailHQ",
+  },
+  {
     hash: "a3f9b2e",
     title: "LinkedHive",
     year: "2025–2026",
@@ -22,6 +32,7 @@ const projects = [
     description: "Native Pomodoro timer for iOS and macOS with analog clock interface, Live Activities, WidgetKit Focus Trail widget, EventKit Reminders integration, custom themes, and guided onboarding. Single SwiftUI codebase across iPhone, iPad, Mac, and menu bar.",
     tech: ["Swift", "SwiftUI", "WidgetKit", "ActivityKit", "AppIntents", "EventKit"],
     link: "https://apps.apple.com/au/app/timebreak-pomodoro/id6763444390",
+    github: "https://github.com/ekramjim/timeBreak",
   },
   {
     hash: "9e2c7d1",
@@ -31,6 +42,7 @@ const projects = [
     description: "50,000-particle Three.js galaxy with a scroll-driven WebGL camera flythrough along a Catmull-Rom spline — clockwise spiral arms, RAF particle formation on load. Orbit section labels rotate in sync with the galaxy via a pixel-radius circle corrected for aspect ratio. NeuralNet Three.js canvas background on Skills. Neofetch terminal card with scramble-text animation. Contact form via Nodemailer.",
     tech: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS v4", "Three.js", "WebGL", "Nodemailer"],
     link: "https://ekram.tech",
+    github: "https://github.com/ekramjim/ekram-portfolio",
   },
   {
     hash: "f4e8c91",
@@ -127,16 +139,29 @@ function CommitCard({ project, index }: { project: typeof projects[0]; index: nu
             ))}
           </div>
 
-          {/* link */}
-          <a
-            href={project.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#FF6600] text-[11px] hover:underline underline-offset-4 flex items-center gap-1 w-fit"
-          >
-            <span>↗</span>
-            <span>open project</span>
-          </a>
+          {/* links */}
+          <div className="flex items-center gap-4">
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#FF6600] text-[11px] hover:underline underline-offset-4 flex items-center gap-1 w-fit"
+            >
+              <span>↗</span>
+              <span>open project</span>
+            </a>
+            {"github" in project && (project as { github?: string }).github && (
+              <a
+                href={(project as { github?: string }).github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#FF6600] text-[11px] hover:underline underline-offset-4 flex items-center gap-1 w-fit opacity-70"
+              >
+                <span>↗</span>
+                <span>github</span>
+              </a>
+            )}
+          </div>
 
         </div>
       </TerminalFrame>
