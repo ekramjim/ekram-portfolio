@@ -36,7 +36,7 @@ const EXPERIENCES: ExperienceEntry[] = [
       { s: "cmd",   text: "cat mindsigns.txt" },
       { s: "blank" },
       { s: "out",   text: "Full Stack Software Developer @ MindSigns", accent: true },
-      { s: "out",   text: "Feb 2026 – Present · Monash University (FIT) Initiative", dim: true },
+      { s: "out",   text: "May 2026 – Present · Monash University (FIT) Initiative", dim: true },
       { s: "link",  label: "mindsigns.online", href: "https://mindsigns.online" },
       { s: "blank" },
       { s: "bullet", text: "Designed, built, and deployed the official MindSigns website end-to-end using Next.js, React, and TypeScript" },
