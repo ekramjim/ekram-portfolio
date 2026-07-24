@@ -6,6 +6,15 @@ import { AnimatedPath } from "@/app/components/Portfolio/AnimatedSVGConnector";
 
 const projects = [
   {
+    hash: "6a92e7c",
+    title: "MindSigns Website",
+    year: "2026",
+    branch: "HEAD → main",
+    description: "Official website for MindSigns, a Monash University Faculty of IT (FIT) initiative. Custom particle-based 3D hero — a procedurally generated hand model built via forward kinematics that morphs between sign-language poses, with cursor-reactive physics and device-aware fallbacks. Reusable editorial design system with scroll-driven Framer Motion animations across every page.",
+    tech: ["Next.js", "React", "TypeScript", "Three.js", "React Three Fiber", "Framer Motion", "Tailwind CSS"],
+    link: "https://mindsigns.online",
+  },
+  {
     hash: "f1a0c3d",
     title: "MailHQ",
     year: "2026",

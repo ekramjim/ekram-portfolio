@@ -115,16 +115,34 @@
 
   \resumeSubHeadingListEnd
 
+%-----------WORK EXPERIENCE-----------
+\section{Work Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Full Stack Software Developer}{May 2026 -- Present}
+      {MindSigns -- Monash University (FIT) Initiative}{Melbourne, Australia $|$ \href{https://mindsigns.online}{\underline{mindsigns.online}}}
+      \resumeItemListStart
+        \resumeItem{Designed, built, and deployed the official MindSigns website end-to-end using Next.js, React, and TypeScript}
+        \resumeItem{Engineered a custom particle-based 3D hero animation (Three.js/React Three Fiber) -- a procedurally generated hand model built via forward kinematics that morphs between sign-language poses, with cursor-reactive physics and device-aware fallbacks}
+        \resumeItem{Built a reusable editorial design system (React components + Tailwind CSS) with scroll-driven animations and micro-interactions via Framer Motion, including an IntersectionObserver-based interaction layer for touch parity on mobile}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Co-Founder \& CEO}{Dec 2024 -- Present}
+      {LynkSphere}{Melbourne, Australia}
+      \resumeItemListStart
+        \resumeItem{Co-founded a software studio delivering iOS, Android, and web applications to Australian startups and B2B clients using React Native, Next.js, SwiftUI, and Supabase}
+        \resumeItem{Grew from zero to \textasciitilde\$30,000 AUD revenue within 3 months, shipping 3 production applications including a 14-month cross-platform community platform (LinkedHive)}
+        \resumeItem{Managed full client lifecycle from technical scoping and architecture through to deployment and post-launch support}
+        \resumeItem{Acquired clients through pitches at BNI Australia, StartSpace Library, and Entrepreneurs Summit 2026}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
 %-----------PROJECTS-----------
 \section{Projects}
   \resumeSubHeadingListStart
-
-    \resumeProjectHeading
-      {\textbf{MailHQ} $|$ \emph{Next.js, TypeScript, Supabase, Gemini API, Resend, Tailwind CSS}}{\href{https://mail-hq.vercel.app}{\underline{Website}} $|$ \href{https://github.com/ekramjim/MailHQ}{\underline{GitHub}} $|$ 2026}
-      \resumeItemListStart
-        \resumeItem{Built a personal outreach manager to organise contacts, AI-personalise bulk cold emails via Gemini 2.5 Flash, and track opens, clicks, and replies}
-        \resumeItem{Integrated Resend for transactional email delivery and Supabase for contact and campaign storage with a Next.js dashboard for managing the full outreach pipeline}
-      \resumeItemListEnd
 
     \resumeProjectHeading
       {\textbf{LinkedHive} $|$ \emph{React Native, Expo, Next.js 16, TypeScript, Supabase, Drizzle ORM, Stripe}}{\href{https://www.linkedhive.com.au/}{\underline{Website}} $|$ \href{https://apps.apple.com/au/app/linkedhive/id6741866108}{\underline{iOS}} $|$ 2025--2026}
@@ -144,18 +162,11 @@
       \resumeItemListEnd
 
     \resumeProjectHeading
-      {\textbf{LynkSphere Website} $|$ \emph{Next.js 15, TypeScript, Tailwind CSS, Framer Motion, GSAP, Three.js}}{\href{https://lynksphere.com/}{\underline{Website}} $|$ 2026}
+      {\textbf{Personal Portfolio Website} $|$ \emph{Next.js 15, TypeScript, Tailwind CSS v4, Framer Motion, HTML5 Canvas}}{\href{https://ekram.tech}{\underline{Website}} $|$ 2026}
       \resumeItemListStart
-        \resumeItem{Built production marketing site with rich 3D animations showcasing services, products, and pricing}
-        \resumeItem{Served as primary customer acquisition channel, contributing to \$30K AUD revenue in 3 months}
-      \resumeItemListEnd
-
-    \resumeProjectHeading
-      {\textbf{Personal Portfolio Website} $|$ \emph{Next.js 15, TypeScript, Tailwind CSS v4, Three.js, WebGL, Nodemailer}}{\href{https://ekram.tech}{\underline{Website}} $|$ 2026}
-      \resumeItemListStart
-        \resumeItem{Built a 50,000-particle WebGL galaxy using Three.js — four spiral arms generated from polar coordinates, with a scroll-driven camera flythrough along a CatmullRom spline and RAF-animated particle formation on load}
-        \resumeItem{Implemented orbit labels that rotate in sync with the galaxy via a pixel-radius circle corrected for aspect ratio, a NeuralNet Three.js canvas on the Skills section, and a neofetch-style terminal card with scramble-text animation}
-        \resumeItem{Integrated a contact form backed by Nodemailer with server-side API route validation}
+        \resumeItem{Engineered a brutalist-themed developer portfolio with a hero terminal simulating a live \texttt{zsh} session, complete with typewriter command animation and an animated ASCII progress bar}
+        \resumeItem{Built a real-time rotating DNA double helix background from scratch using the HTML5 Canvas 2D API, rendering at 60 fps}
+        \resumeItem{Implemented Lenis smooth scroll, scroll-triggered Framer Motion entrance animations, and a contact form backed by Nodemailer with server-side validation}
       \resumeItemListEnd
 
     \resumeProjectHeading
@@ -170,13 +181,6 @@
       {\textbf{F1 Pinnacle of Motor Sports} $|$ \emph{Tableau, Data Visualisation, Statistical Analysis}}{\href{https://public.tableau.com/app/profile/ekramul.islam/viz/Visualization1F1/Dashboard1}{\underline{Tableau Public}} $|$ 2024}
       \resumeItemListStart
         \resumeItem{Built interactive dashboards with calculated fields, filters, and parameter controls displaying driver nationality, constructor performance trends, and season-by-season comparisons across decades of F1 data}
-      \resumeItemListEnd
-
-    \resumeProjectHeading
-      {\textbf{Android Call State Monitor} $|$ \emph{Java, Android SDK, BroadcastReceiver, TelephonyManager, Gradle}}{\href{https://github.com/ekramjim/MyCallReceiver}{\underline{GitHub}} $|$ 2024}
-      \resumeItemListStart
-        \resumeItem{Built an Android app using BroadcastReceiver and TelephonyManager to intercept call state changes (ringing, offhook, idle) and surface incoming caller ID via Toast notifications in real time}
-        \resumeItem{Configured READ\_PHONE\_STATE, PROCESS\_OUTGOING\_CALLS, and READ\_CALL\_LOG permissions with runtime permission handling}
       \resumeItemListEnd
 
     \resumeProjectHeading
@@ -225,22 +229,6 @@
     \resumeSubheadingTwo{MUVP x RMM Outreach Event}{NGO, Kuala Lumpur, Malaysia}
       \resumeItemListStart
         \resumeItem{Conducted an educational class for orphaned children as part of a university outreach initiative}
-      \resumeItemListEnd
-
-  \resumeSubHeadingListEnd
-
-%-----------WORK EXPERIENCE-----------
-\section{Work Experience}
-  \resumeSubHeadingListStart
-
-    \resumeSubheading
-      {Co-Founder \& CEO}{Dec 2024 -- Present}
-      {LynkSphere}{Melbourne, Australia}
-      \resumeItemListStart
-        \resumeItem{Co-founded a software studio delivering iOS, Android, and web applications to Australian startups and B2B clients using React Native, Next.js, SwiftUI, and Supabase}
-        \resumeItem{Grew from zero to \textasciitilde\$30,000 AUD revenue within 3 months, shipping 12+ production applications across 14 months including a cross-platform community platform (LinkedHive)}
-        \resumeItem{Managed full client lifecycle from technical scoping and architecture through to deployment and post-launch support}
-        \resumeItem{Acquired clients through pitches at BNI Australia, StartSpace Library, and Entrepreneurs Summit 2026}
       \resumeItemListEnd
 
   \resumeSubHeadingListEnd

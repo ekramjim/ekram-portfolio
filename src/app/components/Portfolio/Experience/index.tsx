@@ -14,20 +14,6 @@ type Step =
   | { s: "bullet"; text: string }
   | { s: "done" };
 
-const SCRIPT: Step[] = [
-  { s: "cmd",   text: "cat experience.txt" },
-  { s: "blank" },
-  { s: "out",   text: "Co-Founder @ LynkSphere", accent: true },
-  { s: "out",   text: "Dec 2024 – Present", dim: true },
-  { s: "link",  label: "lynksphere.com", href: "https://lynksphere.com" },
-  { s: "blank" },
-  { s: "bullet", text: "Co-founded a software studio delivering iOS, Android, and web apps to Australian startups and B2B clients using React Native, Next.js, SwiftUI, and Supabase" },
-  { s: "bullet", text: "8 clients · 12+ end-to-end products shipped in under a year" },
-  { s: "bullet", text: "Managed full client lifecycle: scoping, architecture, deployment, and post-launch support" },
-  { s: "bullet", text: "Acquired clients via BNI Australia, StartSpace Library, and Entrepreneurs Summit 2026" },
-  { s: "done" },
-];
-
 type Line =
   | { k: "cmd"; text: string }
   | { k: "out"; text: string; accent?: boolean; dim?: boolean }
@@ -36,7 +22,51 @@ type Line =
   | { k: "bullet"; text: string }
   | { k: "done" };
 
-export default function Experience() {
+type ExperienceEntry = {
+  file: string;
+  title: string;
+  script: Step[];
+};
+
+const EXPERIENCES: ExperienceEntry[] = [
+  {
+    file: "mindsigns.txt",
+    title: "zsh — ekram@portfolio ~ experience/mindsigns",
+    script: [
+      { s: "cmd",   text: "cat mindsigns.txt" },
+      { s: "blank" },
+      { s: "out",   text: "Full Stack Software Developer @ MindSigns", accent: true },
+      { s: "out",   text: "Feb 2026 – Present · Monash University (FIT) Initiative", dim: true },
+      { s: "link",  label: "mindsigns.online", href: "https://mindsigns.online" },
+      { s: "blank" },
+      { s: "bullet", text: "Designed, built, and deployed the official MindSigns website end-to-end using Next.js, React, and TypeScript" },
+      { s: "bullet", text: "Engineered a custom particle-based 3D hero animation (Three.js/React Three Fiber) — a procedurally generated hand model built via forward kinematics that morphs between sign-language poses, with cursor-reactive physics" },
+      { s: "bullet", text: "Built a reusable editorial design system with scroll-driven animations and micro-interactions via Framer Motion" },
+      { s: "bullet", text: "Extended interactivity to mobile with an IntersectionObserver-based scroll layer, ensuring feature parity for touch devices" },
+      { s: "bullet", text: "Managed deployment and hosting via Vercel, handling the full release pipeline independently" },
+      { s: "done" },
+    ],
+  },
+  {
+    file: "lynksphere.txt",
+    title: "zsh — ekram@portfolio ~ experience/lynksphere",
+    script: [
+      { s: "cmd",   text: "cat lynksphere.txt" },
+      { s: "blank" },
+      { s: "out",   text: "Co-Founder @ LynkSphere", accent: true },
+      { s: "out",   text: "Dec 2024 – Present", dim: true },
+      { s: "link",  label: "lynksphere.com", href: "https://lynksphere.com" },
+      { s: "blank" },
+      { s: "bullet", text: "Co-founded a software studio delivering iOS, Android, and web apps to Australian startups and B2B clients using React Native, Next.js, SwiftUI, and Supabase" },
+      { s: "bullet", text: "8 clients · 12+ end-to-end products shipped in under a year" },
+      { s: "bullet", text: "Managed full client lifecycle: scoping, architecture, deployment, and post-launch support" },
+      { s: "bullet", text: "Acquired clients via BNI Australia, StartSpace Library, and Entrepreneurs Summit 2026" },
+      { s: "done" },
+    ],
+  },
+];
+
+function ExperienceCard({ entry, delay }: { entry: ExperienceEntry; delay: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [lines, setLines] = useState<Line[]>([]);
   const [finished, setFinished] = useState(false);
@@ -64,10 +94,11 @@ export default function Experience() {
       timers.add(t);
     };
 
+    const script = entry.script;
     let si = 0;
     function next() {
-      if (!alive.current || si >= SCRIPT.length) return;
-      const step = SCRIPT[si++];
+      if (!alive.current || si >= script.length) return;
+      const step = script[si++];
 
       if (step.s === "blank") {
         setLines(p => [...p, { k: "blank" }]);
@@ -107,8 +138,78 @@ export default function Experience() {
 
     schedule(next, 400);
     return () => { alive.current = false; timers.forEach(clearTimeout); };
-  }, [started]);
+  }, [started, entry]);
 
+  return (
+    <FadeInView delay={delay}>
+      <TerminalFrame ref={cardRef} title={entry.title}>
+        <div className="px-6 py-5 min-h-[320px] font-[family-name:var(--font-space-mono)]">
+
+          {lines.length === 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-[#FF6600] text-[16px] leading-none select-none">❯</span>
+              <TerminalCursor className="text-[16px] leading-none" />
+            </div>
+          )}
+
+          {lines.map((line, i) => {
+            if (line.k === "blank") return <div key={i} className="h-4" />;
+
+            if (line.k === "cmd") {
+              const isLast = i === lines.length - 1;
+              return (
+                <div key={i} className="flex items-center gap-2.5 mb-2">
+                  <span className="text-[#FF6600] text-[16px] leading-none select-none">❯</span>
+                  <span className="text-[#d0d0d0] text-[14px] leading-none">{line.text}</span>
+                  {isLast && !finished && <TerminalCursor className="text-[14px] leading-none" />}
+                </div>
+              );
+            }
+
+            if (line.k === "out") {
+              if (line.accent) return (
+                <p key={i} className="text-[#FF6600] text-[18px] font-bold mb-1">{line.text}</p>
+              );
+              return (
+                <p key={i} className="text-[#555] text-[12px] mb-0.5">{line.text}</p>
+              );
+            }
+
+            if (line.k === "link") return (
+              <a
+                key={i}
+                href={line.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#FF6600] text-[12px] hover:underline underline-offset-4 opacity-70 hover:opacity-100 transition-opacity block mb-0.5"
+              >
+                ↗ {line.label}
+              </a>
+            );
+
+            if (line.k === "bullet") return (
+              <div key={i} className="flex gap-2.5 mb-2">
+                <span className="text-[#FF6600] opacity-50 shrink-0 mt-[3px] text-[10px]">▸</span>
+                <span className="text-[#888] text-[13px] leading-relaxed">{line.text}</span>
+              </div>
+            );
+
+            if (line.k === "done") return (
+              <div key={i} className="flex items-center gap-2.5 mt-2">
+                <span className="text-[#FF6600] text-[16px] leading-none select-none">❯</span>
+                <TerminalCursor className="text-[16px] leading-none" />
+              </div>
+            );
+
+            return null;
+          })}
+        </div>
+      </TerminalFrame>
+    </FadeInView>
+  );
+}
+
+export default function Experience() {
   return (
     <section id="Experience" className="relative py-24 overflow-hidden">
       <svg className="absolute inset-0 hidden w-full h-full pointer-events-none md:block" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
@@ -130,72 +231,10 @@ export default function Experience() {
           </p>
         </FadeInView>
 
-        <div className="max-w-3xl">
-          <FadeInView delay={0.1}>
-            <TerminalFrame ref={cardRef} title="zsh — ekram@portfolio ~ experience">
-              <div className="px-6 py-5 min-h-[320px] font-[family-name:var(--font-space-mono)]">
-
-                {lines.length === 0 && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-[#FF6600] text-[16px] leading-none select-none">❯</span>
-                    <TerminalCursor className="text-[16px] leading-none" />
-                  </div>
-                )}
-
-                {lines.map((line, i) => {
-                  if (line.k === "blank") return <div key={i} className="h-4" />;
-
-                  if (line.k === "cmd") {
-                    const isLast = i === lines.length - 1;
-                    return (
-                      <div key={i} className="flex items-center gap-2.5 mb-2">
-                        <span className="text-[#FF6600] text-[16px] leading-none select-none">❯</span>
-                        <span className="text-[#d0d0d0] text-[14px] leading-none">{line.text}</span>
-                        {isLast && !finished && <TerminalCursor className="text-[14px] leading-none" />}
-                      </div>
-                    );
-                  }
-
-                  if (line.k === "out") {
-                    if (line.accent) return (
-                      <p key={i} className="text-[#FF6600] text-[18px] font-bold mb-1">{line.text}</p>
-                    );
-                    return (
-                      <p key={i} className="text-[#555] text-[12px] mb-0.5">{line.text}</p>
-                    );
-                  }
-
-                  if (line.k === "link") return (
-                    <a
-                      key={i}
-                      href={line.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#FF6600] text-[12px] hover:underline underline-offset-4 opacity-70 hover:opacity-100 transition-opacity block mb-0.5"
-                    >
-                      ↗ {line.label}
-                    </a>
-                  );
-
-                  if (line.k === "bullet") return (
-                    <div key={i} className="flex gap-2.5 mb-2">
-                      <span className="text-[#FF6600] opacity-50 shrink-0 mt-[3px] text-[10px]">▸</span>
-                      <span className="text-[#888] text-[13px] leading-relaxed">{line.text}</span>
-                    </div>
-                  );
-
-                  if (line.k === "done") return (
-                    <div key={i} className="flex items-center gap-2.5 mt-2">
-                      <span className="text-[#FF6600] text-[16px] leading-none select-none">❯</span>
-                      <TerminalCursor className="text-[16px] leading-none" />
-                    </div>
-                  );
-
-                  return null;
-                })}
-              </div>
-            </TerminalFrame>
-          </FadeInView>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {EXPERIENCES.map((entry, i) => (
+            <ExperienceCard key={entry.file} entry={entry} delay={i * 0.1} />
+          ))}
         </div>
       </div>
     </section>
