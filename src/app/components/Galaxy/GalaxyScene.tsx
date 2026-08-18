@@ -268,7 +268,8 @@ export default function GalaxyScene() {
     let galaxyFormed = false;
 
     const onProgress = (e: Event) => {
-      loadPct = (e as CustomEvent<{ pct: number }>).detail.pct;
+      // Monotonic: a stray/replayed progress event must never un-form the galaxy.
+      loadPct = Math.max(loadPct, (e as CustomEvent<{ pct: number }>).detail.pct);
     };
     window.addEventListener("galaxyProgress", onProgress);
 

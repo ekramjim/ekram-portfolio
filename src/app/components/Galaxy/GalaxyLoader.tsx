@@ -1,10 +1,16 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function GalaxyLoader({ onComplete }: { onComplete: () => void }) {
   const [pct, setPct]     = useState(0);
   const [fading, setFading] = useState(false);
   const [gone, setGone]   = useState(false);
+
+  // Keep the latest callback in a ref so the effect below can run exactly
+  // once — depending on `onComplete` restarts the interval when the parent
+  // re-renders at completion, replaying the whole load sequence.
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
     let p = 0;
@@ -17,12 +23,12 @@ export default function GalaxyLoader({ onComplete }: { onComplete: () => void })
         setFading(true);
         setTimeout(() => {
           setGone(true);
-          onComplete();
+          onCompleteRef.current();
         }, 600);
       }
     }, 28);
     return () => clearInterval(interval);
-  }, [onComplete]);
+  }, []);
 
   if (gone) return null;
 
