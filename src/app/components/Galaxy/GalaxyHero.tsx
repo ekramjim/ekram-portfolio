@@ -119,7 +119,7 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
   const [radius, setRadius] = useState(0);
 
   useEffect(() => {
-    const update = () => setRadius(Math.min(window.innerWidth, window.innerHeight) * 0.30);
+    const update = () => setRadius(Math.min(window.innerWidth, window.innerHeight) * 0.40);
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
@@ -137,13 +137,15 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
   useEffect(() => {
     if (mobile) return;
     let rafId: number;
-    function tick() {
+    let lastT: number | null = null;
+    function tick(now: number) {
       rafId = requestAnimationFrame(tick);
-      const cp       = pRef.current;
-      const phase2t  = Math.max(0, ss(0.08, 0.22, cp) - ss(0.22, 0.38, cp));
-      const phase3t  = ss(0.50, 0.85, cp);
-      const speedDeg = lerp(0.0014, 0.0058, Math.max(phase2t, phase3t)) * (180 / Math.PI);
-      rotRef.current += speedDeg;
+      const dt = lastT === null ? 0 : Math.min((now - lastT) / 1000, 0.05);
+      lastT = now;
+      const cp = pRef.current;
+      // Match GalaxyScene's rotation: monotonic spin-up, radians/second.
+      const speedRad = lerp(0.085, 0.35, ss(0.08, 0.85, cp));
+      rotRef.current += speedRad * dt * (180 / Math.PI);
       const rot = rotRef.current;
       if (containerRef.current) {
         containerRef.current.style.transform = `rotate(${rot}deg)`;
@@ -295,7 +297,7 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
                   top: py,
                   transform: "translate(-50%, -50%)",
                   fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-                  fontSize: 9,
+                  fontSize: 13,
                   letterSpacing: "0.28em",
                   color: "#FF6600",
                   textTransform: "uppercase",
@@ -305,7 +307,7 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
                   gap: 8,
                 }}
               >
-                <span style={{ opacity: 0.45, fontSize: 6 }}>◆</span>
+                <span style={{ opacity: 0.45, fontSize: 9 }}>◆</span>
                 {label}
               </div>
             );
