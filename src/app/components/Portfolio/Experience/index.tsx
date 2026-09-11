@@ -30,6 +30,21 @@ type ExperienceEntry = {
 
 const EXPERIENCES: ExperienceEntry[] = [
   {
+    file: "ceals.txt",
+    title: "zsh — ekram@portfolio ~ experience/ceals",
+    script: [
+      { s: "cmd",   text: "cat ceals.txt" },
+      { s: "blank" },
+      { s: "out",   text: "Full Stack Software Developer @ CEALS Australia", accent: true },
+      { s: "out",   text: "Aug 2026 – Present", dim: true },
+      { s: "blank" },
+      { s: "bullet", text: "Building a new e-commerce platform from the ground up with Next.js and TypeScript, including end-to-end payment integration and a REST API layer for catalog, cart, and order management" },
+      { s: "bullet", text: "Enhancing existing iOS and Android applications, implementing Row-Level Security (RLS) policies to enforce per-user data access at the database layer" },
+      { s: "bullet", text: "Transitioning the app's UI to Apple's Liquid Glass design language, adopting the latest iOS visual and interaction patterns" },
+      { s: "done" },
+    ],
+  },
+  {
     file: "mindsigns.txt",
     title: "zsh — ekram@portfolio ~ experience/mindsigns",
     script: [
