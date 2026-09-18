@@ -8,7 +8,7 @@ const education = [
   {
     degree: "Master of Data Science",
     school: "Monash University",
-    period: "Jul 2025 – Nov 2026",
+    period: "Jul 2025 – Jul 2027",
     current: true,
     details: [
       "Coursework: Data Wrangling, Software Engineering, Bioinformatics, Machine Learning, Data Visualisation, Data Analytics, Algorithms and Data Structures, Deep Learning, Theory of Computation",
