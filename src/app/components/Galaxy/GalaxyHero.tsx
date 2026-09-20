@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { GALAXY_REPLAY_EVENT } from "./galaxyIntro";
+import styles from "./GalaxyHero.module.css";
 
 const ORBIT_LABEL_NAMES = ["ABOUT", "SKILLS", "PROJECTS", "EXPERIENCE", "EDUCATION", "CONTACT"];
 
@@ -24,7 +26,6 @@ const FLYTHROUGH = [
   },
 ];
 
-const DRAMATIC_TEXT = "Hi, I'm Ekram.";
 
 function useIsMobile() {
   const [mobile, setMobile] = useState(false);
@@ -37,59 +38,10 @@ function useIsMobile() {
   return mobile;
 }
 
-function DramaticText({ visible }: { visible: boolean }) {
-  const [displayed, setDisplayed] = useState("");
-  const [showCursor, setShowCursor] = useState(true);
-  const idxRef = useRef(0);
-  const startedRef = useRef(false);
-
-  useEffect(() => {
-    if (!visible) return;
-    if (startedRef.current) return;
-    startedRef.current = true;
-
-    const delay = setTimeout(() => {
-      const iv = setInterval(() => {
-        idxRef.current += 1;
-        setDisplayed(DRAMATIC_TEXT.slice(0, idxRef.current));
-        if (idxRef.current >= DRAMATIC_TEXT.length) clearInterval(iv);
-      }, 68);
-      return () => clearInterval(iv);
-    }, 400);
-    return () => clearTimeout(delay);
-  }, [visible]);
-
-  useEffect(() => {
-    const iv = setInterval(() => setShowCursor((c) => !c), 530);
-    return () => clearInterval(iv);
-  }, []);
-
-  return (
-    <div
-      style={{
-        fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-        fontSize: "clamp(32px, 7vw, 100px)",
-        fontWeight: 700,
-        letterSpacing: "0.06em",
-        color: "#ffffff",
-        lineHeight: 1.15,
-        textShadow: "0 0 100px rgba(255,102,0,0.25)",
-        textAlign: "center",
-        maxWidth: "90vw",
-        wordBreak: "break-word",
-      }}
-    >
-      {displayed}
-      <span style={{ opacity: showCursor ? 1 : 0, color: "#FF6600" }}>|</span>
-    </div>
-  );
-}
-
 function ss(e0: number, e1: number, x: number) {
   const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0)));
   return t * t * (3 - 2 * t);
 }
-function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
 
 function useScrollPct(heroVH = 5) {
   const [p, setP] = useState(0);
@@ -98,13 +50,14 @@ function useScrollPct(heroVH = 5) {
     const handler = () => {
       setP(Math.max(0, Math.min(window.scrollY / (stableH * heroVH), 1)));
     };
+    handler();
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, [heroVH]);
   return p;
 }
 
-export default function GalaxyHero({ visible }: { visible: boolean }) {
+export default function GalaxyHero({ visible, settled }: { visible: boolean; settled: boolean }) {
   const p       = useScrollPct();
   const mobile  = useIsMobile();
 
@@ -115,7 +68,6 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
   const rotRef       = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const labelRefs    = useRef<(HTMLDivElement | null)[]>([]);
-  const pRef         = useRef(0);
   const [radius, setRadius] = useState(0);
 
   useEffect(() => {
@@ -126,25 +78,16 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
   }, []);
 
   useEffect(() => {
-    const stableH = window.innerHeight;
-    const onScroll = () => {
-      pRef.current = Math.max(0, Math.min(window.scrollY / (stableH * 5), 1));
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
     if (mobile) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let rafId: number;
     let lastT: number | null = null;
     function tick(now: number) {
       rafId = requestAnimationFrame(tick);
       const dt = lastT === null ? 0 : Math.min((now - lastT) / 1000, 0.05);
       lastT = now;
-      const cp = pRef.current;
-      // Match GalaxyScene's rotation: monotonic spin-up, radians/second.
-      const speedRad = lerp(0.085, 0.35, ss(0.08, 0.85, cp));
+      // Match the galaxy's slow ambient rotation, radians/second.
+      const speedRad = reducedMotion.matches ? 0 : 0.018;
       rotRef.current += speedRad * dt * (180 / Math.PI);
       const rot = rotRef.current;
       if (containerRef.current) {
@@ -167,108 +110,46 @@ export default function GalaxyHero({ visible }: { visible: boolean }) {
         width: "100%",
         overflow: "hidden",
         zIndex: 1,
-        opacity: visible ? 1 : 0,
-        transition: "opacity 1s ease",
+
         pointerEvents: "none",
       }}
     >
-      {/* ── Phase 1: Typewriter intro ───────────────────────── */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: titleOp,
-          textAlign: "center",
-          padding: mobile ? "0 20px" : "0 24px",
-          background: "radial-gradient(ellipse 65% 52% at 50% 50%, rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.28) 58%, transparent 100%)",
-        }}
-      >
-        <p
-          style={{
-            fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-            fontSize: mobile ? 10 : 13,
-            letterSpacing: "0.3em",
-            textTransform: "uppercase",
-            color: "#FF6600",
-            marginBottom: mobile ? 20 : 28,
-            fontWeight: 700,
-          }}
-        >
-          Portfolio — 2026
-        </p>
-
-        <DramaticText visible={visible} />
-
-        <div
-          style={{
-            fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-            fontSize: mobile ? 9 : "clamp(11px, 1.6vw, 15px)",
-            letterSpacing: mobile ? "0.12em" : "0.28em",
-            color: "#FF6600",
-            marginTop: mobile ? 16 : 22,
-            lineHeight: mobile ? 1.9 : 2.2,
-            textAlign: "center",
-          }}
-        >
-          {mobile ? (
-            <>CO-FOUNDER · BIOINFORMATICIAN<br />· COMPUTER SCIENTIST</>
-          ) : (
-            "CO-FOUNDER · BIOINFORMATICIAN · COMPUTER SCIENTIST"
-          )}
-        </div>
-
-        {/* scroll cue */}
-        <div
-          style={mobile ? {
-            position: "absolute",
-            bottom: 36,
-            left: "50%",
-            transform: "translateX(-50%)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 8,
-          } : {
-            marginTop: 56,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "var(--font-space-mono),'Space Mono',monospace",
-              fontSize: 9,
-              letterSpacing: "0.35em",
-              color: "#aaa",
-              textTransform: "uppercase",
-            }}
-          >
-            Scroll
-          </span>
-          {/* bouncing chevrons */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-            {[0, 1, 2].map((i) => (
-              <svg
-                key={i}
-                width="18" height="10" viewBox="0 0 18 10" fill="none"
-                style={{
-                  animation: `scrollBounce 1.4s ease-in-out infinite`,
-                  animationDelay: `${i * 0.18}s`,
-                  opacity: 1 - i * 0.25,
-                }}
-              >
-                <polyline points="1,1 9,9 17,1" stroke="#FF6600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            ))}
-          </div>
+      <button
+        type="button"
+        data-galaxy-interaction
+        aria-label="Rotate galaxy with drag or arrow keys. Press Home to reset."
+        className="absolute inset-0 h-full w-full border-0 bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-white/60"
+        style={{ pointerEvents: "auto", touchAction: "pan-y", cursor: "grab" }}
+      />
+      <div className={styles.introduction} style={{ opacity: titleOp }}>
+        <h1 className={styles.title} aria-label="Hi, I'm Ekram.">
+          {["Hi, I'm", "Ekram."].map((word, side) => (
+            <span key={word} className={styles.titleSide} aria-hidden="true" data-visible={visible}>
+              {Array.from(word).map((letter, index) => (
+                <span key={index} className={styles.letter} style={{ transitionDelay: visible ? `${index * 65 + side * 100}ms` : "0ms" }}>
+                  {letter === " " ? "\u00a0" : letter}
+                </span>
+              ))}
+            </span>
+          ))}
+        </h1>
+        <div className={styles.caption} data-visible={settled}>
+          <p>Co-founder · Bioinformatician · Computer scientist</p>
+          <span>Scroll to explore</span>
         </div>
       </div>
+      <button
+        type="button"
+        className={styles.replay}
+        aria-label="Replay galaxy introduction"
+        onClick={() => window.dispatchEvent(new Event(GALAXY_REPLAY_EVENT))}
+        style={{ opacity: titleOp, pointerEvents: titleOp > 0.5 ? "auto" : "none" }}
+        tabIndex={titleOp > 0.5 ? 0 : -1}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 10a8 8 0 1 1 1 7M4 4v6h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
 
       {/* ── Phase 2: Orbit labels — centered pixel circle, RAF-rotated ── */}
       {!mobile && radius > 0 && (

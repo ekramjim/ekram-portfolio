@@ -1,14 +1,9 @@
 "use client";
-import { useState } from "react";
-import GalaxyLoader from "./GalaxyLoader";
+import { useSyncExternalStore } from "react";
 import GalaxyHero from "./GalaxyHero";
+import { getIntroPhase, getServerIntroPhase, subscribeIntro } from "./galaxyIntro";
 
 export default function GalaxyEntry() {
-  const [visible, setVisible] = useState(false);
-  return (
-    <>
-      <GalaxyLoader onComplete={() => setVisible(true)} />
-      <GalaxyHero visible={visible} />
-    </>
-  );
+  const phase = useSyncExternalStore(subscribeIntro, getIntroPhase, getServerIntroPhase);
+  return <GalaxyHero visible={phase !== "stars"} settled={phase === "settled"} />;
 }

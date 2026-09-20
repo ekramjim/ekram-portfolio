@@ -1,414 +1,277 @@
 "use client";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
-import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
+import { GALAXY_REPLAY_EVENT, setIntroPhase } from "./galaxyIntro";
 
-const PARTICLE_COUNT = 50_000;
-const FILL_COUNT     = 35_000;
-const BRIGHT_COUNT   = 1_200;
-const ARMS           = 4;
-const MAX_RADIUS     = 120;
-const SCATTER_R      = 380; // scatter start radius — wide starfield
-
-function ss(e0: number, e1: number, x: number) {
-  const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0)));
+const INTRO_DURATION = 5.2;
+function smoothstep(a: number, b: number, value: number) {
+  const t = THREE.MathUtils.clamp((value - a) / (b - a), 0, 1);
   return t * t * (3 - 2 * t);
 }
-function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
 
-function writeScatterPoint(out: Float32Array, i: number) {
-  const sr     = Math.sqrt(Math.random()) * SCATTER_R;
-  const stheta = Math.random() * Math.PI * 2;
-  out[i * 3]     = Math.cos(stheta) * sr;
-  out[i * 3 + 1] = (Math.random() - 0.5) * 40;
-  out[i * 3 + 2] = Math.sin(stheta) * sr;
-}
-
-function writeArmPoint(out: Float32Array, i: number) {
-  const arm = i % ARMS;
-  const t   = Math.pow(Math.random(), 0.55);
-  const r   = t * MAX_RADIUS;
-
-  const armAngle  = (arm / ARMS) * Math.PI * 2;
-  const spinAngle = r * -0.065;
-  const dAngle    = (Math.random() - 0.5) * 0.55;
-  const dR        = (Math.random() - 0.5) * r * 0.22;
-
-  const ang = armAngle + spinAngle + dAngle;
-  const rad = r + dR;
-
-  out[i * 3]     = Math.cos(ang) * rad;
-  out[i * 3 + 1] = (Math.random() - 0.5) * r * 0.07 + (Math.random() - 0.5) * 1.2;
-  out[i * 3 + 2] = Math.sin(ang) * rad;
-}
-
-// Soft radial-gradient sprite so points render as glowing dust, not squares.
-function makeSpriteTexture() {
-  const c = document.createElement("canvas");
-  c.width = c.height = 64;
-  const ctx = c.getContext("2d")!;
-  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-  g.addColorStop(0.0, "rgba(255,255,255,1)");
-  g.addColorStop(0.35, "rgba(255,255,255,0.55)");
-  g.addColorStop(1.0, "rgba(255,255,255,0)");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, 64, 64);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
-
-function buildGalaxyGeometry() {
-  const positions    = new Float32Array(PARTICLE_COUNT * 3);
-  const scatterPos   = new Float32Array(PARTICLE_COUNT * 3);
-  const targetPos    = new Float32Array(PARTICLE_COUNT * 3);
-  const colors       = new Float32Array(PARTICLE_COUNT * 3);
-
-  const coreColor = new THREE.Color(0.9, 0.18, 0.0);
-  const midColor  = new THREE.Color(0.65, 0.12, 0.0);
-  const edgeColor = new THREE.Color(0.15, 0.04, 0.0);
-  const tmp = new THREE.Color();
-
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    writeScatterPoint(scatterPos, i);
-    writeArmPoint(targetPos, i);
-
-    positions[i * 3]     = scatterPos[i * 3];
-    positions[i * 3 + 1] = scatterPos[i * 3 + 1];
-    positions[i * 3 + 2] = scatterPos[i * 3 + 2];
-
-    const dist = Math.sqrt(targetPos[i * 3] ** 2 + targetPos[i * 3 + 2] ** 2);
-    const n    = Math.min(dist / MAX_RADIUS, 1.0);
-
-    if (n < 0.12) {
-      tmp.copy(coreColor).lerp(midColor, n / 0.12);
-    } else if (n < 0.55) {
-      tmp.copy(midColor).lerp(edgeColor, (n - 0.12) / 0.43);
-    } else {
-      // Floor the dim so outer-arm particles fade out instead of vanishing.
-      const dim = 1.0 - (n - 0.55) * 2.0;
-      tmp.copy(edgeColor).multiplyScalar(Math.max(dim, 0.25));
-    }
-
-    colors[i * 3]     = tmp.r;
-    colors[i * 3 + 1] = tmp.g;
-    colors[i * 3 + 2] = tmp.b;
+function buildStars(mobile: boolean) {
+  let seed = 76129;
+  const random = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) | 0;
+    return (seed >>> 0) / 4294967296;
+  };
+  const gaussian = () => (random() + random() + random() + random() - 2) * 1.73;
+  const count = mobile ? 5200 : 8200;
+  const position = new Float32Array(count * 3);
+  const scatter = new Float32Array(count * 3);
+  const color = new Float32Array(count * 3);
+  const size = new Float32Array(count);
+  const phase = new Float32Array(count);
+  const kind = new Float32Array(count);
+  // Small clusters interrupt the trails, avoiding evenly spaced beads or solid arms.
+  const knots = Array.from({ length: 110 }, () => random());
+  const palette = [new THREE.Color("#74b4ee"), new THREE.Color("#a8d8ff"),
+    new THREE.Color("#e6f2ff"), new THREE.Color("#ffe4cb"), new THREE.Color("#d99861")];
+  for (let i = 0; i < count; i++) {
+    const field = i < 800;
+    const core = i >= 800 && i < 850;
+    const hot = core || random() < 0.06;
+    let t = random() < 0.72 ? knots[Math.floor(random() * knots.length)] + gaussian() * 0.012 : random();
+    t = THREE.MathUtils.clamp(t, 0, 1);
+    const strand = i % 2;
+    const radius = 18 + 104 * Math.pow(t, 0.94);
+    const angle = 1.55 + (1 - t) * 10.2 - strand * (1.15 - 0.25 * t);
+    const spread = (hot ? 0.65 : 1) * (1.1 + 4.0 * Math.sin(t * Math.PI));
+    const radial = radius + gaussian() * spread;
+    // Both outer strands rise above the central curl instead of forming a pinwheel.
+    const tail = 87 * Math.pow(Math.max(0, (t - 0.76) / 0.24), 1.6);
+    const theta = angle + gaussian() * spread / Math.max(radius, 8);
+    let x = Math.cos(theta) * radial * 1.12;
+    let y = Math.sin(theta) * radial + tail;
+    let z = gaussian() * (2 + 5 * Math.sin(t * Math.PI));
+    if (field) { x = (random() - 0.5) * 850; y = (random() - 0.5) * 650; z = -60 - random() * 220; }
+    if (core) { const r = Math.pow(random(), 1.4) * 9; const a = random() * Math.PI * 2; x = Math.cos(a) * r; y = Math.sin(a) * r; z = gaussian() * 3; }
+    position.set([x, y, z], i * 3);
+    scatter.set([(random() - 0.5) * 700, (random() - 0.5) * 480 + 35, (random() - 0.5) * 160], i * 3);
+    const pick = random();
+    const tone = core ? palette[2] : palette[pick < 0.3 ? 0 : pick < 0.55 ? 1 : pick < 0.78 ? 2 : pick < 0.91 ? 3 : 4];
+    const intensity = field ? 0.2 + random() * 0.5 : hot ? 1.6 + random() * 1.8 : 0.32 + random() * 0.65;
+    color.set([tone.r * intensity, tone.g * intensity, tone.b * intensity], i * 3);
+    size[i] = core ? 6 + random() * 13 : field ? (random() < 0.025 ? 12 : 0.8 + random() * 2) : hot ? 15 + Math.pow(random(), 2) * 25 : 0.8 + random() * 1.8;
+    phase[i] = random() * Math.PI * 2;
+    kind[i] = field ? 1 : core ? 2 : 0;
   }
-
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  geo.setAttribute("color",    new THREE.BufferAttribute(colors, 3));
-  return { geo, scatterPos, targetPos };
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(position, 3));
+  geometry.setAttribute("aScatter", new THREE.BufferAttribute(scatter, 3));
+  geometry.setAttribute("color", new THREE.BufferAttribute(color, 3));
+  geometry.setAttribute("aSize", new THREE.BufferAttribute(size, 1));
+  geometry.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
+  geometry.setAttribute("aKind", new THREE.BufferAttribute(kind, 1));
+  return geometry;
 }
-
-function buildFillGeometry() {
-  const positions  = new Float32Array(FILL_COUNT * 3);
-  const scatterPos = new Float32Array(FILL_COUNT * 3);
-  const targetPos  = new Float32Array(FILL_COUNT * 3);
-  const colors     = new Float32Array(FILL_COUNT * 3);
-
-  const midColor  = new THREE.Color(0.65, 0.12, 0.0);
-  const edgeColor = new THREE.Color(0.15, 0.04, 0.0);
-  const tmp = new THREE.Color();
-
-  for (let i = 0; i < FILL_COUNT; i++) {
-    writeScatterPoint(scatterPos, i);
-
-    const r     = Math.pow(Math.random(), 0.5) * MAX_RADIUS;
-    const theta = Math.random() * Math.PI * 2;
-    targetPos[i * 3]     = Math.cos(theta) * r;
-    targetPos[i * 3 + 1] = (Math.random() - 0.5) * r * 0.06;
-    targetPos[i * 3 + 2] = Math.sin(theta) * r;
-
-    positions[i * 3]     = scatterPos[i * 3];
-    positions[i * 3 + 1] = scatterPos[i * 3 + 1];
-    positions[i * 3 + 2] = scatterPos[i * 3 + 2];
-
-    const n = Math.min(r / MAX_RADIUS, 1.0);
-    if (n < 0.55) {
-      tmp.copy(midColor).lerp(edgeColor, n / 0.55);
-    } else {
-      const dim = 1.0 - (n - 0.55) * 2.0;
-      tmp.copy(edgeColor).multiplyScalar(Math.max(dim, 0.25));
-    }
-
-    colors[i * 3]     = tmp.r;
-    colors[i * 3 + 1] = tmp.g;
-    colors[i * 3 + 2] = tmp.b;
-  }
-
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  geo.setAttribute("color",    new THREE.BufferAttribute(colors, 3));
-  return { geo, scatterPos, targetPos };
-}
-
-// Sparse hot outliers along the arms — breaks the uniform particle size.
-function buildBrightGeometry() {
-  const positions  = new Float32Array(BRIGHT_COUNT * 3);
-  const scatterPos = new Float32Array(BRIGHT_COUNT * 3);
-  const targetPos  = new Float32Array(BRIGHT_COUNT * 3);
-  const colors     = new Float32Array(BRIGHT_COUNT * 3);
-
-  for (let i = 0; i < BRIGHT_COUNT; i++) {
-    writeScatterPoint(scatterPos, i);
-    writeArmPoint(targetPos, i);
-
-    positions[i * 3]     = scatterPos[i * 3];
-    positions[i * 3 + 1] = scatterPos[i * 3 + 1];
-    positions[i * 3 + 2] = scatterPos[i * 3 + 2];
-
-    const b = 0.7 + Math.random() * 0.3;
-    colors[i * 3]     = 1.0 * b;
-    colors[i * 3 + 1] = (0.4 + Math.random() * 0.25) * b;
-    colors[i * 3 + 2] = 0.1 * b;
-  }
-
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  geo.setAttribute("color",    new THREE.BufferAttribute(colors, 3));
-  return { geo, scatterPos, targetPos };
-}
-
 
 export default function GalaxyScene() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || typeof window === "undefined") return;
-
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000, 1);
-    renderer.toneMapping = THREE.ReinhardToneMapping;
-    renderer.toneMappingExposure = 1.0;
-
-    const scene  = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(0, 180, 60);
-    camera.lookAt(0, 0, 0);
-
-    const sprite = makeSpriteTexture();
-
-    const { geo, scatterPos: armScatter, targetPos: armTarget } = buildGalaxyGeometry();
-    const mat = new THREE.PointsMaterial({
-      size: 0.9,
-      map: sprite,
-      vertexColors: true,
-      sizeAttenuation: true,
-      transparent: true,
-      opacity: 0.9,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-    });
-    const points = new THREE.Points(geo, mat);
-
-    const { geo: fillGeo, scatterPos: fillScatter, targetPos: fillTarget } = buildFillGeometry();
-    const fillMat = new THREE.PointsMaterial({
-      size: 0.6,
-      map: sprite,
-      vertexColors: true,
-      sizeAttenuation: true,
-      transparent: true,
-      opacity: 0.5,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
-    const fillPoints = new THREE.Points(fillGeo, fillMat);
-
-    const { geo: brightGeo, scatterPos: brightScatter, targetPos: brightTarget } = buildBrightGeometry();
-    const brightMat = new THREE.PointsMaterial({
-      size: 2.2,
-      map: sprite,
-      vertexColors: true,
-      sizeAttenuation: true,
-      transparent: true,
-      opacity: 0.9,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
-    const brightPoints = new THREE.Points(brightGeo, brightMat);
-
-    const galaxy = new THREE.Group();
-    galaxy.add(points);
-    galaxy.add(fillPoints);
-    galaxy.add(brightPoints);
-    scene.add(galaxy);
-
-    const composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.45, // strength
-      0.7,  // radius
-      0.55, // threshold
-    );
-    composer.addPass(bloomPass);
-    composer.addPass(new OutputPass());
-
-    // One continuous camera path for the whole scroll — a single spline avoids
-    // the stop-start velocity discontinuities of piecewise segments.
-    const camPath = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, 180,  60),
-      new THREE.Vector3(0, 240, 120),
-      new THREE.Vector3(0, 290,  50),
-      new THREE.Vector3(0, 160, 130),
-      new THREE.Vector3(0,  40, 220),
-      new THREE.Vector3(0,   8, 420),
-    ]);
-
-    // ── Load progress ─────────────────────────────────────────────
-    let loadPct      = 0;
-    let formT        = 0; // eased toward loadPct so formation glides despite chunky loader steps
-    let galaxyFormed = false;
-
-    const onProgress = (e: Event) => {
-      // Monotonic: a stray/replayed progress event must never un-form the galaxy.
-      loadPct = Math.max(loadPct, (e as CustomEvent<{ pct: number }>).detail.pct);
-    };
-    window.addEventListener("galaxyProgress", onProgress);
-
-    const HERO_VH = 5;
-    // Capture stable height — address bar show/hide changes innerHeight and
-    // would shift the scroll percentage even if the user hasn't moved.
-    // Refreshed on width changes (rotation / window resize) below.
-    let stableH = window.innerHeight;
-    let scrollRaw = 0;
-    let smoothP   = 0;
-
-    const onScroll = () => {
-      // Clamp to [0,1]: iOS rubber-band makes scrollY briefly negative, which
-      // drives smoothP below 0 and causes the camera to bounce.
-      scrollRaw = Math.max(0, Math.min(window.scrollY / (stableH * HERO_VH), 1));
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    // Only resize when WIDTH changes. Address bar show/hide is a height-only
-    // event; resizing on it changes camera.aspect and causes a visible zoom jerk.
-    let lastWidth = window.innerWidth;
-    let resizeId: ReturnType<typeof setTimeout> | null = null;
-    const onResize = () => {
-      if (window.innerWidth === lastWidth) return;
-      lastWidth = window.innerWidth;
-      if (resizeId !== null) clearTimeout(resizeId);
-      resizeId = setTimeout(() => {
-        resizeId = null;
-        stableH = window.innerHeight;
-        onScroll();
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        composer.setSize(window.innerWidth, window.innerHeight);
-      }, 150);
-    };
-    window.addEventListener("resize", onResize);
-
-    const camTarget  = new THREE.Vector3(0, 180, 60);
-    const lookTarget = new THREE.Vector3(0, 0, 0);
-    const curLook    = new THREE.Vector3(0, 0, 0);
-
-    const clock = new THREE.Clock();
-    let rafId: number;
-
-    function tick() {
-      rafId = requestAnimationFrame(tick);
-      // Clamp dt so a backgrounded tab doesn't produce a huge jump on return.
-      const dt = Math.min(clock.getDelta(), 0.05);
-
-      // ── Particle formation during load ────────────────────────
-      if (!galaxyFormed) {
-        formT += (loadPct / 100 - formT) * (1 - Math.exp(-4 * dt));
-        if (loadPct >= 100 && formT > 0.997) {
-          formT = 1;
-          galaxyFormed = true;
-        }
-        const t = ss(0, 1, formT);
-
-        const armArr = geo.attributes.position.array as Float32Array;
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-          armArr[i * 3]     = lerp(armScatter[i * 3],     armTarget[i * 3],     t);
-          armArr[i * 3 + 1] = lerp(armScatter[i * 3 + 1], armTarget[i * 3 + 1], t);
-          armArr[i * 3 + 2] = lerp(armScatter[i * 3 + 2], armTarget[i * 3 + 2], t);
-        }
-        geo.attributes.position.needsUpdate = true;
-
-        const fillArr = fillGeo.attributes.position.array as Float32Array;
-        for (let i = 0; i < FILL_COUNT; i++) {
-          fillArr[i * 3]     = lerp(fillScatter[i * 3],     fillTarget[i * 3],     t);
-          fillArr[i * 3 + 1] = lerp(fillScatter[i * 3 + 1], fillTarget[i * 3 + 1], t);
-          fillArr[i * 3 + 2] = lerp(fillScatter[i * 3 + 2], fillTarget[i * 3 + 2], t);
-        }
-        fillGeo.attributes.position.needsUpdate = true;
-
-        const brightArr = brightGeo.attributes.position.array as Float32Array;
-        for (let i = 0; i < BRIGHT_COUNT; i++) {
-          brightArr[i * 3]     = lerp(brightScatter[i * 3],     brightTarget[i * 3],     t);
-          brightArr[i * 3 + 1] = lerp(brightScatter[i * 3 + 1], brightTarget[i * 3 + 1], t);
-          brightArr[i * 3 + 2] = lerp(brightScatter[i * 3 + 2], brightTarget[i * 3 + 2], t);
-        }
-        brightGeo.attributes.position.needsUpdate = true;
-      }
-
-      // ── Scroll-driven camera ──────────────────────────────────
-      // Exponential smoothing in dt terms — identical feel at 60Hz and 120Hz.
-      smoothP += (scrollRaw - smoothP) * (1 - Math.exp(-3.5 * dt));
-      const p = smoothP;
-
-      // Monotonic spin-up across the scroll (radians/second).
-      const rotSpeed = lerp(0.085, 0.35, ss(0.08, 0.85, p));
-      galaxy.rotation.y -= rotSpeed * dt;
-      // Fill cloud drifts at a slightly different rate for parallax depth.
-      fillPoints.rotation.y += rotSpeed * 0.18 * dt;
-
-      camTarget.copy(camPath.getPoint(ss(0, 1, p)));
-      lookTarget.set(0, 0, 0);
-
-      const kCam = 1 - Math.exp(-4.3 * dt);
-      camera.position.lerp(camTarget, kCam);
-      curLook.lerp(lookTarget, kCam);
-      camera.lookAt(curLook);
-      composer.render();
+    if (!canvas) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
+    } catch {
+      // Keep the introduction readable on devices without WebGL.
+      setIntroPhase("settled");
+      return;
     }
-
+    renderer.setClearColor(0x000000, 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 640 ? 1.5 : 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.toneMapping = THREE.NoToneMapping;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1800);
+    const geometry = buildStars(window.innerWidth < 640);
+    const uniforms = {
+      uTime: { value: 0 }, uFormation: { value: 0 }, uRotation: { value: 0 },
+      uTilt: { value: 0 }, uFade: { value: 0 }, uPixelRatio: { value: renderer.getPixelRatio() },
+    };
+    const material = new THREE.ShaderMaterial({
+      uniforms, vertexColors: true, transparent: true, depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      vertexShader: `
+        attribute vec3 aScatter;
+        attribute float aSize, aPhase, aKind;
+        uniform float uTime, uFormation, uRotation, uTilt, uFade, uPixelRatio;
+        varying vec3 vColor;
+        varying float vAlpha, vHot;
+        void main() {
+          float background = 1.0 - step(0.1, abs(aKind - 1.0));
+          float core = step(1.5, aKind);
+          float f = smoothstep(0.0, 1.0, clamp(uFormation * 1.12 - aPhase * 0.018, 0.0, 1.0));
+          vec3 p = mix(aScatter, position, mix(f, 1.0, background));
+          float sweep = sin(f * 3.14159265) * (1.0 - f) * 0.6;
+          float rotation = (uRotation + sweep) * (1.0 - background);
+          p.xy = mat2(cos(rotation), -sin(rotation), sin(rotation), cos(rotation)) * p.xy;
+          float tilt = uTilt * (1.0 - background);
+          p.yz = mat2(cos(tilt), -sin(tilt), sin(tilt), cos(tilt)) * p.yz;
+          vec4 viewPosition = modelViewMatrix * vec4(p, 1.0);
+          gl_Position = projectionMatrix * viewPosition;
+          gl_PointSize = clamp(aSize * uPixelRatio * 440.0 / max(100.0, -viewPosition.z), 0.8, 80.0);
+          vColor = color;
+          vHot = step(5.0, aSize);
+          float twinkle = 0.9 + 0.1 * sin(uTime * 0.65 + aPhase);
+          vAlpha = uFade * twinkle * mix(1.0, 0.22 + 0.78 * f, core);
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vColor;
+        varying float vAlpha, vHot;
+        void main() {
+          vec2 p = (gl_PointCoord - 0.5) * 2.0;
+          float r2 = dot(p, p);
+          if (r2 > 1.0) discard;
+          float dust = exp(-r2 * 3.0);
+          // Tight white center and a local colored halo; no full-screen bloom fog.
+          float star = exp(-r2 * 32.0) + 0.16 * exp(-r2 * 5.0);
+          float light = mix(dust, star, vHot) * (1.0 - smoothstep(0.75, 1.0, sqrt(r2)));
+          gl_FragColor = vec4(vColor, vAlpha * light);
+          #include <tonemapping_fragment>
+          #include <colorspace_fragment>
+        }
+      `,
+    });
+    const stars = new THREE.Points(geometry, material);
+    stars.frustumCulled = false;
+    scene.add(stars);
+    const glowCanvas = document.createElement("canvas");
+    glowCanvas.width = glowCanvas.height = 128;
+    const ctx = glowCanvas.getContext("2d")!;
+    const glow = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    glow.addColorStop(0, "rgba(228,240,255,0.55)");
+    glow.addColorStop(0.12, "rgba(208,226,255,0.32)");
+    glow.addColorStop(0.4, "rgba(184,207,242,0.1)");
+    glow.addColorStop(1, "rgba(184,207,242,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, 128, 128);
+    const glowTexture = new THREE.CanvasTexture(glowCanvas);
+    const glowMaterial = new THREE.SpriteMaterial({ map: glowTexture, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 });
+    const coreGlow = new THREE.Sprite(glowMaterial);
+    coreGlow.scale.set(65, 65, 1);
+    scene.add(coreGlow);
+    const cameraPath = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 44, 440), new THREE.Vector3(0, 28, 560),
+      new THREE.Vector3(0, 5, 640), new THREE.Vector3(0, 25, 440),
+      new THREE.Vector3(0, 200, 360), new THREE.Vector3(0, 400, 250),
+    ]);
+    let stableHeight = window.innerHeight;
+    let scroll = 0;
+    let smoothScroll = 0;
+    let elapsed = 0;
+    let dragRotation = 0;
+    let dragTilt = 0;
+    let pointer: { id: number; x: number; y: number; target: HTMLElement } | null = null;
+    const onReplay = () => {
+      elapsed = 0;
+      dragRotation = 0;
+      dragTilt = 0;
+      uniforms.uRotation.value = 0;
+      uniforms.uTilt.value = 0;
+      setIntroPhase(reducedMotion.matches ? "settled" : "stars");
+    };
+    const onScroll = () => { scroll = THREE.MathUtils.clamp(window.scrollY / (stableHeight * 5), 0, 1); };
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target instanceof Element ? event.target.closest<HTMLElement>("[data-galaxy-interaction]") : null;
+      if (!target || event.button !== 0 || pointer) return;
+      pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, target };
+      target.setPointerCapture(event.pointerId);
+      target.style.cursor = "grabbing";
+    };
+    const onPointerMove = (event: PointerEvent) => {
+      if (!pointer || event.pointerId !== pointer.id) return;
+      dragRotation += (event.clientX - pointer.x) * 0.004;
+      dragTilt = THREE.MathUtils.clamp(dragTilt + (event.clientY - pointer.y) * 0.003, -0.8, 0.8);
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+    };
+    const onPointerUp = (event?: PointerEvent) => {
+      if (event && pointer && event.pointerId !== pointer.id) return;
+      if (pointer) {
+        pointer.target.style.cursor = "grab";
+        if (pointer.target.hasPointerCapture(pointer.id)) pointer.target.releasePointerCapture(pointer.id);
+      }
+      pointer = null;
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!(event.target instanceof Element) || !event.target.closest("[data-galaxy-interaction]")) return;
+      if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home"].includes(event.key)) return;
+      event.preventDefault();
+      if (event.key === "Home") { dragRotation = 0; dragTilt = 0; }
+      if (event.key === "ArrowLeft") dragRotation -= 0.12;
+      if (event.key === "ArrowRight") dragRotation += 0.12;
+      if (event.key === "ArrowUp") dragTilt = Math.max(-0.8, dragTilt - 0.1);
+      if (event.key === "ArrowDown") dragTilt = Math.min(0.8, dragTilt + 0.1);
+    };
+    let lastWidth = window.innerWidth;
+    const onResize = () => {
+      if (window.innerWidth < 640 && lastWidth === window.innerWidth && Math.abs(stableHeight - window.innerHeight) < 160) return;
+      lastWidth = window.innerWidth;
+      stableHeight = window.innerHeight;
+      camera.aspect = window.innerWidth / stableHeight;
+      camera.updateProjectionMatrix();
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 640 ? 1.5 : 2));
+      renderer.setSize(window.innerWidth, stableHeight);
+      uniforms.uPixelRatio.value = renderer.getPixelRatio();
+      onScroll();
+    };
+    window.addEventListener(GALAXY_REPLAY_EVENT, onReplay);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    window.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+    window.addEventListener("keydown", onKeyDown);
+    onScroll();
+    onReplay();
+    const clock = new THREE.Clock();
+    const cameraTarget = new THREE.Vector3();
+    const lookTarget = new THREE.Vector3();
+    let frame: number;
+    function tick() {
+      frame = requestAnimationFrame(tick);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      if (document.hidden) return;
+      elapsed += dt;
+      const reduced = reducedMotion.matches;
+      uniforms.uFormation.value = reduced ? 1 : smoothstep(1.2, INTRO_DURATION, elapsed);
+      uniforms.uFade.value = reduced ? 1 : smoothstep(0, 0.7, elapsed);
+      glowMaterial.opacity = reduced ? 1 : smoothstep(3.5, INTRO_DURATION, elapsed);
+      setIntroPhase(reduced || elapsed >= INTRO_DURATION ? "settled" : elapsed >= 0.7 ? "title" : "stars");
+      if (!reduced) uniforms.uTime.value += dt;
+      const ease = reduced ? 1 : 1 - Math.exp(-5 * dt);
+      // A restrained sway preserves the distinctive upward silhouette over time.
+      const drift = reduced ? 0 : Math.sin(Math.max(0, elapsed - INTRO_DURATION) * 0.08) * 0.035;
+      uniforms.uRotation.value += (dragRotation + drift - uniforms.uRotation.value) * ease;
+      uniforms.uTilt.value += (dragTilt - uniforms.uTilt.value) * ease;
+      smoothScroll += (scroll - smoothScroll) * ease;
+      cameraPath.getPoint(smoothstep(0, 1, smoothScroll), cameraTarget);
+      const fit = Math.max(1, 0.8 / camera.aspect);
+      cameraTarget.z *= fit;
+      camera.position.copy(cameraTarget);
+      lookTarget.set(0, 44 * (1 - smoothstep(0, 0.45, smoothScroll)), 0);
+      camera.lookAt(lookTarget);
+      if (scroll < 1) renderer.render(scene, camera);
+    }
     tick();
-
     return () => {
-      if (resizeId !== null) clearTimeout(resizeId);
-      cancelAnimationFrame(rafId);
-      window.removeEventListener("galaxyProgress", onProgress);
+      cancelAnimationFrame(frame);
+      onPointerUp();
+      window.removeEventListener(GALAXY_REPLAY_EVENT, onReplay);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
-      renderer.dispose();
-      composer.dispose();
-      geo.dispose();
-      mat.dispose();
-      fillGeo.dispose();
-      fillMat.dispose();
-      brightGeo.dispose();
-      brightMat.dispose();
-      sprite.dispose();
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+      window.removeEventListener("keydown", onKeyDown);
+      geometry.dispose(); material.dispose(); glowTexture.dispose(); glowMaterial.dispose(); renderer.dispose();
     };
   }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        zIndex: 0,
-        pointerEvents: "none",
-        transform: "translateZ(0)",
-      }}
-    />
-  );
+  return <canvas ref={canvasRef} aria-hidden="true" style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: 0, pointerEvents: "none", background: "radial-gradient(ellipse at 50% 48%, #010204 10%, #060c12 72%, #09121a 100%)" }} />;
 }
