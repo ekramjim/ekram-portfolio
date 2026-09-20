@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import * as THREE from "three";
-import { GALAXY_REPLAY_EVENT, setIntroPhase } from "./galaxyIntro";
+import { getScrollProgress } from "./scrollProgress";
+import type { GalaxyPhase } from "./types";
 
 const INTRO_DURATION = 5.2;
 function smoothstep(a: number, b: number, value: number) {
@@ -23,6 +24,8 @@ function buildStars(mobile: boolean) {
   const size = new Float32Array(count);
   const phase = new Float32Array(count);
   const kind = new Float32Array(count);
+  const arm = new Float32Array(count * 2);
+  const noise = new Float32Array(count * 3);
   // Small clusters interrupt the trails, avoiding evenly spaced beads or solid arms.
   const knots = Array.from({ length: 110 }, () => random());
   const palette = [new THREE.Color("#74b4ee"), new THREE.Color("#a8d8ff"),
@@ -33,17 +36,10 @@ function buildStars(mobile: boolean) {
     const hot = core || random() < 0.06;
     let t = random() < 0.72 ? knots[Math.floor(random() * knots.length)] + gaussian() * 0.012 : random();
     t = THREE.MathUtils.clamp(t, 0, 1);
-    const strand = i % 2;
-    const radius = 18 + 104 * Math.pow(t, 0.94);
-    const angle = 1.55 + (1 - t) * 10.2 - strand * (1.15 - 0.25 * t);
-    const spread = (hot ? 0.65 : 1) * (1.1 + 4.0 * Math.sin(t * Math.PI));
-    const radial = radius + gaussian() * spread;
-    // Both outer strands rise above the central curl instead of forming a pinwheel.
-    const tail = 87 * Math.pow(Math.max(0, (t - 0.76) / 0.24), 1.6);
-    const theta = angle + gaussian() * spread / Math.max(radius, 8);
-    let x = Math.cos(theta) * radial * 1.12;
-    let y = Math.sin(theta) * radial + tail;
-    let z = gaussian() * (2 + 5 * Math.sin(t * Math.PI));
+    // Arm stars are placed in the vertex shader from (t, strand, noise) so they can flow along the spiral.
+    arm.set([Math.min(t, 0.9999), i % 2], i * 2);
+    noise.set([gaussian(), gaussian(), gaussian()], i * 3);
+    let x = 0, y = 0, z = 0;
     if (field) { x = (random() - 0.5) * 850; y = (random() - 0.5) * 650; z = -60 - random() * 220; }
     if (core) { const r = Math.pow(random(), 1.4) * 9; const a = random() * Math.PI * 2; x = Math.cos(a) * r; y = Math.sin(a) * r; z = gaussian() * 3; }
     position.set([x, y, z], i * 3);
@@ -63,21 +59,45 @@ function buildStars(mobile: boolean) {
   geometry.setAttribute("aSize", new THREE.BufferAttribute(size, 1));
   geometry.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
   geometry.setAttribute("aKind", new THREE.BufferAttribute(kind, 1));
+  geometry.setAttribute("aArm", new THREE.BufferAttribute(arm, 2));
+  geometry.setAttribute("aNoise", new THREE.BufferAttribute(noise, 3));
   return geometry;
 }
 
-export default function GalaxyScene() {
+interface GalaxySceneProps {
+  /** Scroll zone element; scroll progress, drag and key handling are scoped to it. */
+  rootRef: RefObject<HTMLElement | null>;
+  scrollScreens: number;
+  flowSpeed: number;
+  onPhaseChange: (phase: GalaxyPhase) => void;
+  /** Bump to replay the intro. */
+  replayToken: number;
+}
+
+export default function GalaxyScene({ rootRef, scrollScreens, flowSpeed, onPhaseChange, replayToken }: GalaxySceneProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Latest props live in refs so the scene effect runs once and is never torn down by parent re-renders.
+  const onPhaseRef = useRef(onPhaseChange);
+  onPhaseRef.current = onPhaseChange;
+  const replayTokenRef = useRef(replayToken);
+  replayTokenRef.current = replayToken;
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const root = rootRef.current;
+    if (!canvas || !root) return;
+    let phase: GalaxyPhase | null = null;
+    const report = (next: GalaxyPhase) => {
+      if (next === phase) return;
+      phase = next;
+      onPhaseRef.current(next);
+    };
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
     } catch {
       // Keep the introduction readable on devices without WebGL.
-      setIntroPhase("settled");
+      report("settled");
       return;
     }
     renderer.setClearColor(0x000000, 0);
@@ -89,7 +109,7 @@ export default function GalaxyScene() {
     const geometry = buildStars(window.innerWidth < 640);
     const uniforms = {
       uTime: { value: 0 }, uFormation: { value: 0 }, uRotation: { value: 0 },
-      uTilt: { value: 0 }, uFade: { value: 0 }, uPixelRatio: { value: renderer.getPixelRatio() },
+      uTilt: { value: 0 }, uFade: { value: 0 }, uFlow: { value: 0 }, uFlowFade: { value: 0 }, uPixelRatio: { value: renderer.getPixelRatio() },
     };
     const material = new THREE.ShaderMaterial({
       uniforms, vertexColors: true, transparent: true, depthWrite: false,
@@ -97,14 +117,27 @@ export default function GalaxyScene() {
       vertexShader: `
         attribute vec3 aScatter;
         attribute float aSize, aPhase, aKind;
-        uniform float uTime, uFormation, uRotation, uTilt, uFade, uPixelRatio;
+        attribute vec2 aArm;
+        attribute vec3 aNoise;
+        uniform float uTime, uFormation, uRotation, uTilt, uFade, uPixelRatio, uFlow, uFlowFade;
         varying vec3 vColor;
         varying float vAlpha, vHot;
         void main() {
           float background = 1.0 - step(0.1, abs(aKind - 1.0));
           float core = step(1.5, aKind);
           float f = smoothstep(0.0, 1.0, clamp(uFormation * 1.12 - aPhase * 0.018, 0.0, 1.0));
-          vec3 p = mix(aScatter, position, mix(f, 1.0, background));
+          // Arm stars ride the spiral: t runs 0 (core) to 1 (rim) and uFlow slides it inward, wrapping at the rim.
+          float arm = 1.0 - step(0.5, aKind);
+          float t = mod(aArm.x - uFlow, 1.0);
+          float radius = 18.0 + 104.0 * pow(t, 0.94);
+          float angle = 1.55 + (1.0 - t) * 10.2 - aArm.y * (1.15 - 0.25 * t);
+          float spread = mix(1.0, 0.65, step(5.0, aSize)) * (1.1 + 4.0 * sin(t * 3.14159265));
+          float radial = radius + aNoise.x * spread;
+          float theta = angle + aNoise.y * spread / max(radius, 8.0);
+          float tail = 87.0 * pow(max(0.0, (t - 0.76) / 0.24), 1.6);
+          vec3 armPosition = vec3(cos(theta) * radial * 1.12, sin(theta) * radial + tail, aNoise.z * (2.0 + 5.0 * sin(t * 3.14159265)));
+          vec3 galaxyPosition = mix(position, armPosition, arm);
+          vec3 p = mix(aScatter, galaxyPosition, mix(f, 1.0, background));
           float sweep = sin(f * 3.14159265) * (1.0 - f) * 0.6;
           float rotation = (uRotation + sweep) * (1.0 - background);
           p.xy = mat2(cos(rotation), -sin(rotation), sin(rotation), cos(rotation)) * p.xy;
@@ -116,7 +149,9 @@ export default function GalaxyScene() {
           vColor = color;
           vHot = step(5.0, aSize);
           float twinkle = 0.9 + 0.1 * sin(uTime * 0.65 + aPhase);
-          vAlpha = uFade * twinkle * mix(1.0, 0.22 + 0.78 * f, core);
+          // Stars fade in at the rim and out into the core so the wrap-around is never seen.
+          float seam = smoothstep(0.0, 0.05, t) * (1.0 - smoothstep(0.95, 1.0, t));
+          vAlpha = uFade * twinkle * mix(1.0, 0.22 + 0.78 * f, core) * mix(1.0, seam, arm * uFlowFade);
         }
       `,
       fragmentShader: `
@@ -161,23 +196,31 @@ export default function GalaxyScene() {
     ]);
     let stableHeight = window.innerHeight;
     let scroll = 0;
+    let inView = true;
+    let seenReplayToken = replayTokenRef.current;
     let smoothScroll = 0;
     let elapsed = 0;
     let dragRotation = 0;
     let dragTilt = 0;
+    let flow = 0;
     let pointer: { id: number; x: number; y: number; target: HTMLElement } | null = null;
     const onReplay = () => {
       elapsed = 0;
       dragRotation = 0;
       dragTilt = 0;
+      flow = 0;
       uniforms.uRotation.value = 0;
       uniforms.uTilt.value = 0;
-      setIntroPhase(reducedMotion.matches ? "settled" : "stars");
+      report(reducedMotion.matches ? "settled" : "stars");
     };
-    const onScroll = () => { scroll = THREE.MathUtils.clamp(window.scrollY / (stableHeight * 5), 0, 1); };
+    const onScroll = () => {
+      scroll = getScrollProgress(root, stableHeight, scrollScreens);
+      const rect = root.getBoundingClientRect();
+      inView = rect.bottom > 0 && rect.top < window.innerHeight;
+    };
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target instanceof Element ? event.target.closest<HTMLElement>("[data-galaxy-interaction]") : null;
-      if (!target || event.button !== 0 || pointer) return;
+      if (!target || !root.contains(target) || event.button !== 0 || pointer) return;
       pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, target };
       target.setPointerCapture(event.pointerId);
       target.style.cursor = "grabbing";
@@ -198,7 +241,8 @@ export default function GalaxyScene() {
       pointer = null;
     };
     const onKeyDown = (event: KeyboardEvent) => {
-      if (!(event.target instanceof Element) || !event.target.closest("[data-galaxy-interaction]")) return;
+      const target = event.target instanceof Element ? event.target.closest("[data-galaxy-interaction]") : null;
+      if (!target || !root.contains(target)) return;
       if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home"].includes(event.key)) return;
       event.preventDefault();
       if (event.key === "Home") { dragRotation = 0; dragTilt = 0; }
@@ -219,7 +263,6 @@ export default function GalaxyScene() {
       uniforms.uPixelRatio.value = renderer.getPixelRatio();
       onScroll();
     };
-    window.addEventListener(GALAXY_REPLAY_EVENT, onReplay);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
     window.addEventListener("pointerdown", onPointerDown);
@@ -237,14 +280,20 @@ export default function GalaxyScene() {
       frame = requestAnimationFrame(tick);
       const dt = Math.min(clock.getDelta(), 0.05);
       if (document.hidden) return;
+      if (replayTokenRef.current !== seenReplayToken) { seenReplayToken = replayTokenRef.current; onReplay(); }
       elapsed += dt;
       const reduced = reducedMotion.matches;
       uniforms.uFormation.value = reduced ? 1 : smoothstep(1.2, INTRO_DURATION, elapsed);
       uniforms.uFade.value = reduced ? 1 : smoothstep(0, 0.7, elapsed);
       glowMaterial.opacity = reduced ? 1 : smoothstep(3.5, INTRO_DURATION, elapsed);
-      setIntroPhase(reduced || elapsed >= INTRO_DURATION ? "settled" : elapsed >= 0.7 ? "title" : "stars");
+      report(reduced || elapsed >= INTRO_DURATION ? "settled" : elapsed >= 0.7 ? "title" : "stars");
       if (!reduced) uniforms.uTime.value += dt;
       const ease = reduced ? 1 : 1 - Math.exp(-5 * dt);
+      // Stars stream inward along the arms once the galaxy has formed.
+      const flowEase = reduced ? 0 : smoothstep(INTRO_DURATION, INTRO_DURATION + 2, elapsed);
+      flow = (flow + flowSpeed * flowEase * dt) % 1;
+      uniforms.uFlow.value = flow;
+      uniforms.uFlowFade.value = flowEase;
       // A restrained sway preserves the distinctive upward silhouette over time.
       const drift = reduced ? 0 : Math.sin(Math.max(0, elapsed - INTRO_DURATION) * 0.08) * 0.035;
       uniforms.uRotation.value += (dragRotation + drift - uniforms.uRotation.value) * ease;
@@ -256,13 +305,12 @@ export default function GalaxyScene() {
       camera.position.copy(cameraTarget);
       lookTarget.set(0, 44 * (1 - smoothstep(0, 0.45, smoothScroll)), 0);
       camera.lookAt(lookTarget);
-      if (scroll < 1) renderer.render(scene, camera);
+      if (scroll < 1 && inView) renderer.render(scene, camera);
     }
     tick();
     return () => {
       cancelAnimationFrame(frame);
       onPointerUp();
-      window.removeEventListener(GALAXY_REPLAY_EVENT, onReplay);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("pointerdown", onPointerDown);
@@ -272,6 +320,6 @@ export default function GalaxyScene() {
       window.removeEventListener("keydown", onKeyDown);
       geometry.dispose(); material.dispose(); glowTexture.dispose(); glowMaterial.dispose(); renderer.dispose();
     };
-  }, []);
+  }, [rootRef, scrollScreens, flowSpeed]);
   return <canvas ref={canvasRef} aria-hidden="true" style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: 0, pointerEvents: "none", background: "radial-gradient(ellipse at 50% 48%, #010204 10%, #060c12 72%, #09121a 100%)" }} />;
 }

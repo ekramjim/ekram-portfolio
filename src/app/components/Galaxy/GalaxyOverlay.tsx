@@ -1,30 +1,8 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { GALAXY_REPLAY_EVENT } from "./galaxyIntro";
-import styles from "./GalaxyHero.module.css";
-
-const ORBIT_LABEL_NAMES = ["ABOUT", "SKILLS", "PROJECTS", "EXPERIENCE", "EDUCATION", "CONTACT"];
-
-const FLYTHROUGH = [
-  {
-    p0: 0.55, p1: 0.63,
-    tag: "ABOUT",
-    heading: "CS Graduate · Co-Founder",
-    body: "Co-Founder of LynkSphere · MSc Data Science at Monash University · Melbourne, Australia.",
-  },
-  {
-    p0: 0.64, p1: 0.71,
-    tag: "SKILLS",
-    heading: "Full-Stack · Data · Bioinformatics",
-    body: "Python, TypeScript, Swift, R · Next.js, SwiftUI, React Native · RNA-seq, PyTorch, Scikit-learn · PostgreSQL, AWS.",
-  },
-  {
-    p0: 0.72, p1: 0.79,
-    tag: "PROJECTS",
-    heading: "9 Project Highlights",
-    body: "LinkedHive · TimeBreak · AFL Ranking System · LynkSphere Website · F1 Dashboards · and more across mobile, web, and data science.",
-  },
-];
+import { useEffect, useRef, useState, type RefObject } from "react";
+import { getScrollProgress } from "./scrollProgress";
+import type { GalaxyProps } from "./types";
+import styles from "./GalaxyOverlay.module.css";
 
 
 function useIsMobile() {
@@ -43,22 +21,34 @@ function ss(e0: number, e1: number, x: number) {
   return t * t * (3 - 2 * t);
 }
 
-function useScrollPct(heroVH = 5) {
+function useScrollPct(rootRef: RefObject<HTMLElement | null>, screens: number) {
   const [p, setP] = useState(0);
   useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
     const stableH = window.innerHeight;
-    const handler = () => {
-      setP(Math.max(0, Math.min(window.scrollY / (stableH * heroVH), 1)));
-    };
+    const handler = () => setP(getScrollProgress(root, stableH, screens));
     handler();
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
-  }, [heroVH]);
+  }, [rootRef, screens]);
   return p;
 }
 
-export default function GalaxyHero({ visible, settled }: { visible: boolean; settled: boolean }) {
-  const p       = useScrollPct();
+interface GalaxyOverlayProps extends Omit<GalaxyProps, "title" | "scrollScreens"> {
+  title: GalaxyProps["title"];
+  scrollScreens: number;
+  rootRef: RefObject<HTMLElement | null>;
+  visible: boolean;
+  settled: boolean;
+  onReplay: () => void;
+}
+
+export default function GalaxyOverlay({
+  title, caption, hint, orbitLabels = [], steps = [], scrollScreens, accentColor = "#FF6600",
+  rootRef, visible, settled, onReplay,
+}: GalaxyOverlayProps) {
+  const p       = useScrollPct(rootRef, scrollScreens);
   const mobile  = useIsMobile();
 
   const titleOp  = 1 - ss(0.12, 0.22, p);
@@ -86,7 +76,7 @@ export default function GalaxyHero({ visible, settled }: { visible: boolean; set
       rafId = requestAnimationFrame(tick);
       const dt = lastT === null ? 0 : Math.min((now - lastT) / 1000, 0.05);
       lastT = now;
-      // Match the galaxy's slow ambient rotation, radians/second.
+      // Slow ambient rotation of the label ring, radians/second.
       const speedRad = reducedMotion.matches ? 0 : 0.018;
       rotRef.current += speedRad * dt * (180 / Math.PI);
       const rot = rotRef.current;
@@ -122,8 +112,8 @@ export default function GalaxyHero({ visible, settled }: { visible: boolean; set
         style={{ pointerEvents: "auto", touchAction: "pan-y", cursor: "grab" }}
       />
       <div className={styles.introduction} style={{ opacity: titleOp }}>
-        <h1 className={styles.title} aria-label="Hi, I'm Ekram.">
-          {["Hi, I'm", "Ekram."].map((word, side) => (
+        <h1 className={styles.title} aria-label={title.join(" ")}>
+          {title.map((word, side) => (
             <span key={word} className={styles.titleSide} aria-hidden="true" data-visible={visible}>
               {Array.from(word).map((letter, index) => (
                 <span key={index} className={styles.letter} style={{ transitionDelay: visible ? `${index * 65 + side * 100}ms` : "0ms" }}>
@@ -134,15 +124,15 @@ export default function GalaxyHero({ visible, settled }: { visible: boolean; set
           ))}
         </h1>
         <div className={styles.caption} data-visible={settled}>
-          <p>Co-founder · Bioinformatician · Computer scientist</p>
-          <span>Scroll to explore</span>
+          {caption && <p>{caption}</p>}
+          {hint && <span>{hint}</span>}
         </div>
       </div>
       <button
         type="button"
         className={styles.replay}
         aria-label="Replay galaxy introduction"
-        onClick={() => window.dispatchEvent(new Event(GALAXY_REPLAY_EVENT))}
+        onClick={onReplay}
         style={{ opacity: titleOp, pointerEvents: titleOp > 0.5 ? "auto" : "none" }}
         tabIndex={titleOp > 0.5 ? 0 : -1}
       >
@@ -152,7 +142,7 @@ export default function GalaxyHero({ visible, settled }: { visible: boolean; set
       </button>
 
       {/* ── Phase 2: Orbit labels — centered pixel circle, RAF-rotated ── */}
-      {!mobile && radius > 0 && (
+      {!mobile && radius > 0 && orbitLabels.length > 0 && (
         <div
           ref={containerRef}
           style={{
@@ -164,8 +154,8 @@ export default function GalaxyHero({ visible, settled }: { visible: boolean; set
             opacity: labelsOp,
           }}
         >
-          {ORBIT_LABEL_NAMES.map((label, i) => {
-            const angle = (i / ORBIT_LABEL_NAMES.length) * Math.PI * 2 - Math.PI / 2;
+          {orbitLabels.map((label, i) => {
+            const angle = (i / orbitLabels.length) * Math.PI * 2 - Math.PI / 2;
             const px    = Math.cos(angle) * radius;
             const py    = Math.sin(angle) * radius;
             return (
@@ -180,7 +170,7 @@ export default function GalaxyHero({ visible, settled }: { visible: boolean; set
                   fontFamily: "var(--font-space-mono),'Space Mono',monospace",
                   fontSize: 13,
                   letterSpacing: "0.28em",
-                  color: "#FF6600",
+                  color: accentColor,
                   textTransform: "uppercase",
                   whiteSpace: "nowrap",
                   display: "flex",
@@ -197,7 +187,7 @@ export default function GalaxyHero({ visible, settled }: { visible: boolean; set
       )}
 
       {/* ── Phase 3: Flythrough content overlays ────────────── */}
-      {FLYTHROUGH.map((step) => {
+      {steps.map((step) => {
         const opacity    = ss(step.p0, step.p0 + 0.03, p) * (1 - ss(step.p1, step.p1 + 0.03, p));
         const translateY = (1 - ss(step.p0, step.p0 + 0.06, p)) * 22;
         return (
@@ -223,7 +213,7 @@ export default function GalaxyHero({ visible, settled }: { visible: boolean; set
                 fontFamily: "var(--font-space-mono),'Space Mono',monospace",
                 fontSize: 9,
                 letterSpacing: "0.32em",
-                color: "#FF6600",
+                color: accentColor,
                 textTransform: "uppercase",
                 margin: "0 0 10px 0",
               }}

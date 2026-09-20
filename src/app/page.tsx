@@ -7,13 +7,36 @@ import Projects from "@/app/components/Portfolio/Projects";
 import Education from "@/app/components/Portfolio/Education";
 import Leadership from "@/app/components/Portfolio/Leadership";
 import Contact from "@/app/components/Portfolio/Contact";
-import { GalaxySceneClient as GalaxyScene, GalaxyEntryClient as GalaxyEntry } from "@/app/components/Galaxy/GalaxyClient";
+import { Galaxy, type GalaxyStep } from "@/app/components/Galaxy";
 
 export const metadata: Metadata = {
   title: "Ekram — Portfolio",
   description:
     "CS graduate from Monash University specialising in Data Science, Bioinformatics, and Full-Stack Development. Co-Founder of LynkSphere.",
 };
+
+const ORBIT_LABELS = ["ABOUT", "SKILLS", "PROJECTS", "EXPERIENCE", "EDUCATION", "CONTACT"];
+
+const GALAXY_STEPS: GalaxyStep[] = [
+  {
+    p0: 0.55, p1: 0.63,
+    tag: "ABOUT",
+    heading: "CS Graduate · Co-Founder",
+    body: "Co-Founder of LynkSphere · MSc Data Science at Monash University · Melbourne, Australia.",
+  },
+  {
+    p0: 0.64, p1: 0.71,
+    tag: "SKILLS",
+    heading: "Full-Stack · Data · Bioinformatics",
+    body: "Python, TypeScript, Swift, R · Next.js, SwiftUI, React Native · RNA-seq, PyTorch, Scikit-learn · PostgreSQL, AWS.",
+  },
+  {
+    p0: 0.72, p1: 0.79,
+    tag: "PROJECTS",
+    heading: "9 Project Highlights",
+    body: "LinkedHive · TimeBreak · AFL Ranking System · LynkSphere Website · F1 Dashboards · and more across mobile, web, and data science.",
+  },
+];
 
 function SectionDivider() {
   return (
@@ -28,13 +51,14 @@ function SectionDivider() {
 export default function Home() {
   return (
     <main>
-      {/* Fixed galaxy canvas — always behind everything */}
-      <GalaxyScene />
-
-      {/* 400vh scroll zone — transparent so galaxy shows through */}
-      <div style={{ height: "500vh", position: "relative", zIndex: 1 }}>
-        <GalaxyEntry />
-      </div>
+      <Galaxy
+        title={["Hi, I'm", "Ekram."]}
+        caption="Co-founder · Bioinformatician · Computer scientist"
+        hint="Scroll to explore"
+        orbitLabels={ORBIT_LABELS}
+        steps={GALAXY_STEPS}
+        scrollScreens={5}
+      />
 
       {/* Content sections — solid background covers galaxy */}
       <div
