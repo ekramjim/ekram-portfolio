@@ -128,7 +128,8 @@ export default function GalaxyScene({ rootRef, scrollScreens, flowSpeed, onPhase
         void main() {
           float background = 1.0 - step(0.1, abs(aKind - 1.0));
           float core = step(1.5, aKind);
-          float f = smoothstep(0.0, 1.0, clamp(uFormation * 1.12 - aPhase * 0.018, 0.0, 1.0));
+          // Easing is applied on the CPU (uFormation) so assembly starts moving on the first frame.
+          float f = clamp(uFormation * 1.12 - aPhase * 0.018, 0.0, 1.0);
           // Arm stars ride the spiral: t runs 0 (core) to 1 (rim) and uFlow slides it inward, wrapping at the rim.
           float arm = 1.0 - step(0.5, aKind);
           float t = mod(aArm.x - uFlow, 1.0);
@@ -286,14 +287,15 @@ export default function GalaxyScene({ rootRef, scrollScreens, flowSpeed, onPhase
       if (replayTokenRef.current !== seenReplayToken) { seenReplayToken = replayTokenRef.current; onReplay(); }
       elapsed += dt;
       const reduced = reducedMotion.matches;
-      uniforms.uFormation.value = reduced ? 1 : smoothstep(1.2, INTRO_DURATION, elapsed);
+      // Ease-out: begins moving immediately and glides into place.
+      uniforms.uFormation.value = reduced ? 1 : 1 - Math.pow(1 - Math.min(elapsed / INTRO_DURATION, 1), 3);
       uniforms.uFade.value = reduced ? 1 : smoothstep(0, 0.7, elapsed);
-      glowMaterial.opacity = reduced ? 1 : smoothstep(3.5, INTRO_DURATION, elapsed);
+      glowMaterial.opacity = reduced ? 1 : smoothstep(1.5, 4.2, elapsed);
       report(reduced || elapsed >= INTRO_DURATION ? "settled" : elapsed >= 0.7 ? "title" : "stars");
       if (!reduced) uniforms.uTime.value += dt;
       const ease = reduced ? 1 : 1 - Math.exp(-5 * dt);
-      // Stars stream inward along the arms once the galaxy has formed.
-      const flowEase = reduced ? 0 : smoothstep(INTRO_DURATION, INTRO_DURATION + 2, elapsed);
+      // Stars stream inward along the arms; the flow ramps up during assembly so there is no pause once it settles.
+      const flowEase = reduced ? 0 : smoothstep(0.3, 3.5, elapsed);
       flow = (flow + flowSpeed * flowEase * dt) % 1;
       uniforms.uFlow.value = flow;
       uniforms.uFlowFade.value = flowEase;
