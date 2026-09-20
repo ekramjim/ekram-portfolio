@@ -5,6 +5,9 @@ import { getScrollProgress } from "./scrollProgress";
 import type { GalaxyPhase } from "./types";
 
 const INTRO_DURATION = 5.2;
+const ARM_COUNT = 3;
+// Background field (800) + core (50) come first; arm stars are budgeted per arm so density holds as arms are added.
+const FIELD_AND_CORE = 850;
 function smoothstep(a: number, b: number, value: number) {
   const t = THREE.MathUtils.clamp((value - a) / (b - a), 0, 1);
   return t * t * (3 - 2 * t);
@@ -17,7 +20,7 @@ function buildStars(mobile: boolean) {
     return (seed >>> 0) / 4294967296;
   };
   const gaussian = () => (random() + random() + random() + random() - 2) * 1.73;
-  const count = mobile ? 5200 : 8200;
+  const count = FIELD_AND_CORE + ARM_COUNT * (mobile ? 2200 : 3700);
   const position = new Float32Array(count * 3);
   const scatter = new Float32Array(count * 3);
   const color = new Float32Array(count * 3);
@@ -37,7 +40,7 @@ function buildStars(mobile: boolean) {
     let t = random() < 0.72 ? knots[Math.floor(random() * knots.length)] + gaussian() * 0.012 : random();
     t = THREE.MathUtils.clamp(t, 0, 1);
     // Arm stars are placed in the vertex shader from (t, strand, noise) so they can flow along the spiral.
-    arm.set([Math.min(t, 0.9999), i % 2], i * 2);
+    arm.set([Math.min(t, 0.9999), i % ARM_COUNT], i * 2);
     noise.set([gaussian(), gaussian(), gaussian()], i * 3);
     let x = 0, y = 0, z = 0;
     if (field) { x = (random() - 0.5) * 850; y = (random() - 0.5) * 650; z = -60 - random() * 220; }
