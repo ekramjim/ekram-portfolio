@@ -1,56 +1,55 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
+  })[character] ?? character);
+
 export async function POST(request: Request) {
   try {
-    const { name, email, subject, message } = await request.json();
-    const emailSubject = subject?.trim() || "New contact form message";
+    const body = await request.json();
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const email = typeof body.email === "string" ? body.email.trim() : "";
+    const subject = typeof body.subject === "string" ? body.subject.trim() : "";
+    const message = typeof body.message === "string" ? body.message.trim() : "";
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_APP_PASSWORD,
-      },
-    });
+    // This is the archived v1 site: refuse blank or oversized submissions instead of mailing them.
+    if (!name || name.length > 100 || !emailPattern.test(email) || email.length > 254 || !message || message.length > 3000 || subject.length > 160) {
+      return NextResponse.json({ error: "Please check the form fields" }, { status: 400 });
+    }
 
-    const recipients = [
-      process.env.EMAIL_RECIPIENT_1,
-      process.env.EMAIL_RECIPIENT_2,
-      "ekramjim002@gmail.com",
-    ].filter(Boolean);
+    const user = process.env.EMAIL_USER;
+    const password = process.env.EMAIL_APP_PASSWORD;
+    if (!user || !password) {
+      console.error("Contact form email credentials are not configured");
+      return NextResponse.json({ error: "Contact service is unavailable" }, { status: 503 });
+    }
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
+    const recipients = [...new Set(
+      [process.env.EMAIL_RECIPIENT_1, process.env.EMAIL_RECIPIENT_2, "ekramjim002@gmail.com"].filter(Boolean) as string[],
+    )];
+    const emailSubject = subject || "New contact form message";
+    const transporter = nodemailer.createTransport({ service: "gmail", auth: { user, pass: password } });
+
+    await transporter.sendMail({
+      from: user,
       to: recipients.join(", "),
       replyTo: email,
       subject: emailSubject,
-      text: `
-Name: ${name}
-Email: ${email}
-Subject: ${emailSubject}
-Message: ${message}
-      `,
-      html: `
-<h3>New Contact Form Message</h3>
-<p><strong>Name:</strong> ${name}</p>
-<p><strong>Email:</strong> ${email}</p>
-<p><strong>Subject:</strong> ${emailSubject}</p>
-<p><strong>Message:</strong><br/>${message}</p>
-      `,
-    };
+      text: `Name: ${name}\nEmail: ${email}\nSubject: ${emailSubject}\n\n${message}`,
+      html: `<h3>New Contact Form Message (v1 archive)</h3><p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Subject:</strong> ${escapeHtml(emailSubject)}</p><p><strong>Message:</strong></p><p>${escapeHtml(message).replace(/\n/g, "<br>")}</p>`,
+    });
 
-    await transporter.sendMail(mailOptions);
-
-    return NextResponse.json(
-      { message: "Email sent successfully" },
-      { status: 200 },
-    );
+    return NextResponse.json({ message: "Email sent successfully" }, { status: 200 });
   } catch (error) {
     console.error("Error sending email:", error);
-    return NextResponse.json(
-      { error: "Failed to send email" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
   }
 }
