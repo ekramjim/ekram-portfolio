@@ -9,6 +9,9 @@ import TerminalFrame from "@/components/ui/TerminalFrame";
 import type { FormEvent, ReactNode } from "react";
 import SectionLabel from "@/components/ui/SectionLabel";
 
+// Next prefixes <Link> and router calls with basePath, but not plain asset paths or fetch URLs.
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 type ContactLink = {
   label: string;
   value: string;
@@ -21,7 +24,7 @@ const contacts: ContactLink[] = [
   {
     label: "CV",
     value: "ekram-tech-cv.pdf",
-    href: "/cv/ekram-tech-cv.pdf",
+    href: `${BASE}/cv/ekram-tech-cv.pdf`,
     download: true,
     icon: (
       <Icon icon="ion:document-text-outline" width="20" height="20" />
@@ -65,7 +68,7 @@ const contacts: ContactLink[] = [
     href: "https://lynksphere.com",
     icon: (
       <Image
-        src="/images/lynksphereLogo/lsLogoDark.png"
+        src={`${BASE}/images/lynksphereLogo/lsLogoDark.png`}
         alt=""
         width={22}
         height={22}
@@ -91,7 +94,7 @@ export default function Contact() {
     setSubmitStatus("idle");
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(`${BASE}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
